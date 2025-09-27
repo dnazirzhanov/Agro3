@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Pests & Diseases - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1><i class="bi bi-bug text-warning me-2"></i>Pests & Disease Management</h1>
+            <small class="text-muted">{{ pests_diseases.paginator.count }} entries found</small>
+        </div>
+        <p class="lead">Identify and manage pests and diseases affecting crops in the Batken region.</p>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-funnel me-1"></i>Filter by Category</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search by Name</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ current_search }}" placeholder="Enter pest or disease name...">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="">All Types</option>
+                            {% for value, display in type_choices %}
+                                <option value="{{ value }}" {% if value == current_type %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-warning me-2">
+                            <i class="bi bi-search me-1"></i>Filter
+                        </button>
+                        <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Type Filter Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="btn-group" role="group">
+            <a href="{% url 'pests_diseases:list' %}" 
+               class="btn {% if not current_type %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                All ({{ pests_diseases.paginator.count }})
+            </a>
+            <a href="?type=Pest" 
+               class="btn {% if current_type == 'Pest' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                <i class="bi bi-bug me-1"></i>Pests
+            </a>
+            <a href="?type=Disease" 
+               class="btn {% if current_type == 'Disease' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                <i class="bi bi-virus me-1"></i>Diseases
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Pests & Diseases Grid -->
+<div class="row g-4">
+    {% for item in pests_diseases %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-{% if item.type == 'Pest' %}warning{% else %}danger{% endif %}">
+                {% if item.featured_image %}
+                    <img src="{{ item.featured_image.url }}" class="card-img-top" 
+                         style="height: 200px; object-fit: cover;" alt="{{ item.name }}">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                         style="height: 200px;">
+                        <i class="bi bi-{% if item.type == 'Pest' %}bug{% else %}virus{% endif %} text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ item.name }}</h5>
+                        <span class="badge bg-{% if item.type == 'Pest' %}warning{% else %}danger{% endif %} text-white">
+                            {{ item.type }}
+                        </span>
+                    </div>
+                    
+                    {% if item.scientific_name %}
+                        <h6 class="card-subtitle mb-2 text-muted fst-italic">{{ item.scientific_name }}</h6>
+                    {% endif %}
+                    
+                    <p class="card-text flex-grow-1">
+                        <strong>Symptoms:</strong> {{ item.symptoms|truncatewords:15 }}
+                    </p>
+                    
+                    {% if item.affected_crops.exists %}
+                        <div class="mb-3">
+                            <small class="text-muted d-block mb-1">Affects:</small>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for crop in item.affected_crops.all|slice:":3" %}
+                                    <span class="badge bg-success text-white small">{{ crop.name }}</span>
+                                {% endfor %}
+                                {% if item.affected_crops.count > 3 %}
+                                    <span class="badge bg-secondary text-white small">+{{ item.affected_crops.count|add:"-3" }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'pests_diseases:detail' item.pk %}" class="btn btn-{% if item.type == 'Pest' %}warning{% else %}danger{% endif %} mt-auto">
+                        <i class="bi bi-eye me-1"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-search text-muted mb-3" style="font-size: 3rem;"></i>
+                <h4 class="text-muted">No pests or diseases found</h4>
+                <p class="text-muted">Try adjusting your search criteria or 
+                   <a href="{% url 'pests_diseases:list' %}">view all entries</a>.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if pests_diseases.has_other_pages %}
+    <nav aria-label="Pests & diseases pagination" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if pests_diseases.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}page={{ pests_diseases.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in pests_diseases.paginator.page_range %}
+                {% if pests_diseases.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > pests_diseases.number|add:'-3' and num < pests_diseases.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if pests_diseases.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}page={{ pests_diseases.next_page_number }}">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}

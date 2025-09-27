@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ crop.name }} - Crops - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'crops:list' %}">Crops</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ crop.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            {% if crop.featured_image %}
+                <img src="{{ crop.featured_image.url }}" class="card-img-top" 
+                     style="height: 400px; object-fit: cover;" alt="{{ crop.name }}">
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="card-title h2 mb-2">{{ crop.name }}</h1>
+                        {% if crop.scientific_name %}
+                            <h5 class="text-muted fst-italic">{{ crop.scientific_name }}</h5>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Crops
+                    </a>
+                </div>
+                
+                <p class="lead">{{ crop.description }}</p>
+                
+                <!-- Growing Requirements -->
+                <div class="row g-3 mt-4">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <h6 class="fw-bold text-success mb-2">
+                                <i class="bi bi-sun me-1"></i>Sunlight Requirements
+                            </h6>
+                            <span class="badge bg-warning text-dark fs-6">{{ crop.sunlight_needs }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <h6 class="fw-bold text-success mb-2">
+                                <i class="bi bi-droplet me-1"></i>Water Requirements
+                            </h6>
+                            <span class="badge bg-info text-dark fs-6">{{ crop.water_needs }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Soil and Climate -->
+                <div class="row g-3 mt-3">
+                    {% if crop.soil_preference %}
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <h6 class="fw-bold text-success mb-2">
+                                <i class="bi bi-dirt me-1"></i>Preferred Soil Type
+                            </h6>
+                            <p class="mb-0">{{ crop.soil_preference.name }}</p>
+                            <small class="text-muted">{{ crop.soil_preference.texture }} soil</small>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="col-md-{% if crop.soil_preference %}6{% else %}12{% endif %}">
+                        <div class="border rounded p-3 h-100">
+                            <h6 class="fw-bold text-success mb-2">
+                                <i class="bi bi-thermometer me-1"></i>Climate Preference
+                            </h6>
+                            <p class="mb-0">{{ crop.climate_preference }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Growing Information -->
+                {% if crop.planting_seasons or crop.harvest_time %}
+                <div class="mt-4">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-calendar-event me-2"></i>Growing Timeline
+                    </h5>
+                    <div class="row g-3">
+                        {% if crop.planting_seasons %}
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <h6 class="fw-bold mb-2">Planting Seasons</h6>
+                                <p class="mb-0">{{ crop.planting_seasons }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if crop.harvest_time %}
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <h6 class="fw-bold mb-2">Harvest Time</h6>
+                                <p class="mb-0">{{ crop.harvest_time }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Nutrient Information -->
+                {% if crop.nutrient_needs %}
+                <div class="mt-4">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-graph-up me-2"></i>Nutrient Requirements
+                    </h5>
+                    <div class="bg-light rounded p-3">
+                        <p class="mb-0">{{ crop.nutrient_needs }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Usage Information -->
+                {% if crop.recommended_usage %}
+                <div class="mt-4">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-lightbulb me-2"></i>Recommended Usage
+                    </h5>
+                    <div class="bg-light rounded p-3">
+                        <p class="mb-0">{{ crop.recommended_usage }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Related Crops -->
+        {% if related_crops %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-flower2 me-2"></i>Similar Crops
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for related_crop in related_crops %}
+                <div class="d-flex align-items-center mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                    {% if related_crop.featured_image %}
+                        <img src="{{ related_crop.featured_image.url }}" 
+                             class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" 
+                             alt="{{ related_crop.name }}">
+                    {% else %}
+                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
+                             style="width: 60px; height: 60px;">
+                            <i class="bi bi-flower3 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">
+                            <a href="{% url 'crops:detail' related_crop.pk %}" class="text-decoration-none">
+                                {{ related_crop.name }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            <i class="bi bi-sun me-1"></i>{{ related_crop.sunlight_needs }} • 
+                            <i class="bi bi-droplet me-1"></i>{{ related_crop.water_needs }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-tools me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% if crop.soil_preference %}
+                    <a href="{% url 'soil:questionnaire' %}" class="btn btn-outline-info">
+                        <i class="bi bi-dirt me-1"></i>Test Your Soil
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-bug me-1"></i>Check Pests & Diseases
+                    </a>
+                    <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-graph-up me-1"></i>View Market Prices
+                    </a>
+                    <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-people me-1"></i>Ask Community
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Crops - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1><i class="bi bi-flower3 text-success me-2"></i>Crop Information</h1>
+            <small class="text-muted">{{ crops.paginator.count }} crops found</small>
+        </div>
+        <p class="lead">Discover detailed information about crops suitable for the Batken region.</p>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-funnel me-1"></i>Filter Crops</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="search" class="form-label">Search by Name</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ current_search }}" placeholder="Enter crop name...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="sunlight" class="form-label">Sunlight Needs</label>
+                        <select class="form-select" id="sunlight" name="sunlight">
+                            <option value="">All Sunlight Types</option>
+                            {% for value, display in sunlight_choices %}
+                                <option value="{{ value }}" {% if value == current_sunlight %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="water" class="form-label">Water Needs</label>
+                        <select class="form-select" id="water" name="water">
+                            <option value="">All Water Requirements</option>
+                            {% for value, display in water_choices %}
+                                <option value="{{ value }}" {% if value == current_water %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="bi bi-search me-1"></i>Filter
+                        </button>
+                        <a href="{% url 'crops:list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Crops Grid -->
+<div class="row g-4">
+    {% for crop in crops %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                {% if crop.featured_image %}
+                    <img src="{{ crop.featured_image.url }}" class="card-img-top" 
+                         style="height: 200px; object-fit: cover;" alt="{{ crop.name }}">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                         style="height: 200px;">
+                        <i class="bi bi-flower3 text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ crop.name }}</h5>
+                    {% if crop.scientific_name %}
+                        <h6 class="card-subtitle mb-2 text-muted fst-italic">{{ crop.scientific_name }}</h6>
+                    {% endif %}
+                    
+                    <p class="card-text flex-grow-1">{{ crop.description|truncatewords:20 }}</p>
+                    
+                    <div class="mb-3">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <small class="text-muted d-block">Sunlight:</small>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-sun me-1"></i>{{ crop.sunlight_needs }}
+                                </span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">Water:</small>
+                                <span class="badge bg-info text-dark">
+                                    <i class="bi bi-droplet me-1"></i>{{ crop.water_needs }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'crops:detail' crop.pk %}" class="btn btn-success mt-auto">
+                        <i class="bi bi-eye me-1"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-search text-muted mb-3" style="font-size: 3rem;"></i>
+                <h4 class="text-muted">No crops found</h4>
+                <p class="text-muted">Try adjusting your search criteria or 
+                   <a href="{% url 'crops:list' %}">view all crops</a>.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if crops.has_other_pages %}
+    <nav aria-label="Crops pagination" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if crops.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.sunlight %}sunlight={{ request.GET.sunlight }}&{% endif %}{% if request.GET.water %}water={{ request.GET.water }}&{% endif %}page={{ crops.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in crops.paginator.page_range %}
+                {% if crops.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > crops.number|add:'-3' and num < crops.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.sunlight %}sunlight={{ request.GET.sunlight }}&{% endif %}{% if request.GET.water %}water={{ request.GET.water }}&{% endif %}page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if crops.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.sunlight %}sunlight={{ request.GET.sunlight }}&{% endif %}{% if request.GET.water %}water={{ request.GET.water }}&{% endif %}page={{ crops.next_page_number }}">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}#{{ tag.name }} - Community Forum - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Community Forum</a></li>
+        <li class="breadcrumb-item active" aria-current="page">#{{ tag.name }}</li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>
+                    <span class="badge bg-primary me-2" style="font-size: 1rem;">#</span>
+                    {{ tag.name }}
+                </h1>
+                <p class="lead text-muted">Posts tagged with "{{ tag.name }}"</p>
+            </div>
+            <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Forum
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>Posts tagged with "{{ tag.name }}"</h4>
+            <small class="text-muted">{{ posts.paginator.count }} posts</small>
+        </div>
+    </div>
+</div>
+
+<!-- Posts List -->
+<div class="row">
+    <div class="col-12">
+        {% if posts %}
+        {% for post in posts %}
+        <article class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <h5 class="card-title mb-2">
+                            <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+                                {{ post.title }}
+                            </a>
+                        </h5>
+                        
+                        {% if post.category %}
+                            <a href="{% url 'forum:category' post.category.slug %}" 
+                               class="badge text-bg-primary text-decoration-none me-2">{{ post.category.name }}</a>
+                        {% endif %}
+                        
+                        <p class="card-text mt-2">
+                            {{ post.short_description|default:post.content|striptags|truncatewords:25 }}
+                        </p>
+                        
+                        <div class="d-flex align-items-center text-muted small">
+                            <i class="bi bi-person me-1"></i>
+                            <span class="me-3">{{ post.author.username }}</span>
+                            
+                            <i class="bi bi-calendar me-1"></i>
+                            <span class="me-3">{{ post.publication_date|date:"M d, Y" }}</span>
+                            
+                            <i class="bi bi-chat me-1"></i>
+                            <span class="me-3">{{ post.get_comment_count }} comments</span>
+                            
+                            <i class="bi bi-eye me-1"></i>
+                            <span>{{ post.views_count }} views</span>
+                        </div>
+                        
+                        {% if post.tags.all %}
+                        <div class="mt-2">
+                            {% for post_tag in post.tags.all|slice:":4" %}
+                                <a href="{% url 'forum:tag' post_tag.slug %}" 
+                                   class="badge bg-{% if post_tag.slug == tag.slug %}primary{% else %}light text-dark{% endif %} text-decoration-none me-1">
+                                    #{{ post_tag.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if post.featured_image %}
+                    <div class="col-md-3">
+                        <img src="{{ post.featured_image.url }}" class="img-fluid rounded" 
+                             style="height: 120px; width: 100%; object-fit: cover;" alt="{{ post.title }}">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+        
+        <!-- Pagination -->
+        {% if posts.has_other_pages %}
+        <nav aria-label="Posts pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">{{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+                </li>
+                
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-tags text-muted mb-3" style="font-size: 3rem;"></i>
+            <h4 class="text-muted">No posts with this tag yet</h4>
+            <p class="text-muted">Be the first to create a post tagged with "{{ tag.name }}"!</p>
+            <a href="{% url 'forum:index' %}" class="btn btn-primary">Browse All Posts</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

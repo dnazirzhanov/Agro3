@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pest_disease.name }} - Pests & Diseases - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pests_diseases:list' %}">Pests & Diseases</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ pest_disease.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %}">
+            {% if pest_disease.featured_image %}
+                <img src="{{ pest_disease.featured_image.url }}" class="card-img-top" 
+                     style="height: 400px; object-fit: cover;" alt="{{ pest_disease.name }}">
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <div class="d-flex align-items-center mb-2">
+                            <h1 class="card-title h2 mb-0 me-3">{{ pest_disease.name }}</h1>
+                            <span class="badge bg-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %} text-white fs-6">
+                                {{ pest_disease.type }}
+                            </span>
+                        </div>
+                        {% if pest_disease.scientific_name %}
+                            <h5 class="text-muted fst-italic">{{ pest_disease.scientific_name }}</h5>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %}">
+                        <i class="bi bi-arrow-left me-1"></i>Back to List
+                    </a>
+                </div>
+                
+                <!-- Symptoms -->
+                <div class="mb-4">
+                    <h5 class="text-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %} mb-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Symptoms
+                    </h5>
+                    <div class="bg-light rounded p-3">
+                        <p class="mb-0">{{ pest_disease.symptoms }}</p>
+                    </div>
+                </div>
+                
+                <!-- Example Images -->
+                {% if pest_disease.example_images %}
+                <div class="mb-4">
+                    <h5 class="text-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %} mb-3">
+                        <i class="bi bi-images me-2"></i>Example Images
+                    </h5>
+                    <img src="{{ pest_disease.example_images.url }}" class="img-fluid rounded shadow-sm" 
+                         alt="Example of {{ pest_disease.name }}">
+                </div>
+                {% endif %}
+                
+                <!-- Identification Tips -->
+                {% if pest_disease.identification_tips %}
+                <div class="mb-4">
+                    <h5 class="text-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %} mb-3">
+                        <i class="bi bi-search me-2"></i>Identification Tips
+                    </h5>
+                    <div class="border-start border-4 border-info bg-light rounded-end p-3">
+                        <p class="mb-0">{{ pest_disease.identification_tips }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Causes -->
+                {% if pest_disease.causes %}
+                <div class="mb-4">
+                    <h5 class="text-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %} mb-3">
+                        <i class="bi bi-question-circle me-2"></i>Causes
+                    </h5>
+                    <div class="bg-light rounded p-3">
+                        <p class="mb-0">{{ pest_disease.causes }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Prevention Methods -->
+                {% if pest_disease.prevention_methods %}
+                <div class="mb-4">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-shield-check me-2"></i>Prevention Methods
+                    </h5>
+                    <div class="border-start border-4 border-success bg-light rounded-end p-3">
+                        <p class="mb-0">{{ pest_disease.prevention_methods }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Management Strategies -->
+                {% if pest_disease.management_strategies %}
+                <div class="mb-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="bi bi-gear me-2"></i>Management Strategies
+                    </h5>
+                    <div class="border-start border-4 border-primary bg-light rounded-end p-3">
+                        <p class="mb-0">{{ pest_disease.management_strategies }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Affected Crops -->
+                {% if pest_disease.affected_crops.exists %}
+                <div class="mb-4">
+                    <h5 class="text-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %} mb-3">
+                        <i class="bi bi-flower3 me-2"></i>Affected Crops
+                    </h5>
+                    <div class="row g-2">
+                        {% for crop in pest_disease.affected_crops.all %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body p-3">
+                                    <div class="d-flex align-items-center">
+                                        {% if crop.featured_image %}
+                                            <img src="{{ crop.featured_image.url }}" 
+                                                 class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" 
+                                                 alt="{{ crop.name }}">
+                                        {% else %}
+                                            <div class="bg-success text-white rounded me-2 d-flex align-items-center justify-content-center"
+                                                 style="width: 40px; height: 40px;">
+                                                <i class="bi bi-flower3" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <a href="{% url 'crops:detail' crop.pk %}" 
+                                               class="text-decoration-none fw-bold">{{ crop.name }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Related Items -->
+        {% if related_items %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-{% if pest_disease.type == 'Pest' %}bug{% else %}virus{% endif %} me-2"></i>
+                    Other {{ pest_disease.type }}s
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for item in related_items %}
+                <div class="d-flex align-items-center mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                    {% if item.featured_image %}
+                        <img src="{{ item.featured_image.url }}" 
+                             class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" 
+                             alt="{{ item.name }}">
+                    {% else %}
+                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
+                             style="width: 60px; height: 60px;">
+                            <i class="bi bi-{% if item.type == 'Pest' %}bug{% else %}virus{% endif %} text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">
+                            <a href="{% url 'pests_diseases:detail' item.pk %}" class="text-decoration-none">
+                                {{ item.name }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">{{ item.type }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-tools me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
+                        <i class="bi bi-flower3 me-1"></i>View Crops
+                    </a>
+                    <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-graph-up me-1"></i>Check Market Prices
+                    </a>
+                    <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-people me-1"></i>Ask Community
+                    </a>
+                    <a href="{% url 'pests_diseases:list' %}?type={{ pest_disease.type }}" 
+                       class="btn btn-outline-{% if pest_disease.type == 'Pest' %}warning{% else %}danger{% endif %}">
+                        <i class="bi bi-{% if pest_disease.type == 'Pest' %}bug{% else %}virus{% endif %} me-1"></i>More {{ pest_disease.type }}s
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

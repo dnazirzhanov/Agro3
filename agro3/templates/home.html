@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="bg-success text-white p-5 rounded text-center">
+            <h1 class="display-4 fw-bold mb-3">Welcome to Batken Agri-Helper</h1>
+            <p class="lead mb-4">Your comprehensive agricultural companion for the Batken region, Kyrgyzstan</p>
+            <p class="mb-4">Access data-driven insights, connect with the farming community, and grow your agricultural knowledge</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-flower3 text-success mb-3" style="font-size: 3rem;"></i>
+                <h5 class="card-title">Crop Information</h5>
+                <p class="card-text">Discover detailed information about various crops, their requirements, and growing conditions suitable for Batken region.</p>
+                <a href="{% url 'crops:list' %}" class="btn btn-success">Explore Crops</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-bug text-warning mb-3" style="font-size: 3rem;"></i>
+                <h5 class="card-title">Pest & Disease Management</h5>
+                <p class="card-text">Identify and manage pests and diseases affecting your crops with our comprehensive identification guide.</p>
+                <a href="{% url 'pests_diseases:list' %}" class="btn btn-warning">Learn More</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up text-primary mb-3" style="font-size: 3rem;"></i>
+                <h5 class="card-title">Market Prices</h5>
+                <p class="card-text">Stay updated with current market prices for agricultural products across different markets in the region.</p>
+                <a href="{% url 'market:price_list' %}" class="btn btn-primary">View Prices</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-dirt text-info mb-3" style="font-size: 3rem;"></i>
+                <h5 class="card-title">Soil Type Identification</h5>
+                <p class="card-text">Identify your soil type through our interactive questionnaire to make better agricultural decisions.</p>
+                <a href="{% url 'soil:questionnaire' %}" class="btn btn-info">Test Soil</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-people text-secondary mb-3" style="font-size: 3rem;"></i>
+                <h5 class="card-title">Community Forum</h5>
+                <p class="card-text">Connect with fellow farmers, share experiences, and learn from agricultural experts in our community blog.</p>
+                <a href="{% url 'forum:index' %}" class="btn btn-secondary">Join Community</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-question-circle text-dark mb-3" style="font-size: 3rem;"></i>
+                <h5 class="card-title">Agricultural Support</h5>
+                <p class="card-text">Get expert advice and support for your agricultural needs through our comprehensive resource center.</p>
+                <a href="#" class="btn btn-dark">Get Support</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="bg-light p-4 rounded">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h3 class="text-success fw-bold">500+</h3>
+                    <p class="mb-0">Crop Varieties</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="text-warning fw-bold">200+</h3>
+                    <p class="mb-0">Pest & Disease Guides</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="text-primary fw-bold">50+</h3>
+                    <p class="mb-0">Market Locations</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="text-info fw-bold">1000+</h3>
+                    <p class="mb-0">Farmers Helped</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

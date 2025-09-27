@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Market Prices - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1><i class="bi bi-graph-up text-primary me-2"></i>Market Prices</h1>
+            <div>
+                <a href="{% url 'market:price_comparison' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-bar-chart me-1"></i>Compare Prices
+                </a>
+            </div>
+        </div>
+        <p class="lead">Stay updated with current market prices across different markets in the Batken region.</p>
+    </div>
+</div>
+
+<!-- Price Statistics -->
+{% if stats %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h5><i class="bi bi-graph-up me-2"></i>{{ stats.product.name }} - Price Statistics (Last 30 days)</h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Average Price:</strong> {{ stats.avg_price|floatformat:2 }} som
+                </div>
+                <div class="col-md-3">
+                    <strong>Lowest Price:</strong> {{ stats.min_price|floatformat:2 }} som
+                </div>
+                <div class="col-md-3">
+                    <strong>Highest Price:</strong> {{ stats.max_price|floatformat:2 }} som
+                </div>
+                <div class="col-md-3">
+                    <strong>Entries:</strong> {{ stats.count }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Filter Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-funnel me-1"></i>Filter Prices</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="search" class="form-label">Search Product</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ current_search }}" placeholder="Enter product name...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="product" class="form-label">Product</label>
+                        <select class="form-select" id="product" name="product">
+                            <option value="">All Products</option>
+                            {% for product in products %}
+                                <option value="{{ product.pk }}" {% if product.pk|stringformat:"s" == current_product %}selected{% endif %}>
+                                    {{ product.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="market" class="form-label">Market</label>
+                        <select class="form-select" id="market" name="market">
+                            <option value="">All Markets</option>
+                            {% for market in markets %}
+                                <option value="{{ market.pk }}" {% if market.pk|stringformat:"s" == current_market %}selected{% endif %}>
+                                    {{ market.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="date_range" class="form-label">Time Period</label>
+                        <select class="form-select" id="date_range" name="date_range">
+                            {% for value, display in date_range_choices %}
+                                <option value="{{ value }}" {% if value == current_date_range %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search me-1"></i>Filter
+                        </button>
+                        <a href="{% url 'market:price_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prices Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Market Prices</h5>
+                <small class="text-muted">{{ prices.paginator.count }} entries found</small>
+            </div>
+            <div class="card-body p-0">
+                {% if prices %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="bi bi-basket me-1"></i>Product</th>
+                                <th><i class="bi bi-shop me-1"></i>Market</th>
+                                <th><i class="bi bi-geo-alt me-1"></i>Location</th>
+                                <th><i class="bi bi-currency-exchange me-1"></i>Price</th>
+                                <th><i class="bi bi-calendar me-1"></i>Date</th>
+                                <th><i class="bi bi-chat-text me-1"></i>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for price in prices %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-success">{{ price.product.name }}</div>
+                                    {% if price.product.category %}
+                                        <small class="text-muted">{{ price.product.category }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ price.market.name }}</td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt-fill"></i> {{ price.market.location }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary fs-6">
+                                        {{ price.price }} som/{{ price.get_unit_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div>{{ price.date_recorded|date:"M d, Y" }}</div>
+                                    <small class="text-muted">{{ price.date_recorded|date:"H:i" }}</small>
+                                </td>
+                                <td>
+                                    {% if price.notes %}
+                                        <small class="text-muted">{{ price.notes|truncatewords:10 }}</small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-search text-muted mb-3" style="font-size: 3rem;"></i>
+                    <h4 class="text-muted">No price data found</h4>
+                    <p class="text-muted">Try adjusting your search criteria or 
+                       <a href="{% url 'market:price_list' %}">view all prices</a>.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if prices.has_other_pages %}
+    <nav aria-label="Price pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if prices.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.product %}product={{ request.GET.product }}&{% endif %}{% if request.GET.market %}market={{ request.GET.market }}&{% endif %}{% if request.GET.date_range %}date_range={{ request.GET.date_range }}&{% endif %}page={{ prices.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in prices.paginator.page_range %}
+                {% if prices.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > prices.number|add:'-3' and num < prices.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.product %}product={{ request.GET.product }}&{% endif %}{% if request.GET.market %}market={{ request.GET.market }}&{% endif %}{% if request.GET.date_range %}date_range={{ request.GET.date_range }}&{% endif %}page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if prices.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.product %}product={{ request.GET.product }}&{% endif %}{% if request.GET.market %}market={{ request.GET.market }}&{% endif %}{% if request.GET.date_range %}date_range={{ request.GET.date_range }}&{% endif %}page={{ prices.next_page_number }}">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}
