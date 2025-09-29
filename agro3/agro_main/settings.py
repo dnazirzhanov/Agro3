@@ -12,7 +12,17 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
+try:
+    import dj_database_url  # optional, used only when DATABASE_URL is set
+except Exception:
+    dj_database_url = None
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not installed
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +59,7 @@ INSTALLED_APPS = [
     'market',
     'soil',
     'forum',
+    'weather',
 ]
 
 MIDDLEWARE = [
@@ -166,6 +177,10 @@ LOGOUT_REDIRECT_URL = 'home'
 
 # Email Settings (for password reset, etc.)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+
+# Weather API Configuration
+# Get your free API key from https://openweathermap.org/api
+OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', '')
 
 # Session Settings
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 1 week

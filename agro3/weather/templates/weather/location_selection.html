@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Select Location - Weather{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Multiple locations found for "{{ search_term }}"
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        We found multiple places with that name. Please select the correct location:
+                    </p>
+                    
+                    <div class="list-group">
+                        {% for location in locations %}
+                        <a href="/weather/?lat={{ location.lat }}&lon={{ location.lon }}&location={{ location.name }}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">
+                                        <i class="fas fa-map-pin text-primary me-2"></i>
+                                        {{ location.name }}
+                                    </h5>
+                                    <p class="mb-1">
+                                        {% if location.state %}
+                                            <span class="badge bg-secondary me-2">{{ location.state }}</span>
+                                        {% endif %}
+                                        <span class="badge bg-primary">{{ location.country }}</span>
+                                    </p>
+                                    {% if location.local_names %}
+                                        <small class="text-muted">
+                                            Local names: 
+                                            {% for key, value in location.local_names.items %}
+                                                {{ value }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </small>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted">
+                                        <i class="fas fa-globe me-1"></i>
+                                        {{ location.lat|floatformat:4 }}, {{ location.lon|floatformat:4 }}
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'weather:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back to Weather Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.list-group-item-action {
+    text-decoration: none;
+    color: inherit;
+}
+
+.list-group-item-action:hover h5 {
+    color: #007bff;
+}
+</style>
+{% endblock %}
