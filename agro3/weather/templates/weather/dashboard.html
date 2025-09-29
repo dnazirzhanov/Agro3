@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block title %}Weather Forecast - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-cloud-sun text-primary me-2"></i>Weather Forecast</h1>
+        <p class="lead">Stay informed about weather conditions to make better agricultural decisions.</p>
+    </div>
+</div>
+
+<!-- Location Search -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-search me-2"></i>Search Location</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{% url 'weather:search' %}" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="city" 
+                               placeholder="Enter city name (e.g., Batken, Bishkek, Osh)" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search me-1"></i>Search Weather
+                        </button>
+                    </div>
+                </form>
+                
+                {% if recent_locations %}
+                <div class="mt-3">
+                    <small class="text-muted">Recent locations:</small>
+                    <div class="mt-1">
+                        {% for location in recent_locations %}
+                            <a href="?lat={{ location.latitude }}&lon={{ location.longitude }}&location={{ location.name }}" 
+                               class="btn btn-sm btn-outline-secondary me-2 mb-1">
+                                <i class="bi bi-geo-alt me-1"></i>{{ location.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not api_configured %}
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <strong>Weather API Not Configured</strong><br>
+        To use weather features, please set your OpenWeatherMap API key in the environment variable <code>OPENWEATHER_API_KEY</code>.
+        <br><small class="text-muted">Get a free API key at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></small>
+    </div>
+{% elif weather_data %}
+    <!-- Current Weather -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-geo-alt me-2"></i>Current Weather - {{ weather_data.location.name }}
+                        {% if weather_data.location.state %}, {{ weather_data.location.state }}{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="http://openweathermap.org/img/wn/{{ weather_data.current.weather_icon }}@2x.png" 
+                                 alt="{{ weather_data.current.weather_description }}" class="img-fluid mb-2">
+                            <h2 class="display-4 text-primary mb-0">{{ weather_data.current.temperature|floatformat:0 }}°C</h2>
+                            <p class="text-muted mb-0">Feels like {{ weather_data.current.feels_like|floatformat:0 }}°C</p>
+                        </div>
+                        <div class="col-md-9">
+                            <h4 class="text-capitalize mb-3">{{ weather_data.current.weather_description }}</h4>
+                            <div class="row">
+                                <div class="col-sm-6 col-lg-3 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-droplet text-info me-2 fs-4"></i>
+                                        <div>
+                                            <strong>{{ weather_data.current.humidity }}%</strong>
+                                            <br><small class="text-muted">Humidity</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-wind text-success me-2 fs-4"></i>
+                                        <div>
+                                            <strong>{{ weather_data.current.wind_speed|floatformat:1 }} m/s</strong>
+                                            <br><small class="text-muted">Wind ({{ weather_data.current.wind_direction_text }})</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-speedometer text-warning me-2 fs-4"></i>
+                                        <div>
+                                            <strong>{{ weather_data.current.pressure|floatformat:0 }} hPa</strong>
+                                            <br><small class="text-muted">Pressure</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if weather_data.current.visibility %}
+                                <div class="col-sm-6 col-lg-3 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-eye text-secondary me-2 fs-4"></i>
+                                        <div>
+                                            <strong>{{ weather_data.current.visibility|floatformat:0 }} m</strong>
+                                            <br><small class="text-muted">Visibility</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hourly Forecast -->
+    {% if weather_data.forecast %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock me-2"></i>24-Hour Forecast</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-0">
+                        {% for forecast in weather_data.forecast %}
+                        <div class="col-12">
+                            <div class="forecast-item border-bottom py-3 {% if not forloop.last %}border-bottom{% endif %}">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2 text-center mb-2 mb-md-0">
+                                        <strong class="text-primary">{{ forecast.timestamp|date:"H:i" }}</strong>
+                                        <br><small class="text-muted">{{ forecast.timestamp|date:"M d" }}</small>
+                                    </div>
+                                    <div class="col-md-2 text-center mb-2 mb-md-0">
+                                        <img src="http://openweathermap.org/img/wn/{{ forecast.weather_icon }}.png" 
+                                             alt="{{ forecast.weather_description }}" class="img-fluid" style="width: 50px;">
+                                    </div>
+                                    <div class="col-md-2 text-center mb-2 mb-md-0">
+                                        <h5 class="mb-0">{{ forecast.temperature|floatformat:0 }}°C</h5>
+                                        <small class="text-muted">{{ forecast.feels_like|floatformat:0 }}°C</small>
+                                    </div>
+                                    <div class="col-md-3 mb-2 mb-md-0">
+                                        <span class="text-capitalize fw-bold">{{ forecast.weather_main }}</span>
+                                        <br><small class="text-muted">{{ forecast.weather_description }}</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row text-center">
+                                            <div class="col-4">
+                                                <i class="bi bi-droplet text-info"></i>
+                                                <br><small>{{ forecast.humidity }}%</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <i class="bi bi-wind text-success"></i>
+                                                <br><small>{{ forecast.wind_speed|floatformat:1 }} m/s</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <i class="bi bi-speedometer text-warning"></i>
+                                                <br><small>{{ forecast.pressure|floatformat:0 }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Agricultural Tips -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightbulb text-warning me-2"></i>Farming Tips</h5>
+                </div>
+                <div class="card-body">
+                    {% if weather_data.current.weather_main == 'Rain' %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-cloud-rain me-2"></i>
+                            <strong>Rainy Weather:</strong> Good for recently planted crops. Avoid field work and consider covered storage for harvested crops.
+                        </div>
+                    {% elif weather_data.current.temperature > 30 %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-thermometer-sun me-2"></i>
+                            <strong>Hot Weather:</strong> Ensure adequate irrigation. Consider early morning or evening work to avoid heat stress.
+                        </div>
+                    {% elif weather_data.current.temperature < 5 %}
+                        <div class="alert alert-primary">
+                            <i class="bi bi-thermometer-snow me-2"></i>
+                            <strong>Cold Weather:</strong> Protect sensitive crops from frost. Check greenhouse heating systems.
+                        </div>
+                    {% elif weather_data.current.wind_speed > 10 %}
+                        <div class="alert alert-secondary">
+                            <i class="bi bi-wind me-2"></i>
+                            <strong>Windy Conditions:</strong> Secure greenhouses and equipment. Avoid spraying operations.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong>Good Conditions:</strong> Ideal weather for most agricultural activities.
+                        </div>
+                    {% endif %}
+                    
+                    <h6 class="mt-3">General Recommendations:</h6>
+                    <ul class="small">
+                        <li>Monitor soil moisture levels regularly</li>
+                        <li>Adjust irrigation based on weather forecast</li>
+                        <li>Plan fieldwork during optimal conditions</li>
+                        <li>Protect equipment from extreme weather</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle text-primary me-2"></i>Weather Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Data Source:</strong> OpenWeatherMap</p>
+                    <p><strong>Last Updated:</strong> {{ weather_data.current.created_at|date:"M d, Y H:i" }}</p>
+                    <p><strong>Location:</strong> {{ weather_data.location.name }}, {{ weather_data.location.country }}</p>
+                    <p><strong>Coordinates:</strong> {{ weather_data.location.latitude|floatformat:4 }}°, {{ weather_data.location.longitude|floatformat:4 }}°</p>
+                    
+                    <div class="mt-3">
+                        <h6>Quick Actions:</h6>
+                        <a href="{% url 'crops:list' %}" class="btn btn-outline-success btn-sm me-2">
+                            <i class="bi bi-flower3 me-1"></i>Crop Guide
+                        </a>
+                        <a href="{% url 'soil:questionnaire' %}" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-dirt me-1"></i>Soil Test
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-cloud-slash text-muted mb-3" style="font-size: 4rem;"></i>
+        <h4 class="text-muted">No Weather Data Available</h4>
+        <p class="text-muted">Please search for a location or check your internet connection.</p>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.forecast-item:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.weather-icon {
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+}
+</style>
+{% endblock %}
