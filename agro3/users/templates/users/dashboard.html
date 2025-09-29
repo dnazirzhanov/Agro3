@@ -51,7 +51,7 @@
                     <div class="text-primary mb-2">
                         <i class="bi bi-file-text fs-1"></i>
                     </div>
-                    <h4 class="mb-1">{{ user_posts.count }}</h4>
+                    <h4 class="mb-1">{{ user_posts|length }}</h4>
                     <small class="text-muted">Blog Posts</small>
                 </div>
             </div>
@@ -103,7 +103,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <a href="{% url 'forum:post_create' %}" class="btn btn-outline-primary w-100">
-                                <i class="bi bi-plus-circle"></i> Write New Post
+                                <i class="bi bi-plus-circle"></i> Go to Forum
                             </a>
                         </div>
                         <div class="col-md-6">
@@ -117,7 +117,7 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a href="{% url 'market:index' %}" class="btn btn-outline-info w-100">
+                            <a href="{% url 'market:price_list' %}" class="btn btn-outline-info w-100">
                                 <i class="bi bi-graph-up"></i> Check Prices
                             </a>
                         </div>
@@ -130,7 +130,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-file-text"></i> My Recent Posts</h5>
-                    <a href="{% url 'forum:user_posts' user.pk %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a href="{% url 'forum:index' %}?author={{ user.pk }}" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body">
                     {% for post in user_posts %}
@@ -149,7 +149,7 @@
                             <p class="text-muted small mb-1">{{ post.short_description|truncatechars:100 }}</p>
                             <small class="text-muted">
                                 <i class="bi bi-calendar3"></i> {{ post.created_at|date:"M d, Y" }}
-                                <i class="bi bi-tag ms-2"></i> {{ post.category.name }}
+                                <i class="bi bi-tag ms-2"></i> {{ post.category.name|default:"Uncategorized" }}
                             </small>
                         </div>
                     </div>

@@ -53,7 +53,7 @@ def register_view(request):
 @login_required
 def dashboard_view(request):
     """User dashboard with personalized content"""
-    user_profile = get_object_or_404(UserProfile, user=request.user)
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
     
     # Get recent activities
     recent_activities = UserActivity.objects.filter(user=request.user)[:10]

@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import BlogPost, Category, Tag, Comment
+from django import forms
+from ckeditor.widgets import CKEditorWidget
 
 
 def blog_index_view(request):
@@ -28,6 +30,11 @@ def blog_index_view(request):
     tag_slug = request.GET.get('tag')
     if tag_slug:
         posts = posts.filter(tags__slug=tag_slug)
+
+    # Author filter (for dashboard deep link)
+    author_id = request.GET.get('author')
+    if author_id:
+        posts = posts.filter(author_id=author_id)
     
     # Pagination
     paginator = Paginator(posts, 10)
@@ -49,32 +56,57 @@ def blog_index_view(request):
         'current_search': search or '',
         'current_category': category_slug,
         'current_tag': tag_slug,
+        'current_author': author_id,
     }
     
     return render(request, 'forum/index.html', context)
 
 
 def blog_post_detail_view(request, slug):
-    """Display a single blog post with comments."""
+    """Display a single blog post with comments and replies."""
     post = get_object_or_404(BlogPost, slug=slug, is_published=True)
     
     # Increment view count
     post.views_count += 1
     post.save(update_fields=['views_count'])
     
-    # Get approved comments
-    comments = post.comments.filter(is_approved=True).select_related('author')
+    # Get approved comments (only top-level comments, replies will be fetched via prefetch)
+    comments = post.comments.filter(
+        is_approved=True, 
+        parent_comment=None
+    ).select_related('author').prefetch_related(
+        'replies__author'
+    ).order_by('publication_date')
     
-    # Handle comment submission
+    # Handle comment/reply submission
     if request.method == 'POST' and request.user.is_authenticated:
         content = request.POST.get('content')
+        parent_id = request.POST.get('parent_id')
+        
         if content:
+            parent_comment = None
+            if parent_id:
+                try:
+                    parent_comment = Comment.objects.get(
+                        id=parent_id, 
+                        blog_post=post, 
+                        is_approved=True
+                    )
+                except Comment.DoesNotExist:
+                    parent_comment = None
+            
             Comment.objects.create(
                 blog_post=post,
                 author=request.user,
-                content=content
+                content=content,
+                parent_comment=parent_comment
             )
-            messages.success(request, 'Your comment has been posted successfully!')
+            
+            if parent_comment:
+                messages.success(request, 'Your reply has been posted successfully!')
+            else:
+                messages.success(request, 'Your comment has been posted successfully!')
+                
             return redirect('forum:post_detail', slug=post.slug)
     
     # Get related posts
@@ -134,3 +166,67 @@ def blog_tag_list_view(request, slug):
     }
     
     return render(request, 'forum/post_list_by_tag.html', context)
+
+
+class BlogPostForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorWidget())
+
+    class Meta:
+        model = BlogPost
+        fields = ['title', 'short_description', 'content', 'featured_image', 'category', 'tags', 'is_published']
+
+
+@login_required
+def blog_post_create_view(request):
+    """Create a new blog post (author is current user)."""
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post: BlogPost = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            form.save_m2m()
+            messages.success(request, 'Your post has been created!')
+            return redirect(post.get_absolute_url())
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = BlogPostForm()
+
+    return render(request, 'forum/post_form.html', {'form': form})
+
+
+@login_required
+def comment_edit_view(request, comment_id):
+    """Edit a comment (only by the author)."""
+    comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+    
+    if request.method == 'POST':
+        content = request.POST.get('content', '').strip()
+        if content:
+            comment.content = content
+            comment.save(update_fields=['content', 'updated_at'])
+            messages.success(request, 'Comment updated successfully!')
+        else:
+            messages.error(request, 'Comment content cannot be empty.')
+    
+    return redirect('forum:post_detail', slug=comment.blog_post.slug)
+
+
+@login_required
+def comment_delete_view(request, comment_id):
+    """Delete a comment (only by the author or admin)."""
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    # Check permissions
+    if comment.author != request.user and not request.user.is_staff:
+        messages.error(request, 'You can only delete your own comments.')
+        return redirect('forum:post_detail', slug=comment.blog_post.slug)
+    
+    if request.method == 'POST':
+        post_slug = comment.blog_post.slug
+        comment.delete()
+        messages.success(request, 'Comment deleted successfully!')
+        return redirect('forum:post_detail', slug=post_slug)
+    
+    return redirect('forum:post_detail', slug=comment.blog_post.slug)

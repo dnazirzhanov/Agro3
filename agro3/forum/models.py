@@ -109,6 +109,13 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments'
     )
+    parent_comment = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='replies'
+    )
     content = models.TextField()
     publication_date = models.DateTimeField(default=timezone.now)
     is_agronomist_reply = models.BooleanField(
@@ -128,3 +135,9 @@ class Comment(models.Model):
     
     def get_absolute_url(self):
         return f"{self.blog_post.get_absolute_url()}#comment-{self.id}"
+    
+    def is_reply(self):
+        return self.parent_comment is not None
+    
+    def get_reply_count(self):
+        return self.replies.filter(is_approved=True).count()

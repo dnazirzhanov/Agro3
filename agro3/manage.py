@@ -6,6 +6,12 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    # Optional: load .env for local and Azure
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except Exception:
+        pass
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "agro_main.settings")
     try:
         from django.core.management import execute_from_command_line

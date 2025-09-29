@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - {{ profile_user.get_full_name|default:profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-4">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body text-center">
+        {% if user_profile.avatar %}
+          <img src="{{ user_profile.avatar.url }}" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;" alt="Avatar">
+        {% else %}
+          <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3" style="width:120px;height:120px;">
+            <i class="bi bi-person fs-1 text-muted"></i>
+          </div>
+        {% endif %}
+        <h4 class="mb-0">{{ profile_user.get_full_name|default:profile_user.username }}</h4>
+        <small class="text-muted">Joined {{ profile_user.date_joined|date:"M Y" }}</small>
+        <div class="mt-3">
+          <span class="badge bg-success">{{ user_profile.get_experience_level }}</span>
+          {% if user_profile.is_verified_farmer %}
+            <span class="badge bg-primary">Verified</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header"><strong>About</strong></div>
+      <div class="card-body">
+        <p class="mb-1"><strong>Region:</strong> {{ user_profile.get_region_display }}</p>
+        <p class="mb-1"><strong>Farmer Type:</strong> {{ user_profile.get_farmer_type_display }}</p>
+        <p class="mb-1"><strong>Farm Size:</strong> {{ user_profile.get_farm_size_display }}</p>
+        <p class="mb-1"><strong>Main Crops:</strong> {{ user_profile.main_crops|default:"—" }}</p>
+        <p class="mb-1"><strong>Experience:</strong> {{ user_profile.farming_experience }} years</p>
+        <p class="mt-3">{{ user_profile.bio|default:"No bio provided" }}</p>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header"><strong>Recent Posts</strong></div>
+      <div class="card-body">
+        {% if user_posts %}
+          <ul class="list-group list-group-flush">
+            {% for post in user_posts %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ post.get_absolute_url }}" class="text-decoration-none">{{ post.title }}</a>
+                <small class="text-muted">{{ post.publication_date|date:"M d, Y" }}</small>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">No posts yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

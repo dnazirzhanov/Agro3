@@ -87,6 +87,8 @@
                     Search Results for "{{ current_search }}"
                 {% elif current_category %}
                     Category Posts
+                {% elif current_author %}
+                    Posts by selected author
                 {% else %}
                     Recent Posts
                 {% endif %}
@@ -206,7 +208,7 @@
                 {% for category in categories %}
                 <a href="{% url 'forum:category' category.slug %}" 
                    class="d-block py-2 text-decoration-none {% if category.slug == current_category %}fw-bold{% endif %}">
-                    <span class="badge rounded-pill me-2" style="background-color: {{ category.color }};">&nbsp;</span>
+                    <span class="badge rounded-pill me-2" style="background-color: {{ category.color|default:'#007bff' }};" aria-hidden="true">&nbsp;</span>
                     {{ category.name }}
                 </a>
                 {% endfor %}

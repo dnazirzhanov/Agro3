@@ -28,8 +28,7 @@ class CustomUserCreationForm(UserCreationForm):
         user.last_name = self.cleaned_data['last_name']
         if commit:
             user.save()
-            # Create user profile
-            UserProfile.objects.create(user=user)
+            # Rely on post_save signal to create UserProfile
         return user
 
 
