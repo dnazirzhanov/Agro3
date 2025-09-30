@@ -1,9 +1,23 @@
+"""
+Models for pest and disease management in agricultural systems.
+
+This module provides models for tracking pests and diseases that affect crops,
+including their identification, symptoms, prevention methods, and management
+strategies.
+"""
 from django.db import models
 from django.urls import reverse
 from crops.models import Crop
 
 
 class PestOrDisease(models.Model):
+    """
+    Represents a pest or disease that affects agricultural crops.
+    
+    Stores comprehensive information about agricultural pests and diseases including
+    identification tips, symptoms, causes, prevention methods, and management strategies.
+    Links to affected crops to provide targeted guidance for farmers.
+    """
     TYPE_CHOICES = [
         ('Pest', 'Pest'),
         ('Disease', 'Disease'),

@@ -1,10 +1,32 @@
+"""
+Views for soil type identification and recommendations.
+
+This module handles HTTP requests for soil type questionnaires, identification
+results, and soil information display. Helps farmers identify their soil type
+and get crop recommendations based on soil characteristics.
+"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from crops.models import SoilType
 
 
 def soil_type_questionnaire_view(request):
-    """Multi-step questionnaire for soil type identification."""
+    """
+    Multi-step questionnaire for soil type identification.
+    
+    Handles GET requests to display the questionnaire form and POST requests
+    to process answers and identify soil type.
+    
+    POST parameters:
+        texture: Soil texture (sandy, sticky, smooth, mixed)
+        drainage: Drainage characteristics (good, moderate, poor)
+        stickiness: Stickiness level (very_sticky, slightly_sticky, not_sticky)
+        color: Soil color observation
+    
+    Returns:
+        GET: Soil identification questionnaire form
+        POST: Redirects to result page with identified soil type
+    """
     if request.method == 'POST':
         # Process questionnaire responses
         texture = request.POST.get('texture')
@@ -32,7 +54,17 @@ def soil_type_questionnaire_view(request):
 
 
 def soil_type_result_view(request):
-    """Display the identified soil type and recommendations."""
+    """
+    Display the identified soil type and recommendations.
+    
+    Handles GET requests to show soil identification results from the questionnaire.
+    Retrieves soil type from session and displays characteristics, suitable crops,
+    and improvement recommendations.
+    
+    Returns:
+        Soil identification results with suitable crop recommendations
+        Redirects to questionnaire if no identification found in session
+    """
     soil_id = request.session.get('identified_soil_id')
     
     if not soil_id:
@@ -57,7 +89,15 @@ def soil_type_result_view(request):
 
 
 def soil_type_list_view(request):
-    """Display all available soil types."""
+    """
+    Display all available soil types.
+    
+    Handles GET requests to show a list of all soil types in the system
+    for reference and educational purposes.
+    
+    Returns:
+        List of all soil types with basic information
+    """
     soil_types = SoilType.objects.all()
     
     context = {
@@ -68,7 +108,18 @@ def soil_type_list_view(request):
 
 
 def soil_type_detail_view(request, pk):
-    """Display detailed information about a specific soil type."""
+    """
+    Display detailed information about a specific soil type.
+    
+    Handles GET requests to show comprehensive soil type information including
+    characteristics, drainage properties, nutrient retention, and suitable crops.
+    
+    Args:
+        pk: Primary key of the soil type to display
+    
+    Returns:
+        Detailed soil type information page with crop recommendations
+    """
     soil_type = get_object_or_404(SoilType, pk=pk)
     suitable_crops = soil_type.preferred_crops.all()
     
@@ -83,7 +134,20 @@ def soil_type_detail_view(request, pk):
 def identify_soil_type(texture, drainage, stickiness, color):
     """
     Simple soil type identification based on questionnaire responses.
-    In a real application, this would use more sophisticated algorithms.
+    
+    Uses rule-based logic to match questionnaire answers to soil types in the database.
+    In a production application, this could use more sophisticated algorithms or
+    machine learning models for better accuracy.
+    
+    Args:
+        texture: Soil texture response (sandy, sticky, smooth, mixed)
+        drainage: Drainage response (good, moderate, poor)
+        stickiness: Stickiness response (very_sticky, slightly_sticky, not_sticky)
+        color: Soil color response
+    
+    Returns:
+        SoilType object that best matches the responses, or the most common
+        soil type if no specific match is found
     """
     # Simple rule-based identification
     if texture == 'sandy':

@@ -1,10 +1,27 @@
+"""
+Views for pest and disease information display and management.
+
+This module handles HTTP requests for viewing pest and disease information,
+filtering by type, and displaying identification and management guidance to
+help farmers protect their crops.
+"""
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from .models import PestOrDisease
 
 
 def pest_disease_list_view(request):
-    """Display a list of all pests and diseases with filtering."""
+    """
+    Display a list of all pests and diseases with filtering.
+    
+    Handles GET requests with optional filters:
+    - type: Filter by pest or disease type
+    - search: Search by name
+    - page: Pagination (12 items per page)
+    
+    Returns:
+        Paginated list of pests and diseases with applied filters
+    """
     pests_diseases = PestOrDisease.objects.all()
     
     # Filter by type
@@ -33,7 +50,19 @@ def pest_disease_list_view(request):
 
 
 def pest_disease_detail_view(request, pk):
-    """Display detailed information about a specific pest or disease."""
+    """
+    Display detailed information about a specific pest or disease.
+    
+    Handles GET requests to show comprehensive information including symptoms,
+    identification tips, prevention methods, and management strategies.
+    Also displays related pests or diseases of the same type.
+    
+    Args:
+        pk: Primary key of the pest or disease to display
+    
+    Returns:
+        Detailed pest/disease information page with management recommendations
+    """
     pest_disease = get_object_or_404(PestOrDisease, pk=pk)
     
     # Get related pests/diseases of the same type
