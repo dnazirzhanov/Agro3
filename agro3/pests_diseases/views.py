@@ -45,3 +45,26 @@ def pest_disease_detail_view(request, pk):
     }
     
     return render(request, 'pests_diseases/detail.html', context)
+
+
+def dose_calculator_view(request):
+    """Chemical dose calculator for farmers."""
+    result = None
+    
+    if request.method == 'POST':
+        try:
+            dose_per_liter = float(request.POST.get('dose_per_liter', 0))
+            total_liters = float(request.POST.get('total_liters', 0))
+            
+            if dose_per_liter > 0 and total_liters > 0:
+                total_dose = dose_per_liter * total_liters
+                result = {
+                    'dose_per_liter': dose_per_liter,
+                    'total_liters': total_liters,
+                    'total_dose': total_dose,
+                    'total_dose_kg': total_dose / 1000
+                }
+        except (ValueError, TypeError):
+            result = {'error': 'Please enter valid numbers'}
+    
+    return render(request, 'pests_diseases/dose_calculator.html', {'result': result})
