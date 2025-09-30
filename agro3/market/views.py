@@ -112,3 +112,31 @@ def price_comparison_view(request):
     }
     
     return render(request, 'market/price_comparison.html', context)
+
+
+def market_detail_view(request, pk):
+    """Display all products and prices from a specific market/shop."""
+    market = get_object_or_404(Market, pk=pk)
+    
+    # Get all prices for this market, grouped by product with latest price first
+    prices = MarketPrice.objects.filter(market=market).select_related('product').order_by('product__name', '-date_recorded')
+    
+    # Group by product to get latest price for each product
+    product_prices = {}
+    for price in prices:
+        if price.product.id not in product_prices:
+            product_prices[price.product.id] = price
+    
+    latest_prices = list(product_prices.values())
+    
+    # Pagination
+    paginator = Paginator(latest_prices, 20)
+    page_number = request.GET.get('page')
+    paginated_prices = paginator.get_page(page_number)
+    
+    context = {
+        'market': market,
+        'prices': paginated_prices,
+    }
+    
+    return render(request, 'market/market_detail.html', context)
