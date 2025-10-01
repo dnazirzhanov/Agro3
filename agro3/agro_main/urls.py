@@ -26,9 +26,13 @@ def home_view(request):
     return render(request, 'home.html')
 
 
+from locations.views import LocationSearchPageView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
+    path('search/', LocationSearchPageView.as_view(), name='location_search'),
+    path('locations/', include('locations.urls')),
     path('users/', include('users.urls')),
     path('crops/', include('crops.urls')),
     path('pests-diseases/', include('pests_diseases.urls')),

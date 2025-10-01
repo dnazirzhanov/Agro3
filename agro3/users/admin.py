@@ -6,9 +6,9 @@ from .models import UserProfile, FarmerConnection, UserActivity
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'farmer_type', 'region', 'farm_size', 'farming_experience', 'is_verified_farmer']
-    list_filter = ['farmer_type', 'region', 'farm_size', 'is_verified_farmer', 'created_at']
-    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'main_crops', 'village_or_address']
+    list_display = ['user', 'farmer_type', 'region_new', 'farming_experience', 'is_verified_farmer']
+    list_filter = ['farmer_type', 'region_new', 'farming_experience', 'is_verified_farmer', 'created_at']
+    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'village_or_address']
     readonly_fields = ['created_at', 'updated_at', 'last_activity']
     
     fieldsets = [
@@ -17,10 +17,10 @@ class UserProfileAdmin(admin.ModelAdmin):
             'fields': ['phone_number', 'date_of_birth', 'avatar', 'bio']
         }),
         ('Location', {
-            'fields': ['region', 'village_or_address']
+            'fields': ['country', 'region_new', 'city', 'village_or_address']
         }),
         ('Farming Information', {
-            'fields': ['farmer_type', 'farm_size', 'main_crops', 'farming_experience']
+            'fields': ['farmer_type', 'farming_experience']
         }),
         ('Social Features', {
             'fields': ['is_verified_farmer', 'reputation_score']

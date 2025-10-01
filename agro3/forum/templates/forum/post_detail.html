@@ -1,522 +1,1538 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ post.title }} - Community Forum - Batken Agri-Helper{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Django Girls inspired styling with modern responsive design */
+.post-hero {
+    position: relative;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.post-hero img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.post-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: white;
+    padding: 2rem;
+}
+
+.post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Like Button Styling */
+.like-btn {
+    border: 2px solid #dc3545;
+    background: transparent;
+    color: #dc3545;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.like-btn:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    transform: scale(1.05);
+    border-color: #dc3545;
+}
+
+.like-btn.liked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.like-btn.liked:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: white;
+}
+
+.like-btn i {
+    font-size: 1.1rem;
+}
+
+.comment-like-btn {
+    border: 1px solid #dc3545;
+    background: transparent;
+    color: #dc3545;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.comment-like-btn:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+}
+
+.comment-like-btn.liked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.comment-like-btn.liked:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: white;
+}
+    margin: 1rem 0;
+}
+
+.tag {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.tag:hover {
+    background: #e9ecef;
+    color: #495057;
+    transform: translateY(-1px);
+}
+
+.category-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.video-container iframe,
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.image-gallery {
+    margin: 2rem 0;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.gallery-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: white;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+.content-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f3f4;
+}
+
+.post-content {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.post-content h2, .post-content h3, .post-content h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.post-content p {
+    margin-bottom: 1.5rem;
+}
+
+.post-content ul, .post-content ol {
+    margin: 1rem 0 1.5rem 2rem;
+}
+
+.post-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Enhanced Image Styling for Agricultural Content */
+.post-content img, .article-text img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5rem auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 2px solid #e3f2fd;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-content img:hover, .article-text img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+/* Image containers for better control */
+.post-content figure, .article-text figure {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.post-content figcaption, .article-text figcaption {
+    font-style: italic;
+    color: #666;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Force consistent image sizing for pest/disease documentation */
+.agricultural-image {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin: 1.5rem auto;
+    display: block;
+    border: 3px solid #4caf50;
+    border-radius: 12px;
+    background: white;
+    padding: 8px;
+}
+
+.disease-image {
+    border-color: #f44336;
+}
+
+.pest-image {
+    border-color: #ff9800;
+}
+
+.comment-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f3f4;
+}
+
+/* Threaded comment styling */
+.comment-thread {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.comment {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.comment:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.comment.depth-0 {
+    border-left: 4px solid #667eea;
+}
+
+.comment.depth-1 {
+    margin-left: 2rem;
+    border-left: 3px solid #28a745;
+}
+
+.comment.depth-2 {
+    margin-left: 4rem;
+    border-left: 3px solid #ffc107;
+}
+
+.comment.depth-3 {
+    margin-left: 6rem;
+    border-left: 3px solid #fd7e14;
+}
+
+.comment.depth-4 {
+    margin-left: 8rem;
+    border-left: 3px solid #dc3545;
+}
+
+.comment.depth-5, .comment.depth-6, .comment.depth-7, .comment.depth-8, .comment.depth-9 {
+    margin-left: 10rem;
+    border-left: 2px solid #6c757d;
+}
+
+.comment.agronomist {
+    background: linear-gradient(135deg, #f8fff9 0%, #f0fff4 100%);
+    border-left-color: #28a745 !important;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.agronomist-badge {
+    background: #28a745;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.comment-content {
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.comment-form {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    margin-top: 1.5rem;
+}
+
+/* Integrated Media Styles */
+.embedded-video, .embedded-images {
+    margin: 2rem 0;
+}
+
+.embedded-video .video-container,
+.embedded-images .content-image-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.embedded-video iframe,
+.embedded-video video {
+    border-radius: 12px;
+}
+
+.article-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.article-text p {
+    margin-bottom: 1.5rem;
+}
+
+.article-text h1, .article-text h2, .article-text h3,
+.article-text h4, .article-text h5, .article-text h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.content-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.content-image-wrapper:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.image-caption {
+    text-align: center;
+    font-style: italic;
+}
+
+.embedded-images .row {
+    margin-top: 1rem;
+}
+
+/* Media section headers */
+.embedded-video > div:first-child,
+.embedded-images > div:first-child {
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.comment-form.inline-reply {
+    margin: 0.5rem 0 1rem 0;
+    background: #fff;
+    border: 2px solid #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+/* Reply toggle buttons */
+.replies-toggle {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.replies-toggle:hover {
+    color: #5a6fd8;
+    text-decoration: underline;
+}
+
+.replies-toggle i {
+    transition: transform 0.2s ease;
+}
+
+.replies-toggle.collapsed i {
+    transform: rotate(-90deg);
+}
+
+/* Replies container */
+.replies-container {
+    margin-top: 0.75rem;
+    border-left: 2px solid #e9ecef;
+    padding-left: 0.5rem;
+}
+
+.replies-container.collapsed {
+    display: none;
+}
+
+/* Thread connection lines */
+.comment-thread::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #e9ecef 0%, transparent 100%);
+}
+
+.comment-thread.depth-0::before {
+    display: none;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    z-index: 1040;
+}
+
+/* Fix z-index hierarchy */
+.post-hero {
+    position: relative;
+    z-index: 1;
+}
+
+.post-hero-overlay {
+    z-index: 2;
+}
+
+.navbar {
+    z-index: 1030;
+}
+
+/* Modal fixes */
+.modal {
+    z-index: 1050;
+}
+
+.modal-backdrop {
+    z-index: 1040;
+}
+
+/* Ensure modals don't interfere with content */
+.content-image-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* Additional overlapping fixes */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+.content-section {
+    position: relative;
+    z-index: 1;
+}
+
+/* Fix any Bootstrap modal conflicts */
+.modal-open .modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Prevent content shifting when modal opens */
+body.modal-open {
+    padding-right: 0 !important;
+}
+
+.back-to-top:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal for image gallery */
+.modal-body img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .post-hero {
+        margin: -1rem -1rem 2rem -1rem;
+        border-radius: 0;
+    }
+    
+    .post-hero img {
+        height: 250px;
+    }
+    
+    .post-hero-overlay {
+        padding: 1rem;
+    }
+    
+    .content-section {
+        padding: 1.5rem;
+        margin: 1rem;
+        border-radius: 8px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .comment.reply {
+        margin-left: 1rem;
+    }
+    
+    .author-profile-section .card {
+        margin-bottom: 0;
+    }
+}
+
+/* Author Profile Section Styles */
+.author-profile-section {
+    margin: 2rem 0;
+}
+
+.author-profile-section .card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.author-profile-section .card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #007bff;
+}
+
+.author-avatar-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.author-profile-section h5 a {
+    transition: color 0.3s ease;
+}
+
+.author-profile-section h5 a:hover {
+    color: #007bff !important;
+}
+
+.author-profile-section .btn-outline-primary {
+    transition: all 0.3s ease;
+}
+
+.author-profile-section .btn-outline-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.author-profile-section .text-muted {
+    font-size: 0.9rem;
+}
+
+.author-profile-section .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .author-profile-section .row {
+        text-align: center;
+    }
+    
+    .author-profile-section .col-auto {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Breadcrumb -->
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Community Forum</a></li>
-        {% if post.category %}
-            <li class="breadcrumb-item"><a href="{% url 'forum:category' post.category.slug %}">{{ post.category.name }}</a></li>
-        {% endif %}
-        <li class="breadcrumb-item active" aria-current="page">{{ post.title|truncatewords:5 }}</li>
-    </ol>
-</nav>
-
-<div class="row">
-    <!-- Main Content -->
-    <div class="col-lg-8">
-        <!-- Blog Post -->
-        <article class="card shadow-sm mb-4">
-            {% if post.featured_image %}
-                <img src="{{ post.featured_image.url }}" class="card-img-top" 
-                     style="height: 400px; object-fit: cover;" alt="{{ post.title }}">
-            {% endif %}
-            
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="flex-grow-1">
-                        <h1 class="h2 mb-2">{{ post.title }}</h1>
-                        {% if post.category %}
-                            <a href="{% url 'forum:category' post.category.slug %}" 
-                               class="badge text-bg-primary text-decoration-none me-2">{{ post.category.name }}</a>
-                        {% endif %}
-                        {% if post.tags.all %}
-                            {% for tag in post.tags.all %}
-                                <a href="{% url 'forum:tag' tag.slug %}" 
-                                   class="badge bg-light text-dark text-decoration-none me-1">#{{ tag.name }}</a>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                    <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i>Back to Forum
-                    </a>
-                </div>
-                
-                <!-- Post Meta -->
-                <div class="d-flex align-items-center text-muted small mb-4 pb-3 border-bottom">
-                    <i class="bi bi-person me-1"></i>
-                    <span class="me-3 fw-bold">{{ post.author.username }}</span>
-                    
-                    <i class="bi bi-calendar me-1"></i>
-                    <span class="me-3">{{ post.publication_date|date:"F d, Y H:i" }}</span>
-                    
-                    <i class="bi bi-eye me-1"></i>
-                    <span class="me-3">{{ post.views_count }} views</span>
-                    
-                    <i class="bi bi-chat me-1"></i>
-                    <span>{{ comments|length }} comments</span>
-                </div>
-                
-                <!-- Post Content -->
-                <div class="post-content">
-                    {{ post.content|safe }}
-                </div>
-                
-                {% if post.short_description %}
-                    <div class="alert alert-info mt-4">
-                        <strong>Summary:</strong> {{ post.short_description }}
-                    </div>
-                {% endif %}
+<div class="container">
+    <!-- Simple header without image -->
+    <div class="content-section">
+        <h1 class="display-4 fw-bold mb-3">{{ post.title }}</h1>
+        <div class="post-meta">
+            <div class="post-meta-item">
+                <span class="user-avatar user-avatar-sm me-2">{{ post.author.profile.get_avatar_emoji }}</span>
+                <span>{{ post.author.get_full_name|default:post.author.username }}</span>
             </div>
-        </article>
-        
-        <!-- Comments Section -->
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h4 class="mb-0">
-                    <i class="bi bi-chat-dots me-2"></i>Comments ({{ comments|length }})
-                </h4>
+            <div class="post-meta-item">
+                <i class="bi bi-calendar3"></i>
+                <span>{{ post.publication_date|date:"F j, Y" }}</span>
             </div>
-            
-            <div class="card-body">
-                <!-- Comment Form -->
-                {% if user.is_authenticated %}
-                    <form method="POST" class="mb-4">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="content" class="form-label">Add your comment:</label>
-                            <textarea class="form-control" id="content" name="content" rows="4" 
-                                      placeholder="Share your thoughts..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-send me-1"></i>Post Comment
-                        </button>
-                    </form>
-                    <hr>
-                {% else %}
-                    <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Please <a href="/admin/login/?next={{ request.path }}">login</a> to post comments.
-                    </div>
-                {% endif %}
-                
-                <!-- Comments List -->
-                {% if comments %}
-                    {% for comment in comments %}
-                        <!-- Main Comment Card -->
-                        <div class="comment-card card mb-3 {% if comment.is_agronomist_reply %}border-success{% endif %}" id="comment-{{ comment.id }}">
-                            <div class="card-body position-relative">
-                                <!-- Action Buttons (Top Right) -->
-                                <div class="position-absolute top-0 end-0 mt-2 me-2">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            {% if user.is_authenticated %}
-                                                <li>
-                                                    <button class="dropdown-item reply-btn" data-comment-id="{{ comment.id }}" data-author="{{ comment.author.username }}">
-                                                        <i class="bi bi-reply me-2"></i>Reply
-                                                    </button>
-                                                </li>
-                                            {% endif %}
-                                            {% if user.is_authenticated and comment.author == user %}
-                                                <li>
-                                                    <button class="dropdown-item edit-btn" data-comment-id="{{ comment.id }}">
-                                                        <i class="bi bi-pencil me-2"></i>Edit
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ comment.id }}">
-                                                        <i class="bi bi-trash me-2"></i>Delete
-                                                    </button>
-                                                </li>
-                                            {% elif user.is_staff %}
-                                                <li>
-                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ comment.id }}">
-                                                        <i class="bi bi-trash me-2"></i>Delete
-                                                    </button>
-                                                </li>
-                                            {% endif %}
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <!-- Comment Header -->
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-shrink-0 me-3">
-                                        <div class="bg-{% if comment.is_agronomist_reply %}success{% else %}primary{% endif %} text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                             style="width: 40px; height: 40px;">
-                                            <i class="bi bi-person{% if comment.is_agronomist_reply %}-check{% endif %}"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 me-5">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <h6 class="mb-0 me-2">{{ comment.author.username }}</h6>
-                                            {% if comment.is_agronomist_reply %}
-                                                <span class="badge bg-success">Agricultural Expert</span>
-                                            {% endif %}
-                                            <small class="text-muted ms-auto">{{ comment.publication_date|date:"M d, Y H:i" }}</small>
-                                        </div>
-                                        
-                                        <!-- Comment Content -->
-                                        <div class="comment-content-{{ comment.id }}">
-                                            <p class="mb-0">{{ comment.content|linebreaks }}</p>
-                                        </div>
-                                        
-                                        <!-- Edit Form (hidden by default) -->
-                                        <div class="edit-form mt-2" id="edit-form-{{ comment.id }}" style="display: none;">
-                                            <form method="POST" action="{% url 'forum:comment_edit' comment.id %}">
-                                                {% csrf_token %}
-                                                <div class="mb-2">
-                                                    <textarea class="form-control" name="content" rows="3" required>{{ comment.content }}</textarea>
-                                                </div>
-                                                <div class="d-flex gap-2">
-                                                    <button type="submit" class="btn btn-sm btn-success">
-                                                        <i class="bi bi-check me-1"></i>Save
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-secondary cancel-edit" data-comment-id="{{ comment.id }}">
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Reply Form (hidden by default) -->
-                                <div class="reply-form mt-3" id="reply-form-{{ comment.id }}" style="display: none;">
-                                    <div class="ms-5">
-                                        <form method="POST">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                                            <div class="mb-2">
-                                                <textarea class="form-control" name="content" rows="3" 
-                                                          placeholder="Reply to {{ comment.author.username }}..." required></textarea>
-                                            </div>
-                                            <div class="d-flex gap-2">
-                                                <button type="submit" class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-send me-1"></i>Post Reply
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-secondary cancel-reply" 
-                                                        data-comment-id="{{ comment.id }}">Cancel</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Replies -->
-                        {% if comment.replies.all %}
-                            <div class="replies ms-4 mb-4">
-                                {% for reply in comment.replies.all %}
-                                    {% if reply.is_approved %}
-                                        <div class="reply-card card mb-2 bg-light {% if reply.is_agronomist_reply %}border-success{% endif %}" id="comment-{{ reply.id }}">
-                                            <div class="card-body position-relative">
-                                                <!-- Reply Action Buttons (Top Right) -->
-                                                <div class="position-absolute top-0 end-0 mt-2 me-2">
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                                            <i class="bi bi-three-dots"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                            {% if user.is_authenticated %}
-                                                                <li>
-                                                                    <button class="dropdown-item reply-btn" data-comment-id="{{ comment.id }}" data-author="{{ reply.author.username }}">
-                                                                        <i class="bi bi-reply me-2"></i>Reply to {{ reply.author.username }}
-                                                                    </button>
-                                                                </li>
-                                                            {% endif %}
-                                                            {% if user.is_authenticated and reply.author == user %}
-                                                                <li>
-                                                                    <button class="dropdown-item edit-btn" data-comment-id="{{ reply.id }}">
-                                                                        <i class="bi bi-pencil me-2"></i>Edit
-                                                                    </button>
-                                                                </li>
-                                                                <li>
-                                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ reply.id }}">
-                                                                        <i class="bi bi-trash me-2"></i>Delete
-                                                                    </button>
-                                                                </li>
-                                                            {% elif user.is_staff %}
-                                                                <li>
-                                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ reply.id }}">
-                                                                        <i class="bi bi-trash me-2"></i>Delete
-                                                                    </button>
-                                                                </li>
-                                                            {% endif %}
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                                <div class="d-flex align-items-start">
-                                                    <div class="flex-shrink-0 me-2">
-                                                        <div class="bg-{% if reply.is_agronomist_reply %}success{% else %}secondary{% endif %} text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                                             style="width: 32px; height: 32px;">
-                                                            <i class="bi bi-person{% if reply.is_agronomist_reply %}-check{% endif %}" style="font-size: 0.85rem;"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1 me-4">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <h6 class="mb-0 small me-2">{{ reply.author.username }}</h6>
-                                                            {% if reply.is_agronomist_reply %}
-                                                                <span class="badge bg-success" style="font-size: 0.7em;">Expert</span>
-                                                            {% endif %}
-                                                            <small class="text-muted ms-auto" style="font-size: 0.8em;">{{ reply.publication_date|date:"M d, Y H:i" }}</small>
-                                                        </div>
-                                                        
-                                                        <!-- Reply Content -->
-                                                        <div class="comment-content-{{ reply.id }}">
-                                                            <p class="mb-0 small">{{ reply.content|linebreaks }}</p>
-                                                        </div>
-                                                        
-                                                        <!-- Reply Edit Form (hidden by default) -->
-                                                        <div class="edit-form mt-2" id="edit-form-{{ reply.id }}" style="display: none;">
-                                                            <form method="POST" action="{% url 'forum:comment_edit' reply.id %}">
-                                                                {% csrf_token %}
-                                                                <div class="mb-2">
-                                                                    <textarea class="form-control form-control-sm" name="content" rows="2" required>{{ reply.content }}</textarea>
-                                                                </div>
-                                                                <div class="d-flex gap-2">
-                                                                    <button type="submit" class="btn btn-sm btn-success">
-                                                                        <i class="bi bi-check me-1"></i>Save
-                                                                    </button>
-                                                                    <button type="button" class="btn btn-sm btn-secondary cancel-edit" data-comment-id="{{ reply.id }}">
-                                                                        Cancel
-                                                                    </button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="bi bi-chat text-muted mb-2" style="font-size: 2rem;"></i>
-                        <p class="text-muted mb-0">No comments yet. Be the first to comment!</p>
-                    </div>
-                {% endif %}
+            <div class="post-meta-item">
+                <i class="bi bi-eye-fill"></i>
+                <span>{{ post.views_count }} views</span>
             </div>
         </div>
     </div>
-    
-    <!-- Sidebar -->
-    <div class="col-lg-4">
-        <!-- Author Info -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-person me-2"></i>About the Author</h5>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Category and Tags -->
+            <div class="content-section">
+                {% if post.category %}
+                    <a href="{% url 'forum:category' post.category.slug %}" class="category-badge">
+                        <i class="bi bi-folder-fill me-1"></i>{{ post.category.name }}
+                    </a>
+                {% endif %}
+                
+                {% if post.tags.all %}
+                    <div class="tag-cloud">
+                        {% for tag in post.tags.all %}
+                            <a href="{% url 'forum:tag' tag.slug %}" class="tag">
+                                #{{ tag.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if post.short_description %}
+                    <div class="lead mb-4 p-3 bg-light rounded">
+                        {{ post.short_description }}
+                    </div>
+                {% endif %}
             </div>
-            <div class="card-body text-center">
-                <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
-                     style="width: 60px; height: 60px;">
-                    <i class="bi bi-person" style="font-size: 1.5rem;"></i>
-                </div>
-                <h6>{{ post.author.username }}</h6>
-                <small class="text-muted">Member since {{ post.author.date_joined|date:"Y" }}</small>
-            </div>
-        </div>
-        
-        <!-- Related Posts -->
-        {% if related_posts %}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-collection me-2"></i>Related Posts</h5>
-            </div>
-            <div class="card-body">
-                {% for related_post in related_posts %}
-                <div class="d-flex align-items-start mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
-                    {% if related_post.featured_image %}
-                        <img src="{{ related_post.featured_image.url }}" 
-                             class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" 
-                             alt="{{ related_post.title }}">
-                    {% else %}
-                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
-                             style="width: 60px; height: 60px;">
-                            <i class="bi bi-file-text text-muted"></i>
+
+            <!-- Main Content with Integrated Media -->
+            <article class="content-section">
+                <div class="post-content">
+                    <!-- Featured Video at top of content if available -->
+                    {% if post.has_video %}
+                        <div class="embedded-video mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-play-circle-fill text-danger me-2" style="font-size: 1.2rem;"></i>
+                                <span class="fw-semibold text-muted">Featured Video</span>
+                            </div>
+                            <div class="video-container">
+                                {% if post.youtube_url and post.get_youtube_embed_id %}
+                                    <iframe src="https://www.youtube.com/embed/{{ post.get_youtube_embed_id }}" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen></iframe>
+                                {% elif post.featured_video %}
+                                    <video controls class="w-100" style="border-radius: 8px;">
+                                        <source src="{{ post.featured_video.url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endif %}
-                    
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1">
-                            <a href="{{ related_post.get_absolute_url }}" class="text-decoration-none">
-                                {{ related_post.title|truncatewords:8 }}
-                            </a>
-                        </h6>
-                        <small class="text-muted">
-                            <i class="bi bi-calendar me-1"></i>{{ related_post.publication_date|date:"M d" }} • 
-                            <i class="bi bi-eye me-1"></i>{{ related_post.views_count }}
-                        </small>
+
+                    <!-- Main text content -->
+                    <div class="article-text">
+                        {{ post.content|safe }}
+                    </div>
+
+                    <!-- Integrated Image Gallery within content -->
+                    {% if post.get_gallery_images %}
+                        <div class="embedded-images mt-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-images text-primary me-2" style="font-size: 1.2rem;"></i>
+                                <span class="fw-semibold text-muted">
+                                    Gallery ({{ post.get_gallery_images|length }} image{{ post.get_gallery_images|length|pluralize }})
+                                </span>
+                            </div>
+                            
+                            <!-- Responsive image grid within content -->
+                            <div class="row g-3 mb-4">
+                                {% for image in post.get_gallery_images %}
+                                    <div class="col-md-6 {% if post.get_gallery_images|length == 1 %}col-lg-8 mx-auto{% elif post.get_gallery_images|length == 2 %}col-lg-6{% else %}col-lg-4{% endif %}">
+                                        <div class="content-image-wrapper" 
+                                             data-bs-toggle="modal" 
+                                             data-bs-target="#imageModal{{ forloop.counter }}"
+                                             style="cursor: pointer;">
+                                            <img src="{{ image.image.url }}" 
+                                                 alt="{{ image.alt_text|default:'Gallery image' }}" 
+                                                 class="img-fluid rounded shadow-sm"
+                                                 style="transition: transform 0.2s ease; width: 100%; height: 250px; object-fit: cover;"
+                                                 onmouseover="this.style.transform='scale(1.02)'"
+                                                 onmouseout="this.style.transform='scale(1)'">
+                                            {% if image.caption %}
+                                                <div class="image-caption mt-2">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-image me-1"></i>{{ image.caption }}
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Post Actions -->
+                <div class="post-actions mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            {% if user.is_authenticated %}
+                                <button type="button" 
+                                        class="like-btn {% if user_has_liked_post %}liked{% endif %}" 
+                                        data-post-id="{{ post.id }}"
+                                        onclick="togglePostLike({{ post.id }})">
+                                    <i class="bi bi-heart{% if user_has_liked_post %}-fill{% endif %}"></i>
+                                    <span class="like-count">{{ post.get_like_count }}</span>
+                                </button>
+                            {% else %}
+                                <span class="text-muted">
+                                    <i class="bi bi-heart"></i>
+                                    <span>{{ post.get_like_count }}</span> like{{ post.get_like_count|pluralize }}
+                                </span>
+                            {% endif %}
+                            
+                            <span class="text-muted">
+                                <i class="bi bi-chat-dots"></i>
+                                {{ post.get_comment_count }} comment{{ post.get_comment_count|pluralize }}
+                            </span>
+                        </div>
+                        
+                        <div class="text-muted small">
+                            <i class="bi bi-eye"></i>
+                            {{ post.view_count }} view{{ post.view_count|pluralize }}
+                        </div>
                     </div>
                 </div>
-                {% endfor %}
+            </article>
+
+            <!-- Author Profile Section -->
+            <div class="author-profile-section mt-4 mb-4">
+                <div class="card border-primary shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-badge me-2"></i>About the Author
+                        </h5>
+                        <small class="opacity-75">Click anywhere to view full profile and contact information</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <a href="{% url 'users:profile' post.author.pk %}" class="text-decoration-none">
+                                    <div class="author-avatar-large">
+                                        {% if post.author.profile.get_avatar_url %}
+                                            <img src="{{ post.author.profile.get_avatar_url }}" 
+                                                 alt="{{ post.author.get_full_name|default:post.author.username }}"
+                                                 class="rounded-circle" 
+                                                 style="width: 80px; height: 80px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="user-avatar user-avatar-lg {{ post.author.profile.get_avatar_class }}">
+                                                {{ post.author.profile.get_avatar_emoji }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex flex-column">
+                                    <h5 class="mb-1">
+                                        <a href="{% url 'users:profile' post.author.pk %}" 
+                                           class="text-decoration-none text-dark fw-bold">
+                                            {{ post.author.get_full_name|default:post.author.username }}
+                                        </a>
+                                        {% if post.author.profile.is_verified_farmer %}
+                                            <span class="badge bg-success ms-2">
+                                                <i class="bi bi-patch-check-fill"></i> Verified Farmer
+                                            </span>
+                                        {% endif %}
+                                    </h5>
+                                    <div class="text-muted mb-2">
+                                        <i class="bi bi-geo-alt-fill me-1"></i>{{ post.author.profile.get_region_display }}
+                                        {% if post.author.profile.farmer_type %}
+                                            • <i class="bi bi-person-workspace me-1"></i>{{ post.author.profile.get_farmer_type_display }}
+                                        {% endif %}
+                                        {% if post.author.profile.farming_experience %}
+                                            • <i class="bi bi-calendar-check me-1"></i>{{ post.author.profile.get_experience_level }} Farmer
+                                        {% endif %}
+                                    </div>
+                                    {% if post.author.profile.bio %}
+                                        <p class="mb-2 text-muted small">{{ post.author.profile.bio|truncatewords:25 }}</p>
+                                    {% endif %}
+                                    <div class="d-flex gap-3 small text-muted mb-2">
+                                        <span><i class="bi bi-star-fill text-warning me-1"></i>{{ post.author.profile.reputation_score }} reputation</span>
+                                        <span><i class="bi bi-chat-dots me-1"></i>{{ post.author.blog_posts.count }} posts</span>
+                                        {% if post.author.profile.phone_number and post.author.profile.phone_number != 'UPDATE_REQUIRED' %}
+                                            <span><i class="bi bi-telephone me-1"></i>
+                                                <a href="tel:{{ post.author.profile.phone_number }}" class="text-decoration-none">
+                                                    📞 Call {{ post.author.profile.phone_number }}
+                                                </a>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{% url 'users:profile' post.author.pk %}" 
+                                       class="btn btn-primary btn-sm">
+                                        <span class="user-avatar me-1" style="font-size: 1rem;">{{ post.author.profile.get_avatar_emoji }}</span>View Full Profile
+                                    </a>
+                                    {% if post.author.profile.phone_number and post.author.profile.phone_number != 'UPDATE_REQUIRED' %}
+                                        <a href="tel:{{ post.author.profile.phone_number }}" 
+                                           class="btn btn-success btn-sm">
+                                            <i class="bi bi-telephone me-1"></i>Call Now
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="comment-section">
+                <h3 class="h4 mb-4">
+                    <i class="bi bi-chat-dots-fill me-2"></i>
+                    Discussion ({{ post.get_comment_count }})
+                </h3>
+
+                <!-- Comment Form -->
+                {% if user.is_authenticated %}
+                    <div class="comment-form" id="mainCommentForm">
+                        <h5>Join the Discussion</h5>
+                        <form method="POST" id="commentForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" id="parentId" value="">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="content" rows="4" 
+                                          placeholder="Share your thoughts..." required></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <span id="replyingToText"></span>
+                                    Posting as <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                </small>
+                                <div>
+                                    <button type="button" class="btn btn-outline-secondary me-2" 
+                                            id="cancelReply" style="display: none;">Cancel Reply</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-send-fill me-1"></i><span id="submitButtonText">Post Comment</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <a href="{% url 'users:login' %}">Login</a> to join the discussion.
+                    </div>
+                {% endif %}
+
+                <!-- Comments Display -->
+                <div class="comments-list mt-4">
+                    {% for comment in comments %}
+                        {% include 'forum/includes/threaded_comment.html' with comment=comment depth=0 %}
+                    {% empty %}
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-chat-square-dots" style="font-size: 3rem; opacity: 0.3;"></i>
+                            <p class="mt-2">No comments yet. Be the first to start the discussion!</p>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-        {% endif %}
-        
-        <!-- Quick Actions -->
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Links</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'crops:list' %}" class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-flower3 me-1"></i>Browse Crops
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 2rem;">
+                <!-- Navigation -->
+                <div class="content-section">
+                    <a href="{% url 'forum:index' %}" class="btn btn-outline-primary w-100 mb-3">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Forum
                     </a>
-                    <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning btn-sm">
-                        <i class="bi bi-bug me-1"></i>Pest Guide
-                    </a>
-                    <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-graph-up me-1"></i>Market Prices
-                    </a>
-                    <a href="{% url 'soil:questionnaire' %}" class="btn btn-outline-info btn-sm">
-                        <i class="bi bi-dirt me-1"></i>Test Soil
-                    </a>
+                    
+                    {% if user.is_authenticated and user == post.author %}
+                        <a href="/admin/forum/blogpost/{{ post.id }}/change/" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-pencil-fill me-2"></i>Edit Post
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Post Stats -->
+                <div class="content-section">
+                    <h5><i class="bi bi-bar-chart-fill me-2"></i>Post Statistics</h5>
+                    <div class="row g-2 text-center">
+                        <div class="col-4">
+                            <div class="p-2 bg-light rounded">
+                                <div class="fw-bold">{{ post.views_count }}</div>
+                                <small class="text-muted">Views</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 bg-light rounded">
+                                <div class="fw-bold">{{ post.get_comment_count }}</div>
+                                <small class="text-muted">Comments</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 bg-light rounded">
+                                <div class="fw-bold">{{ post.get_like_count }}</div>
+                                <small class="text-muted">Likes</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Posts -->
+                <div class="content-section">
+                    <h5><i class="bi bi-collection-fill me-2"></i>Related Posts</h5>
+                    {% if post.category %}
+                        <!-- This would be handled in the view -->
+                        <p class="text-muted">More posts in {{ post.category.name }} coming soon...</p>
+                    {% else %}
+                        <p class="text-muted">Explore more posts in our forum!</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop">
+    <i class="bi bi-chevron-up"></i>
+</button>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Handle reply button clicks
-    document.querySelectorAll('.reply-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var commentId = this.getAttribute('data-comment-id');
-            var replyForm = document.getElementById('reply-form-' + commentId);
-            var allReplyForms = document.querySelectorAll('.reply-form');
-            var allEditForms = document.querySelectorAll('.edit-form');
-            
-            // Hide all other forms
-            allReplyForms.forEach(function (form) {
-                if (form !== replyForm) {
-                    form.style.display = 'none';
+document.addEventListener('DOMContentLoaded', function() {
+    // Back to top functionality
+    const backToTop = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            backToTop.style.display = 'flex';
+        } else {
+            backToTop.style.display = 'none';
+        }
+    });
+    
+    backToTop.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Main comment form elements
+    const mainCommentForm = document.getElementById('commentForm');
+    const parentIdInput = document.getElementById('parentId');
+    const cancelReplyBtn = document.getElementById('cancelReply');
+    const replyingToText = document.getElementById('replyingToText');
+    const submitButtonText = document.getElementById('submitButtonText');
+    const mainTextarea = mainCommentForm.querySelector('textarea[name="content"]');
+    
+    // Initialize reply functionality for existing buttons
+    initializeReplyButtons();
+    
+    // Initialize replies toggle functionality
+    initializeRepliesToggle();
+    
+    // Handle main form reply cancellation
+    cancelReplyBtn.addEventListener('click', function() {
+        resetMainForm();
+    });
+    
+    // Handle inline reply forms
+    initializeInlineReplyForms();
+    
+    function initializeReplyButtons() {
+        document.querySelectorAll('.reply-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const authorName = this.dataset.author;
+                const depth = parseInt(this.dataset.depth);
+                
+                // For deeper threads (depth > 5), show inline reply form
+                if (depth >= 5) {
+                    showInlineReplyForm(commentId);
+                } else {
+                    // Use main form for shallower threads
+                    showMainFormReply(commentId, authorName);
                 }
             });
-            allEditForms.forEach(function (form) {
-                form.style.display = 'none';
+        });
+    }
+    
+    function initializeRepliesToggle() {
+        document.querySelectorAll('.replies-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const repliesContainer = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                const toggleText = this.querySelector('.toggle-text');
+                const isCollapsed = repliesContainer.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    // Show replies
+                    repliesContainer.classList.remove('collapsed');
+                    icon.classList.remove('bi-chevron-right');
+                    icon.classList.add('bi-chevron-down');
+                    this.classList.remove('collapsed');
+                    
+                    const replyCount = this.textContent.match(/\d+/)[0];
+                    toggleText.textContent = `Hide ${replyCount} repl${replyCount == 1 ? 'y' : 'ies'}`;
+                } else {
+                    // Hide replies
+                    repliesContainer.classList.add('collapsed');
+                    icon.classList.remove('bi-chevron-down');
+                    icon.classList.add('bi-chevron-right');
+                    this.classList.add('collapsed');
+                    
+                    const replyCount = this.textContent.match(/\d+/)[0];
+                    toggleText.textContent = `Show ${replyCount} repl${replyCount == 1 ? 'y' : 'ies'}`;
+                }
             });
-            
-            // Toggle current reply form
-            if (replyForm.style.display === 'none' || !replyForm.style.display) {
-                replyForm.style.display = 'block';
-                replyForm.querySelector('textarea').focus();
-            } else {
+        });
+    }
+    
+    function initializeInlineReplyForms() {
+        document.querySelectorAll('.inline-reply-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Submit the form via AJAX or regular form submission
+                const formData = new FormData(this);
+                
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        // Reload page to show new comment
+                        window.location.reload();
+                    } else {
+                        alert('Error posting reply. Please try again.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('Error posting reply. Please try again.');
+                });
+            });
+        });
+        
+        // Handle cancel buttons for inline forms
+        document.querySelectorAll('.cancel-reply-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const replyForm = this.closest('.reply-form-container');
                 replyForm.style.display = 'none';
-            }
-        });
-    });
-    
-    // Handle cancel reply button clicks
-    document.querySelectorAll('.cancel-reply').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var commentId = this.getAttribute('data-comment-id');
-            var replyForm = document.getElementById('reply-form-' + commentId);
-            replyForm.style.display = 'none';
-        });
-    });
-    
-    // Handle edit button clicks
-    document.querySelectorAll('.edit-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var commentId = this.getAttribute('data-comment-id');
-            var editForm = document.getElementById('edit-form-' + commentId);
-            var commentContent = document.querySelector('.comment-content-' + commentId);
-            var allReplyForms = document.querySelectorAll('.reply-form');
-            var allEditForms = document.querySelectorAll('.edit-form');
-            
-            // Hide all other forms
-            allReplyForms.forEach(function (form) {
-                form.style.display = 'none';
+                
+                // Clear the form
+                const textarea = replyForm.querySelector('textarea');
+                textarea.value = '';
             });
-            allEditForms.forEach(function (form) {
-                if (form !== editForm) {
-                    form.style.display = 'none';
+        });
+        
+        // Handle delete button clicks
+        document.querySelectorAll('.delete-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var commentId = this.getAttribute('data-comment-id');
+                
+                if (confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+                    // Create and submit delete form
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/forum/comment/' + commentId + '/delete/';
+                    
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    var csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken;
+                    
+                    form.appendChild(csrfInput);
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             });
+        });
+    }
+    
+    function showInlineReplyForm(commentId) {
+        // Hide all other inline reply forms
+        document.querySelectorAll('.reply-form-container').forEach(form => {
+            form.style.display = 'none';
+        });
+        
+        // Show the specific reply form
+        const replyForm = document.getElementById(`replyForm-${commentId}`);
+        if (replyForm) {
+            replyForm.style.display = 'block';
+            const textarea = replyForm.querySelector('textarea');
+            textarea.focus();
             
-            // Show edit form, hide content
-            if (editForm && commentContent) {
-                commentContent.style.display = 'none';
-                editForm.style.display = 'block';
-                editForm.querySelector('textarea').focus();
+            // Scroll into view
+            replyForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+    
+    function showMainFormReply(commentId, authorName) {
+        // Set parent comment ID
+        parentIdInput.value = commentId;
+        
+        // Update UI
+        mainTextarea.placeholder = `Reply to ${authorName}...`;
+        replyingToText.textContent = `Replying to ${authorName}. `;
+        submitButtonText.textContent = 'Post Reply';
+        cancelReplyBtn.style.display = 'inline-block';
+        
+        // Focus and scroll
+        mainTextarea.focus();
+        document.getElementById('mainCommentForm').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }
+    
+    function resetMainForm() {
+        parentIdInput.value = '';
+        mainTextarea.placeholder = 'Share your thoughts...';
+        replyingToText.textContent = '';
+        submitButtonText.textContent = 'Post Comment';
+        cancelReplyBtn.style.display = 'none';
+        mainTextarea.focus();
+    }
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
     
-    // Handle cancel edit button clicks
-    document.querySelectorAll('.cancel-edit').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var commentId = this.getAttribute('data-comment-id');
-            var editForm = document.getElementById('edit-form-' + commentId);
-            var commentContent = document.querySelector('.comment-content-' + commentId);
-            
-            if (editForm && commentContent) {
-                editForm.style.display = 'none';
-                commentContent.style.display = 'block';
+    // Auto-expand replies when navigating to a specific comment
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#comment-')) {
+        const targetComment = document.querySelector(hash);
+        if (targetComment) {
+            // Expand all parent containers
+            let parent = targetComment.closest('.replies-container');
+            while (parent) {
+                if (parent.classList.contains('collapsed')) {
+                    const toggle = document.querySelector(`[data-target="${parent.id}"]`);
+                    if (toggle) {
+                        toggle.click();
+                    }
+                }
+                parent = parent.parentElement.closest('.replies-container');
             }
-        });
-    });
+            
+            // Highlight and scroll to comment
+            setTimeout(() => {
+                targetComment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetComment.style.backgroundColor = '#fff3cd';
+                setTimeout(() => {
+                    targetComment.style.backgroundColor = '';
+                }, 3000);
+            }, 500);
+        }
+    }
+});
+
+// Like functionality
+function togglePostLike(postId) {
+    const button = document.querySelector(`.like-btn[data-post-id="${postId}"]`);
+    const heartIcon = button.querySelector('i');
+    const likeCount = button.querySelector('.like-count');
     
-    // Handle delete button clicks
-    document.querySelectorAll('.delete-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var commentId = this.getAttribute('data-comment-id');
-            
-            if (confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
-                // Create and submit delete form
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/forum/comment/' + commentId + '/delete/';
-                
-                var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                var csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrfmiddlewaretoken';
-                csrfInput.value = csrfToken;
-                
-                form.appendChild(csrfInput);
-                document.body.appendChild(form);
-                form.submit();
+    fetch(`/forum/post/${postId}/like/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Post like response:', data); // Debug log
+        if (data.success) {
+            // Update button state
+            if (data.liked) {
+                button.classList.add('liked');
+                heartIcon.classList.remove('bi-heart');
+                heartIcon.classList.add('bi-heart-fill');
+            } else {
+                button.classList.remove('liked');
+                heartIcon.classList.remove('bi-heart-fill');
+                heartIcon.classList.add('bi-heart');
             }
+            // Update like count
+            console.log('Updating like count to:', data.like_count); // Debug log
+            likeCount.textContent = data.like_count;
+        } else {
+            console.error('Error toggling like:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function toggleCommentLike(commentId) {
+    const button = document.querySelector(`.comment-like-btn[data-comment-id="${commentId}"]`);
+    const heartIcon = button.querySelector('i');
+    const likeCount = button.querySelector('.comment-like-count');
+    
+    fetch(`/forum/comment/${commentId}/like/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Comment like response:', data); // Debug log
+        if (data.success) {
+            // Update button state
+            if (data.liked) {
+                button.classList.add('liked');
+                heartIcon.classList.remove('bi-heart');
+                heartIcon.classList.add('bi-heart-fill');
+            } else {
+                button.classList.remove('liked');
+                heartIcon.classList.remove('bi-heart-fill');
+                heartIcon.classList.add('bi-heart');
+            }
+            // Update like count
+            console.log('Updating comment like count to:', data.like_count); // Debug log
+            likeCount.textContent = data.like_count;
+        } else {
+            console.error('Error toggling comment like:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+
+<!-- Image Modals - Placed at document level to prevent overlapping -->
+{% if post.get_gallery_images %}
+    {% for image in post.get_gallery_images %}
+        <div class="modal fade" id="imageModal{{ forloop.counter }}" tabindex="-1" aria-labelledby="imageModalLabel{{ forloop.counter }}" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header border-0 bg-light">
+                        <h5 class="modal-title" id="imageModalLabel{{ forloop.counter }}">
+                            <i class="bi bi-image me-2 text-primary"></i>{{ image.caption|default:"Gallery Image" }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center p-4" style="background: #f8f9fa;">
+                        <img src="{{ image.image.url }}" 
+                             alt="{{ image.alt_text|default:'Gallery image' }}" 
+                             class="img-fluid rounded shadow"
+                             style="max-height: 75vh; width: auto; max-width: 100%;">
+                        {% if image.caption %}
+                            <div class="mt-4 p-3 bg-white rounded shadow-sm">
+                                <p class="mb-0 text-dark lead">{{ image.caption }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Automatically enhance images in agricultural content
+    const articleImages = document.querySelectorAll('.article-text img, .post-content img');
+    
+    articleImages.forEach(function(img) {
+        // Add click-to-zoom functionality
+        img.addEventListener('click', function() {
+            openImageModal(this.src, this.alt || 'Agricultural Image');
         });
+        
+        // Add automatic classification based on alt text or nearby content
+        const altText = img.alt.toLowerCase();
+        const imgText = img.parentElement.textContent.toLowerCase();
+        
+        if (altText.includes('disease') || imgText.includes('disease') || 
+            altText.includes('symptom') || imgText.includes('symptom')) {
+            img.classList.add('agricultural-image', 'disease-image');
+            img.title = 'Disease/Symptom Image - Click to enlarge';
+        } else if (altText.includes('pest') || imgText.includes('pest') || 
+                   altText.includes('insect') || imgText.includes('bug')) {
+            img.classList.add('agricultural-image', 'pest-image');
+            img.title = 'Pest Image - Click to enlarge';
+        } else if (altText.includes('crop') || imgText.includes('crop') || 
+                   altText.includes('plant') || imgText.includes('farming')) {
+            img.classList.add('agricultural-image');
+            img.title = 'Agricultural Image - Click to enlarge';
+        }
+        
+        // Ensure consistent sizing
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        img.style.display = 'block';
+        img.style.margin = '1.5rem auto';
     });
 });
+
+function openImageModal(src, alt) {
+    // Create modal for image viewing
+    const modal = document.createElement('div');
+    modal.className = 'image-modal-overlay';
+    modal.innerHTML = `
+        <div class="image-modal-content">
+            <span class="image-modal-close">&times;</span>
+            <img src="${src}" alt="${alt}" class="image-modal-img">
+            <div class="image-modal-caption">${alt}</div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close modal functionality
+    const closeBtn = modal.querySelector('.image-modal-close');
+    closeBtn.onclick = () => document.body.removeChild(modal);
+    modal.onclick = (e) => {
+        if (e.target === modal) document.body.removeChild(modal);
+    };
+    
+    // Add keyboard support
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (document.body.contains(modal)) {
+                document.body.removeChild(modal);
+            }
+        }
+    });
+}
 </script>
 
 <style>
-.comment-card, .reply-card {
-    transition: box-shadow 0.2s ease;
+/* Image Modal Styles */
+.image-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
 }
 
-.comment-card:hover, .reply-card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.image-modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    text-align: center;
 }
 
-.dropdown-toggle::after {
-    display: none;
+.image-modal-img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.comment-card .position-absolute {
-    z-index: 10;
+.image-modal-close {
+    position: absolute;
+    top: -40px;
+    right: -10px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10000;
 }
 
-.reply-card .position-absolute {
-    z-index: 10;
+.image-modal-close:hover {
+    color: #ccc;
+}
+
+.image-modal-caption {
+    color: white;
+    padding: 10px;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
 }
 </style>
+
 {% endblock %}

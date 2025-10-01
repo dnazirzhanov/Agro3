@@ -1,0 +1,117 @@
+{% load static %}
+
+<div class="comment-thread depth-{{ depth }}">
+    <div class="comment depth-{{ depth }} {% if comment.is_agronomist_reply %}agronomist{% endif %}" 
+         id="comment-{{ comment.id }}">
+        
+        <div class="comment-header">
+            <div class="comment-author">
+                <span class="user-avatar user-avatar-sm me-2">{{ comment.author.profile.get_avatar_emoji }}</span>
+                {{ comment.author.get_full_name|default:comment.author.username }}
+                {% if comment.is_agronomist_reply %}
+                    <span class="agronomist-badge">
+                        <i class="bi bi-patch-check-fill"></i>Expert
+                    </span>
+                {% endif %}
+            </div>
+            
+            <div class="comment-actions">
+                <div class="comment-meta">
+                    <span title="{{ comment.publication_date|date:'F j, Y \a\t g:i A' }}">
+                        {{ comment.publication_date|timesince }} ago
+                    </span>
+                    {% if comment.get_reply_count > 0 %}
+                        <span class="text-muted">
+                            <i class="bi bi-chat-fill"></i>
+                            {{ comment.get_reply_count }} repl{{ comment.get_reply_count|pluralize:"y,ies" }}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                {% if user.is_authenticated and depth < 10 %}
+                    <button class="btn btn-sm btn-outline-primary reply-btn" 
+                            data-comment-id="{{ comment.id }}"
+                            data-author="{{ comment.author.get_full_name|default:comment.author.username }}"
+                            data-depth="{{ depth }}">
+                        <i class="bi bi-reply-fill"></i>Reply
+                    </button>
+                {% endif %}
+                
+                {% if user.is_authenticated %}
+                    {% if comment.author == user or user.is_staff %}
+                        <button class="btn btn-sm btn-outline-danger delete-btn" 
+                                data-comment-id="{{ comment.id }}"
+                                title="Delete comment">
+                            <i class="bi bi-trash"></i>Delete
+                        </button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="comment-content">
+            {{ comment.content|linebreaks }}
+        </div>
+        
+        <!-- Comment Actions -->
+        <div class="comment-like-actions mt-2">
+            {% if user.is_authenticated %}
+                {% comment %} Need to check if user has liked this comment {% endcomment %}
+                {% with user_liked_comment=comment.user_has_liked %}
+                <button type="button" 
+                        class="comment-like-btn {% if user_liked_comment %}liked{% endif %}" 
+                        data-comment-id="{{ comment.id }}"
+                        onclick="toggleCommentLike({{ comment.id }})">
+                    <i class="bi bi-heart{% if user_liked_comment %}-fill{% endif %}"></i>
+                    <span class="comment-like-count">{{ comment.get_like_count }}</span>
+                </button>
+                {% endwith %}
+            {% else %}
+                <span class="text-muted small">
+                    <i class="bi bi-heart"></i>
+                    {{ comment.get_like_count }} like{{ comment.get_like_count|pluralize }}
+                </span>
+            {% endif %}
+        </div>
+        
+        <!-- Inline reply form (initially hidden) -->
+        {% if user.is_authenticated and depth < 10 %}
+            <div class="reply-form-container" id="replyForm-{{ comment.id }}" style="display: none;">
+                <div class="comment-form inline-reply">
+                    <form method="POST" class="inline-reply-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <div class="mb-3">
+                            <textarea class="form-control" name="content" rows="3" 
+                                      placeholder="Reply to {{ comment.author.get_full_name|default:comment.author.username }}..." required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary cancel-reply-btn">Cancel</button>
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="bi bi-send-fill me-1"></i>Reply
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Replies section -->
+        {% if comment.replies.all %}
+            {% if comment.get_reply_count > 3 and depth == 0 %}
+                <button class="replies-toggle" data-target="replies-{{ comment.id }}">
+                    <i class="bi bi-chevron-down"></i>
+                    <span class="toggle-text">Show {{ comment.get_reply_count }} repl{{ comment.get_reply_count|pluralize:"y,ies" }}</span>
+                </button>
+            {% endif %}
+            
+            <div class="replies-container {% if comment.get_reply_count > 3 and depth == 0 %}collapsed{% endif %}" id="replies-{{ comment.id }}">
+                {% for reply in comment.replies.all %}
+                    {% if reply.is_approved %}
+                        {% include 'forum/includes/threaded_comment.html' with comment=reply depth=depth|add:1 %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>

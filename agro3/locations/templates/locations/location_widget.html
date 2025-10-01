@@ -1,0 +1,130 @@
+<!-- Location Selection Widget Template -->
+<!-- Include this in forms that need location selection -->
+
+<div class="location-selection-widget">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="{{ country_field.id_for_label }}" class="form-label">Country</label>
+            {{ country_field }}
+            <div class="form-text">Select your country</div>
+        </div>
+        
+        <div class="col-md-4">
+            <label for="{{ region_field.id_for_label }}" class="form-label">Region/State/Oblast</label>
+            {{ region_field }}
+            <div class="form-text">Select your region, state, or oblast</div>
+        </div>
+        
+        <div class="col-md-4">
+            <label for="{{ city_field.id_for_label }}" class="form-label">City/Village/Town</label>
+            {{ city_field }}
+            <div class="form-text">Select your city, village, or town</div>
+        </div>
+    </div>
+    
+    <!-- Optional custom location field -->
+    {% if custom_location_field %}
+    <div class="mt-3">
+        <label for="{{ custom_location_field.id_for_label }}" class="form-label">Custom Location</label>
+        {{ custom_location_field }}
+        <div class="form-text">If your location is not listed above, you can type it here</div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('id_country');
+    const regionSelect = document.getElementById('id_region');
+    const citySelect = document.getElementById('id_city');
+    
+    // Handle country change
+    if (countrySelect) {
+        countrySelect.addEventListener('change', function() {
+            const countryId = this.value;
+            
+            // Reset and disable dependent fields
+            regionSelect.innerHTML = '<option value="">Select Region/State/Oblast</option>';
+            citySelect.innerHTML = '<option value="">Select City/Village/Town</option>';
+            regionSelect.disabled = true;
+            citySelect.disabled = true;
+            
+            if (countryId) {
+                // Fetch regions for selected country
+                fetch(`/locations/ajax/regions/?country_id=${countryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.regions.length > 0) {
+                            regionSelect.disabled = false;
+                            data.regions.forEach(region => {
+                                const option = document.createElement('option');
+                                option.value = region.id;
+                                option.textContent = region.name;
+                                regionSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching regions:', error);
+                    });
+            }
+        });
+    }
+    
+    // Handle region change
+    if (regionSelect) {
+        regionSelect.addEventListener('change', function() {
+            const regionId = this.value;
+            
+            // Reset and disable city field
+            citySelect.innerHTML = '<option value="">Select City/Village/Town</option>';
+            citySelect.disabled = true;
+            
+            if (regionId) {
+                // Fetch cities for selected region
+                fetch(`/locations/ajax/cities/?region_id=${regionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.cities.length > 0) {
+                            citySelect.disabled = false;
+                            data.cities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.id;
+                                option.textContent = `${city.name} (${city.type})`;
+                                citySelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cities:', error);
+                    });
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.location-selection-widget {
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #f8f9fc;
+    margin-bottom: 1rem;
+}
+
+.location-selection-widget .form-label {
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.location-selection-widget .form-select:disabled {
+    background-color: #e9ecef;
+    opacity: 0.65;
+}
+
+.location-selection-widget .form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+</style>

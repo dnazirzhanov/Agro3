@@ -17,15 +17,17 @@ try:
 except Exception:
     dj_database_url = None
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    # Explicitly specify the .env file path
+    env_path = BASE_DIR / '.env'
+    load_dotenv(dotenv_path=env_path)
 except ImportError:
     pass  # dotenv not installed
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ckeditor',
     'ckeditor_uploader',
+    'locations.apps.LocationsConfig',
     'users.apps.UsersConfig',
     'crops',
     'pests_diseases',
@@ -64,7 +67,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -143,11 +145,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 
-# Static files (Whitenoise for Azure)
+# Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files
 
@@ -165,9 +166,56 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
-        'height': 300,
+        'height': 400,
         'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'image2',
+        ]),
+        'uploadUrl': '/ckeditor/upload/',
+        'image2_alignClasses': ['image-align-left', 'image-align-center', 'image-align-right'],
+        'image2_captionedClass': 'image-captioned',
+        'removePlugins': 'image',  # Remove old image plugin in favor of image2
+        'stylesSet': [
+            {'name': 'Disease Image', 'element': 'img', 'attributes': {'class': 'agricultural-image disease-image'}},
+            {'name': 'Pest Image', 'element': 'img', 'attributes': {'class': 'agricultural-image pest-image'}},
+            {'name': 'Crop Image', 'element': 'img', 'attributes': {'class': 'agricultural-image'}},
+            {'name': 'Full Width Image', 'element': 'img', 'attributes': {'class': 'img-fluid'}},
+        ],
+        'contentsCss': [
+            '/static/css/ckeditor-custom.css'
+        ],
     },
+    'agricultural': {
+        'toolbar': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image', 'Table'],
+            ['Styles', 'Format'],
+            ['Source']
+        ],
+        'height': 500,
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'image2',
+        ]),
+        'uploadUrl': '/ckeditor/upload/',
+        'image2_alignClasses': ['image-align-left', 'image-align-center', 'image-align-right'],
+        'image2_captionedClass': 'image-captioned',
+        'removePlugins': 'image',
+        'stylesSet': [
+            {'name': 'Disease/Symptom Photo', 'element': 'img', 'attributes': {'class': 'agricultural-image disease-image'}},
+            {'name': 'Pest/Insect Photo', 'element': 'img', 'attributes': {'class': 'agricultural-image pest-image'}},
+            {'name': 'Crop/Plant Photo', 'element': 'img', 'attributes': {'class': 'agricultural-image'}},
+            {'name': 'Treatment Result', 'element': 'img', 'attributes': {'class': 'agricultural-image treatment-image'}},
+        ],
+        'format_tags': 'p;h2;h3;h4',
+        'contentsCss': [
+            '/static/css/ckeditor-custom.css'
+        ],
+    }
 }
 
 # Authentication Settings
@@ -180,7 +228,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For developm
 
 # Weather API Configuration
 # Get your free API key from https://openweathermap.org/api
-OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', '')
+OPENWEATHER_API_KEY = '4f767064463296c602c6ddd6903a7db6'
 
 # Session Settings
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 1 week

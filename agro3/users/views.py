@@ -65,6 +65,9 @@ def dashboard_view(request):
     followers_count = FarmerConnection.objects.filter(following=request.user).count()
     following_count = FarmerConnection.objects.filter(follower=request.user).count()
     
+    # Get likes received count
+    likes_received_count = user_profile.get_likes_received_count()
+    
     # Get featured posts from followed users
     following_users = FarmerConnection.objects.filter(
         follower=request.user
@@ -81,6 +84,7 @@ def dashboard_view(request):
         'user_posts': user_posts,
         'followers_count': followers_count,
         'following_count': following_count,
+        'likes_received_count': likes_received_count,
         'featured_posts': featured_posts,
     }
     
@@ -166,6 +170,11 @@ def follow_user_view(request, user_id):
         connection.delete()
         messages.info(request, f'You unfollowed {user_to_follow.get_full_name() or user_to_follow.username}.')
     
+    # Check if request came from farmers list page
+    next_url = request.GET.get('next')
+    if next_url == 'farmers_list':
+        return redirect('users:farmers_list')
+    
     return redirect('users:profile', pk=user_id)
 
 
@@ -187,26 +196,49 @@ def farmers_list_view(request):
     # Filter by experience level
     experience = request.GET.get('experience')
     if experience == 'beginner':
-        farmers = farmers.filter(farming_experience__lt=2)
+        farmers = farmers.filter(farming_experience__in=['0-1'])
+    elif experience == 'novice':
+        farmers = farmers.filter(farming_experience__in=['1-3'])
     elif experience == 'intermediate':
-        farmers = farmers.filter(farming_experience__gte=2, farming_experience__lt=10)
+        farmers = farmers.filter(farming_experience__in=['3-9'])
     elif experience == 'experienced':
-        farmers = farmers.filter(farming_experience__gte=10, farming_experience__lt=20)
+        farmers = farmers.filter(farming_experience__in=['9-15'])
     elif experience == 'expert':
-        farmers = farmers.filter(farming_experience__gte=20)
+        farmers = farmers.filter(farming_experience__in=['15+'])
     
-    # Search by name or crops
+    # Search by name
     search = request.GET.get('search')
     if search:
         farmers = farmers.filter(
             models.Q(user__first_name__icontains=search) |
             models.Q(user__last_name__icontains=search) |
             models.Q(user__username__icontains=search) |
-            models.Q(main_crops__icontains=search)
+            models.Q(bio__icontains=search)
         )
     
+    # Exclude current user from the list
+    farmers = farmers.exclude(user=request.user)
+    
+    # Get follow relationships for the current user
+    following_ids = set(
+        FarmerConnection.objects.filter(follower=request.user)
+        .values_list('following_id', flat=True)
+    )
+    
+    # Annotate farmers with follower count and follow status
+    farmers_with_data = []
+    for farmer in farmers:
+        follower_count = FarmerConnection.objects.filter(following=farmer.user).count()
+        is_following = farmer.user.id in following_ids
+        
+        farmers_with_data.append({
+            'profile': farmer,
+            'follower_count': follower_count,
+            'is_following': is_following,
+        })
+    
     context = {
-        'farmers': farmers,
+        'farmers': farmers_with_data,
         'regions': UserProfile.REGION_CHOICES,
         'farmer_types': UserProfile.FARMER_TYPE_CHOICES,
         'current_filters': {

@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from .models import WeatherLocation, WeatherData
+from locations.models import Country, Region, City
 import os
 
 
@@ -165,28 +166,102 @@ def weather_dashboard_view(request):
     # Get recent locations for quick access
     recent_locations = WeatherLocation.objects.all().order_by('-created_at')[:5]
     
+    # Get all countries for the location dropdown
+    countries = Country.objects.all().order_by('name')
+    
     context = {
         'weather_data': weather_data,
         'recent_locations': recent_locations,
         'api_configured': get_openweather_api_key() is not None,
+        'countries': countries,
     }
     
     return render(request, 'weather/dashboard.html', context)
 
 
 def weather_search_view(request):
-    """Search for weather by city name."""
+    """Search for weather by hierarchical location and city name."""
     if request.method == 'POST':
-        city_name = request.POST.get('city', '').strip()
-        if city_name:
+        # Get form data
+        country_id = request.POST.get('country')
+        region_id = request.POST.get('region')
+        city_name = request.POST.get('city_name', '').strip()
+        
+        # Check if we have the minimum required data
+        if city_name and country_id:
+            try:
+                # Get country and region information
+                country = Country.objects.get(id=country_id)
+                region = None
+                if region_id:
+                    region = Region.objects.get(id=region_id)
+                
+                # Build search query for better accuracy
+                search_query = city_name
+                
+                # Add region to search if available
+                if region:
+                    search_query = f"{city_name}, {region.name}"
+                
+                # Add country for better accuracy
+                search_query = f"{search_query}, {country.name}"
+                
+                # Search using OpenWeatherMap geocoding
+                api_key = get_openweather_api_key()
+                if api_key:
+                    try:
+                        geo_url = "http://api.openweathermap.org/geo/1.0/direct"
+                        params = {
+                            'q': search_query,
+                            'limit': 5,  # Get multiple results to find best match
+                            'appid': api_key
+                        }
+                        response = requests.get(geo_url, params=params, timeout=10)
+                        
+                        if response.status_code == 200:
+                            data = response.json()
+                            if data:
+                                # Prioritize results from the selected country
+                                country_matches = [loc for loc in data if loc.get('country') == country.code]
+                                
+                                if country_matches:
+                                    location = country_matches[0]  # Take the first match from the country
+                                else:
+                                    location = data[0]  # Fallback to first result
+                                
+                                location_name = f"{city_name}, {country.name}"
+                                return redirect(f"/weather/?lat={location['lat']}&lon={location['lon']}&location={location_name}")
+                            else:
+                                messages.error(request, f"Weather data not found for '{city_name}' in {country.name}")
+                        else:
+                            messages.error(request, "Failed to fetch weather data from API.")
+                    except Exception as e:
+                        messages.error(request, f"Weather search error: {str(e)}")
+                else:
+                    messages.error(request, "Weather API not configured.")
+                    
+            except Country.DoesNotExist:
+                messages.error(request, "Selected country not found.")
+            except Region.DoesNotExist:
+                messages.error(request, "Selected region not found.")
+        
+        # Fallback to old text-based search for backward compatibility
+        elif request.POST.get('city_text'):
+            city_name = request.POST.get('city_text', '').strip()
+        
+        if city_name and not country_id:
             # Use OpenWeatherMap geocoding API
             api_key = get_openweather_api_key()
             if api_key:
                 try:
                     geo_url = "http://api.openweathermap.org/geo/1.0/direct"
+                    
+                    # Clean up the search term
+                    search_term = city_name.title()  # Capitalize properly
+                    
                     params = {
-                        'q': city_name,
-                        'limit': 5,  # Get up to 5 results for disambiguation
+                        'q': search_term,
+                        'limit': 10,  # Get up to 10 results for better disambiguation
                         'appid': api_key
                     }
                     response = requests.get(geo_url, params=params, timeout=10)
@@ -200,6 +275,19 @@ def weather_search_view(request):
                                 1 if x.get('country') in priority_countries else
                                 2
                             ))
+                            
+                            # Add country names for better display
+                            country_names = {
+                                'KG': 'Kyrgyzstan', 'KZ': 'Kazakhstan', 'TJ': 'Tajikistan', 'UZ': 'Uzbekistan',
+                                'US': 'United States', 'GB': 'United Kingdom', 'FR': 'France', 'DE': 'Germany',
+                                'CN': 'China', 'RU': 'Russia', 'IN': 'India', 'JP': 'Japan', 'CA': 'Canada',
+                                'AU': 'Australia', 'BR': 'Brazil', 'MX': 'Mexico', 'AR': 'Argentina', 'IT': 'Italy',
+                                'ES': 'Spain', 'TR': 'Turkey', 'EG': 'Egypt', 'ZA': 'South Africa', 'NG': 'Nigeria'
+                            }
+                            
+                            for location in data:
+                                country_code = location.get('country', '')
+                                location['country_name'] = country_names.get(country_code, country_code)
                             
                             # If only one result, redirect directly
                             if len(data) == 1:

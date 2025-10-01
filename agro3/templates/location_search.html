@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Location Search - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-geo-alt text-primary"></i>
+                        Search by Location
+                    </h4>
+                    <p class="text-muted mb-0 mt-2">Find farmers and content by hierarchical location</p>
+                </div>
+                <div class="card-body">
+                    <form id="locationSearchForm" method="get">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="country" class="form-label">Country</label>
+                                <select name="country" id="country" class="form-select">
+                                    <option value="">Select Country...</option>
+                                    {% for country in countries %}
+                                        <option value="{{ country.id }}" {% if request.GET.country == country.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ country.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="region" class="form-label">Region/State</label>
+                                <select name="region" id="region" class="form-select" disabled>
+                                    <option value="">Select Region/State...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="city" class="form-label">City/Village</label>
+                                <select name="city" id="city" class="form-select" disabled>
+                                    <option value="">Select City/Village...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                                <a href="{% url 'location_search' %}" class="btn btn-secondary ms-2">
+                                    <i class="bi bi-arrow-clockwise"></i> Clear
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% if search_results %}
+                        <hr>
+                        <h5>Search Results</h5>
+                        <div class="row">
+                            {% for user in search_results %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                {{ user.get_avatar_emoji }} 
+                                                {{ user.user.get_full_name|default:user.user.username }}
+                                            </h6>
+                                            <p class="text-muted small">
+                                                <i class="bi bi-geo-alt"></i>
+                                                {% if user.country %}{{ user.country.name }}{% endif %}
+                                                {% if user.region_new %}, {{ user.region_new.name }}{% endif %}
+                                                {% if user.city %}, {{ user.city.name }}{% endif %}
+                                            </p>
+                                            <p class="card-text">
+                                                <strong>{{ user.get_farmer_type_display }}</strong><br>
+                                                <small class="text-muted">{{ user.get_farming_experience_display }}</small>
+                                            </p>
+                                            {% if user.phone_number %}
+                                                <p class="text-muted small">
+                                                    <i class="bi bi-telephone"></i> {{ user.phone_number }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% elif request.GET.country %}
+                        <hr>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            No farmers found for the selected location.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('country');
+    const regionSelect = document.getElementById('region');
+    const citySelect = document.getElementById('city');
+
+    // Get initial values from URL parameters
+    const initialCountry = countrySelect.value;
+    const initialRegion = "{{ request.GET.region }}";
+    const initialCity = "{{ request.GET.city }}";
+
+    // Function to clear and disable select
+    function clearSelect(selectElement, placeholder = 'Select...') {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        selectElement.disabled = true;
+    }
+
+    // Function to populate select options
+    function populateSelect(selectElement, options, placeholder = 'Select...', selectedValue = '') {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.id;
+            optionElement.textContent = option.name;
+            if (option.id == selectedValue) {
+                optionElement.selected = true;
+            }
+            selectElement.appendChild(optionElement);
+        });
+        selectElement.disabled = false;
+    }
+
+    // Handle country selection
+    countrySelect.addEventListener('change', function() {
+        const countryId = this.value;
+        
+        // Clear dependent selects
+        clearSelect(regionSelect, 'Select Region/State...');
+        clearSelect(citySelect, 'Select City/Village...');
+
+        if (countryId) {
+            fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    populateSelect(regionSelect, data.regions, 'Select Region/State...');
+                })
+                .catch(error => {
+                    console.error('Error fetching regions:', error);
+                });
+        }
+    });
+
+    // Handle region selection
+    regionSelect.addEventListener('change', function() {
+        const regionId = this.value;
+        
+        // Clear city select
+        clearSelect(citySelect, 'Select City/Village...');
+
+        if (regionId) {
+            fetch(`{% url 'locations:get_cities' %}?region_id=${regionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    populateSelect(citySelect, data.cities, 'Select City/Village...');
+                })
+                .catch(error => {
+                    console.error('Error fetching cities:', error);
+                });
+        }
+    });
+
+    // Initialize cascading dropdowns with existing values (from URL parameters)
+    if (initialCountry) {
+        fetch(`{% url 'locations:get_regions' %}?country_id=${initialCountry}`)
+            .then(response => response.json())
+            .then(data => {
+                populateSelect(regionSelect, data.regions, 'Select Region/State...', initialRegion);
+                
+                // Load cities if region is selected
+                if (initialRegion) {
+                    fetch(`{% url 'locations:get_cities' %}?region_id=${initialRegion}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            populateSelect(citySelect, data.cities, 'Select City/Village...', initialCity);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching cities:', error);
+                        });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching regions:', error);
+            });
+    } else {
+        // Initialize: Clear dependent selects on page load if no country selected
+        clearSelect(regionSelect, 'Select Region/State...');
+        clearSelect(citySelect, 'Select City/Village...');
+    }
+});
+</script>
+
+{% endblock %}

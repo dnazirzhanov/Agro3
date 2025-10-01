@@ -3,7 +3,85 @@
 
 {% block title %}Register - Batken Agri-Helper{% endblock %}
 
+{% block extra_css %}
+<style>
+.avatar-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.avatar-option {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-width: 80px;
+}
+
+.avatar-option:hover {
+    background-color: #f8f9fa;
+    border-color: #28a745;
+}
+
+.form-check-input:checked + .avatar-option {
+    background-color: #e8f5e8;
+    border-color: #28a745;
+    transform: scale(1.05);
+}
+
+.avatar-preview {
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.form-check-input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+</style>
+{% endblock %}
+
 {% block content %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.avatar_choice.id_for_label }}" class="form-label">Choose Your Avatar</label>
+                            <div class="avatar-selection">
+                                {% for value, label in form.avatar_choice.field.choices %}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="avatar_choice" 
+                                               id="avatar_{{ value }}" value="{{ value }}"
+                                               {% if form.avatar_choice.value == value %}checked{% endif %}>
+                                        <label class="form-check-label avatar-option" for="avatar_{{ value }}">
+                                            <div class="avatar-preview avatar-{{ value }}">
+                                                {% if value == 'farmer_man_1' %}👨‍🌾
+                                                {% elif value == 'farmer_man_2' %}🧑‍🌾
+                                                {% elif value == 'farmer_woman_1' %}👩‍🌾
+                                                {% elif value == 'farmer_woman_2' %}🧕
+                                                {% else %}�
+                                                {% endif %}
+                                            </div>
+                                            <small class="d-block text-center mt-1">{{ label|slice:"2:" }}</small>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.avatar_choice.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.avatar_choice.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>t %}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
@@ -77,6 +155,82 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">📞 Phone Number</label>
+                            {{ form.phone_number }}
+                            <div class="form-text">Other farmers will be able to contact you via this number</div>
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.phone_number.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Farming Information -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.farmer_type.id_for_label }}" class="form-label">Farmer Type</label>
+                                {{ form.farmer_type }}
+                                {% if form.farmer_type.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.farmer_type.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.farming_experience.id_for_label }}" class="form-label">Experience Level</label>
+                                {{ form.farming_experience }}
+                                {% if form.farming_experience.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.farming_experience.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Location Selection -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                                {{ form.country }}
+                                {% if form.country.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.country.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.region_new.id_for_label }}" class="form-label">Region/State</label>
+                                {{ form.region_new }}
+                                {% if form.region_new.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.region_new.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.village_or_address.id_for_label }}" class="form-label">City/Village</label>
+                                {{ form.village_or_address }}
+                                {% if form.village_or_address.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.village_or_address.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="row">
@@ -158,4 +312,52 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('{{ form.country.id_for_label }}');
+    const regionSelect = document.getElementById('{{ form.region_new.id_for_label }}');
+
+    // Function to clear and disable select
+    function clearSelect(selectElement, placeholder = 'Select...') {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        selectElement.disabled = true;
+    }
+
+    // Function to populate select options
+    function populateSelect(selectElement, options, placeholder = 'Select...') {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.id;
+            optionElement.textContent = option.name;
+            selectElement.appendChild(optionElement);
+        });
+        selectElement.disabled = false;
+    }
+
+    // Handle country selection
+    countrySelect.addEventListener('change', function() {
+        const countryId = this.value;
+        
+        // Clear region select
+        clearSelect(regionSelect, 'Select Region/State...');
+
+        if (countryId) {
+            fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    populateSelect(regionSelect, data.regions, 'Select Region/State...');
+                })
+                .catch(error => {
+                    console.error('Error fetching regions:', error);
+                });
+        }
+    });
+
+    // Initialize: Clear region select on page load
+    clearSelect(regionSelect, 'Select Region/State...');
+});
+</script>
+
 {% endblock %}

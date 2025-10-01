@@ -3,14 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import BlogPost, Category, Tag, Comment
-from django import forms
-from ckeditor.widgets import CKEditorWidget
+from django.http import JsonResponse
+from .models import BlogPost, Category, Tag, Comment, Like
 
 
 def blog_index_view(request):
     """Display all published blog posts with search and filtering."""
-    posts = BlogPost.objects.filter(is_published=True).select_related('author', 'category').prefetch_related('tags')
+    posts = BlogPost.objects.filter(is_published=True).select_related('author', 'category').prefetch_related('tags', 'images')
     
     # Search functionality
     search = request.GET.get('search')
@@ -64,19 +63,17 @@ def blog_index_view(request):
 
 def blog_post_detail_view(request, slug):
     """Display a single blog post with comments and replies."""
-    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+    post = get_object_or_404(
+        BlogPost.objects.select_related('author', 'category').prefetch_related('tags', 'images'),
+        slug=slug, is_published=True
+    )
     
     # Increment view count
     post.views_count += 1
     post.save(update_fields=['views_count'])
     
-    # Get approved comments (only top-level comments, replies will be fetched via prefetch)
-    comments = post.comments.filter(
-        is_approved=True, 
-        parent_comment=None
-    ).select_related('author').prefetch_related(
-        'replies__author'
-    ).order_by('publication_date')
+    # Get threaded comments using the model method
+    comments = post.get_threaded_comments()
     
     # Handle comment/reply submission
     if request.method == 'POST' and request.user.is_authenticated:
@@ -115,10 +112,35 @@ def blog_post_detail_view(request, slug):
         category=post.category
     ).exclude(pk=post.pk)[:4]
     
+    # Check if current user has liked this post
+    user_has_liked_post = False
+    if request.user.is_authenticated:
+        user_has_liked_post = post.is_liked_by(request.user)
+    
+    # Add liked status to comments for the current user
+    comment_likes = {}
+    if request.user.is_authenticated:
+        # Get all comments for this post (including replies)
+        all_comments = Comment.objects.filter(blog_post=post, is_approved=True)
+        
+        # Create a function to recursively add like status
+        def add_like_status_to_comments(comment_queryset):
+            for comment in comment_queryset:
+                comment.user_has_liked = comment.is_liked_by(request.user)
+                comment_likes[comment.id] = comment.user_has_liked
+                # Add like status to replies if they exist
+                if hasattr(comment, 'replies'):
+                    add_like_status_to_comments(comment.replies.all())
+        
+        # Add like status to top-level comments and their replies
+        add_like_status_to_comments(comments)
+    
     context = {
         'post': post,
         'comments': comments,
         'related_posts': related_posts,
+        'user_has_liked_post': user_has_liked_post,
+        'comment_likes': comment_likes if request.user.is_authenticated else {},
     }
     
     return render(request, 'forum/post_detail.html', context)
@@ -168,34 +190,6 @@ def blog_tag_list_view(request, slug):
     return render(request, 'forum/post_list_by_tag.html', context)
 
 
-class BlogPostForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorWidget())
-
-    class Meta:
-        model = BlogPost
-        fields = ['title', 'short_description', 'content', 'featured_image', 'category', 'tags', 'is_published']
-
-
-@login_required
-def blog_post_create_view(request):
-    """Create a new blog post (author is current user)."""
-    if request.method == 'POST':
-        form = BlogPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post: BlogPost = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            form.save_m2m()
-            messages.success(request, 'Your post has been created!')
-            return redirect(post.get_absolute_url())
-        else:
-            messages.error(request, 'Please correct the errors below.')
-    else:
-        form = BlogPostForm()
-
-    return render(request, 'forum/post_form.html', {'form': form})
-
-
 @login_required
 def comment_edit_view(request, comment_id):
     """Edit a comment (only by the author)."""
@@ -230,3 +224,73 @@ def comment_delete_view(request, comment_id):
         return redirect('forum:post_detail', slug=post_slug)
     
     return redirect('forum:post_detail', slug=comment.blog_post.slug)
+
+
+@login_required
+def toggle_post_like(request, post_id):
+    """Toggle like/unlike for a blog post"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method allowed'}, status=405)
+    
+    post = get_object_or_404(BlogPost, id=post_id, is_published=True)
+    
+    try:
+        # Try to get existing like
+        like = Like.objects.get(user=request.user, blog_post=post)
+        # If exists, unlike (delete)
+        like.delete()
+        liked = False
+        message = 'Post unliked successfully!'
+    except Like.DoesNotExist:
+        # If doesn't exist, create like
+        Like.objects.create(user=request.user, blog_post=post)
+        liked = True
+        message = 'Post liked successfully!'
+        
+        # Update author's reputation score
+        post.author.profile.update_reputation_score()
+    
+    like_count = post.get_like_count()
+    
+    # Always return JSON response for AJAX requests
+    return JsonResponse({
+        'success': True,
+        'liked': liked,
+        'like_count': like_count,
+        'message': message
+    })
+
+
+@login_required
+def toggle_comment_like(request, comment_id):
+    """Toggle like/unlike for a comment"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method allowed'}, status=405)
+    
+    comment = get_object_or_404(Comment, id=comment_id, is_approved=True)
+    
+    try:
+        # Try to get existing like
+        like = Like.objects.get(user=request.user, comment=comment)
+        # If exists, unlike (delete)
+        like.delete()
+        liked = False
+        message = 'Comment unliked successfully!'
+    except Like.DoesNotExist:
+        # If doesn't exist, create like
+        Like.objects.create(user=request.user, comment=comment)
+        liked = True
+        message = 'Comment liked successfully!'
+        
+        # Update author's reputation score
+        comment.author.profile.update_reputation_score()
+    
+    like_count = comment.get_like_count()
+    
+    # Always return JSON response for AJAX requests
+    return JsonResponse({
+        'success': True,
+        'liked': liked,
+        'like_count': like_count,
+        'message': message
+    })

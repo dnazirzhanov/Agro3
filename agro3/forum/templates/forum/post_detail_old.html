@@ -1,0 +1,522 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Community Forum - Batken Agri-Helper{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Community Forum</a></li>
+        {% if post.category %}
+            <li class="breadcrumb-item"><a href="{% url 'forum:category' post.category.slug %}">{{ post.category.name }}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{{ post.title|truncatewords:5 }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Blog Post -->
+        <article class="card shadow-sm mb-4">
+            {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="card-img-top" 
+                     style="height: 400px; object-fit: cover;" alt="{{ post.title }}">
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="flex-grow-1">
+                        <h1 class="h2 mb-2">{{ post.title }}</h1>
+                        {% if post.category %}
+                            <a href="{% url 'forum:category' post.category.slug %}" 
+                               class="badge text-bg-primary text-decoration-none me-2">{{ post.category.name }}</a>
+                        {% endif %}
+                        {% if post.tags.all %}
+                            {% for tag in post.tags.all %}
+                                <a href="{% url 'forum:tag' tag.slug %}" 
+                                   class="badge bg-light text-dark text-decoration-none me-1">#{{ tag.name }}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Forum
+                    </a>
+                </div>
+                
+                <!-- Post Meta -->
+                <div class="d-flex align-items-center text-muted small mb-4 pb-3 border-bottom">
+                    <i class="bi bi-person me-1"></i>
+                    <span class="me-3 fw-bold">{{ post.author.username }}</span>
+                    
+                    <i class="bi bi-calendar me-1"></i>
+                    <span class="me-3">{{ post.publication_date|date:"F d, Y H:i" }}</span>
+                    
+                    <i class="bi bi-eye me-1"></i>
+                    <span class="me-3">{{ post.views_count }} views</span>
+                    
+                    <i class="bi bi-chat me-1"></i>
+                    <span>{{ comments|length }} comments</span>
+                </div>
+                
+                <!-- Post Content -->
+                <div class="post-content">
+                    {{ post.content|safe }}
+                </div>
+                
+                {% if post.short_description %}
+                    <div class="alert alert-info mt-4">
+                        <strong>Summary:</strong> {{ post.short_description }}
+                    </div>
+                {% endif %}
+            </div>
+        </article>
+        
+        <!-- Comments Section -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-chat-dots me-2"></i>Comments ({{ comments|length }})
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <!-- Comment Form -->
+                {% if user.is_authenticated %}
+                    <form method="POST" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Add your comment:</label>
+                            <textarea class="form-control" id="content" name="content" rows="4" 
+                                      placeholder="Share your thoughts..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-1"></i>Post Comment
+                        </button>
+                    </form>
+                    <hr>
+                {% else %}
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Please <a href="/admin/login/?next={{ request.path }}">login</a> to post comments.
+                    </div>
+                {% endif %}
+                
+                <!-- Comments List -->
+                {% if comments %}
+                    {% for comment in comments %}
+                        <!-- Main Comment Card -->
+                        <div class="comment-card card mb-3 {% if comment.is_agronomist_reply %}border-success{% endif %}" id="comment-{{ comment.id }}">
+                            <div class="card-body position-relative">
+                                <!-- Action Buttons (Top Right) -->
+                                <div class="position-absolute top-0 end-0 mt-2 me-2">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            {% if user.is_authenticated %}
+                                                <li>
+                                                    <button class="dropdown-item reply-btn" data-comment-id="{{ comment.id }}" data-author="{{ comment.author.username }}">
+                                                        <i class="bi bi-reply me-2"></i>Reply
+                                                    </button>
+                                                </li>
+                                            {% endif %}
+                                            {% if user.is_authenticated and comment.author == user %}
+                                                <li>
+                                                    <button class="dropdown-item edit-btn" data-comment-id="{{ comment.id }}">
+                                                        <i class="bi bi-pencil me-2"></i>Edit
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ comment.id }}">
+                                                        <i class="bi bi-trash me-2"></i>Delete
+                                                    </button>
+                                                </li>
+                                            {% elif user.is_staff %}
+                                                <li>
+                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ comment.id }}">
+                                                        <i class="bi bi-trash me-2"></i>Delete
+                                                    </button>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Comment Header -->
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-{% if comment.is_agronomist_reply %}success{% else %}primary{% endif %} text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="bi bi-person{% if comment.is_agronomist_reply %}-check{% endif %}"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 me-5">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <h6 class="mb-0 me-2">{{ comment.author.username }}</h6>
+                                            {% if comment.is_agronomist_reply %}
+                                                <span class="badge bg-success">Agricultural Expert</span>
+                                            {% endif %}
+                                            <small class="text-muted ms-auto">{{ comment.publication_date|date:"M d, Y H:i" }}</small>
+                                        </div>
+                                        
+                                        <!-- Comment Content -->
+                                        <div class="comment-content-{{ comment.id }}">
+                                            <p class="mb-0">{{ comment.content|linebreaks }}</p>
+                                        </div>
+                                        
+                                        <!-- Edit Form (hidden by default) -->
+                                        <div class="edit-form mt-2" id="edit-form-{{ comment.id }}" style="display: none;">
+                                            <form method="POST" action="{% url 'forum:comment_edit' comment.id %}">
+                                                {% csrf_token %}
+                                                <div class="mb-2">
+                                                    <textarea class="form-control" name="content" rows="3" required>{{ comment.content }}</textarea>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                        <i class="bi bi-check me-1"></i>Save
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-secondary cancel-edit" data-comment-id="{{ comment.id }}">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Reply Form (hidden by default) -->
+                                <div class="reply-form mt-3" id="reply-form-{{ comment.id }}" style="display: none;">
+                                    <div class="ms-5">
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                            <div class="mb-2">
+                                                <textarea class="form-control" name="content" rows="3" 
+                                                          placeholder="Reply to {{ comment.author.username }}..." required></textarea>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-send me-1"></i>Post Reply
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-secondary cancel-reply" 
+                                                        data-comment-id="{{ comment.id }}">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Replies -->
+                        {% if comment.replies.all %}
+                            <div class="replies ms-4 mb-4">
+                                {% for reply in comment.replies.all %}
+                                    {% if reply.is_approved %}
+                                        <div class="reply-card card mb-2 bg-light {% if reply.is_agronomist_reply %}border-success{% endif %}" id="comment-{{ reply.id }}">
+                                            <div class="card-body position-relative">
+                                                <!-- Reply Action Buttons (Top Right) -->
+                                                <div class="position-absolute top-0 end-0 mt-2 me-2">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                                            <i class="bi bi-three-dots"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            {% if user.is_authenticated %}
+                                                                <li>
+                                                                    <button class="dropdown-item reply-btn" data-comment-id="{{ comment.id }}" data-author="{{ reply.author.username }}">
+                                                                        <i class="bi bi-reply me-2"></i>Reply to {{ reply.author.username }}
+                                                                    </button>
+                                                                </li>
+                                                            {% endif %}
+                                                            {% if user.is_authenticated and reply.author == user %}
+                                                                <li>
+                                                                    <button class="dropdown-item edit-btn" data-comment-id="{{ reply.id }}">
+                                                                        <i class="bi bi-pencil me-2"></i>Edit
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ reply.id }}">
+                                                                        <i class="bi bi-trash me-2"></i>Delete
+                                                                    </button>
+                                                                </li>
+                                                            {% elif user.is_staff %}
+                                                                <li>
+                                                                    <button class="dropdown-item text-danger delete-btn" data-comment-id="{{ reply.id }}">
+                                                                        <i class="bi bi-trash me-2"></i>Delete
+                                                                    </button>
+                                                                </li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex align-items-start">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <div class="bg-{% if reply.is_agronomist_reply %}success{% else %}secondary{% endif %} text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                                             style="width: 32px; height: 32px;">
+                                                            <i class="bi bi-person{% if reply.is_agronomist_reply %}-check{% endif %}" style="font-size: 0.85rem;"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1 me-4">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h6 class="mb-0 small me-2">{{ reply.author.username }}</h6>
+                                                            {% if reply.is_agronomist_reply %}
+                                                                <span class="badge bg-success" style="font-size: 0.7em;">Expert</span>
+                                                            {% endif %}
+                                                            <small class="text-muted ms-auto" style="font-size: 0.8em;">{{ reply.publication_date|date:"M d, Y H:i" }}</small>
+                                                        </div>
+                                                        
+                                                        <!-- Reply Content -->
+                                                        <div class="comment-content-{{ reply.id }}">
+                                                            <p class="mb-0 small">{{ reply.content|linebreaks }}</p>
+                                                        </div>
+                                                        
+                                                        <!-- Reply Edit Form (hidden by default) -->
+                                                        <div class="edit-form mt-2" id="edit-form-{{ reply.id }}" style="display: none;">
+                                                            <form method="POST" action="{% url 'forum:comment_edit' reply.id %}">
+                                                                {% csrf_token %}
+                                                                <div class="mb-2">
+                                                                    <textarea class="form-control form-control-sm" name="content" rows="2" required>{{ reply.content }}</textarea>
+                                                                </div>
+                                                                <div class="d-flex gap-2">
+                                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                                        <i class="bi bi-check me-1"></i>Save
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-sm btn-secondary cancel-edit" data-comment-id="{{ reply.id }}">
+                                                                        Cancel
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-chat text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted mb-0">No comments yet. Be the first to comment!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Author Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person me-2"></i>About the Author</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                     style="width: 60px; height: 60px;">
+                    <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                </div>
+                <h6>{{ post.author.username }}</h6>
+                <small class="text-muted">Member since {{ post.author.date_joined|date:"Y" }}</small>
+            </div>
+        </div>
+        
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-collection me-2"></i>Related Posts</h5>
+            </div>
+            <div class="card-body">
+                {% for related_post in related_posts %}
+                <div class="d-flex align-items-start mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                    {% if related_post.featured_image %}
+                        <img src="{{ related_post.featured_image.url }}" 
+                             class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" 
+                             alt="{{ related_post.title }}">
+                    {% else %}
+                        <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
+                             style="width: 60px; height: 60px;">
+                            <i class="bi bi-file-text text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">
+                            <a href="{{ related_post.get_absolute_url }}" class="text-decoration-none">
+                                {{ related_post.title|truncatewords:8 }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar me-1"></i>{{ related_post.publication_date|date:"M d" }} • 
+                            <i class="bi bi-eye me-1"></i>{{ related_post.views_count }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Links</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'crops:list' %}" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-flower3 me-1"></i>Browse Crops
+                    </a>
+                    <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-bug me-1"></i>Pest Guide
+                    </a>
+                    <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-graph-up me-1"></i>Market Prices
+                    </a>
+                    <a href="{% url 'soil:questionnaire' %}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-dirt me-1"></i>Test Soil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Handle reply button clicks
+    document.querySelectorAll('.reply-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var commentId = this.getAttribute('data-comment-id');
+            var replyForm = document.getElementById('reply-form-' + commentId);
+            var allReplyForms = document.querySelectorAll('.reply-form');
+            var allEditForms = document.querySelectorAll('.edit-form');
+            
+            // Hide all other forms
+            allReplyForms.forEach(function (form) {
+                if (form !== replyForm) {
+                    form.style.display = 'none';
+                }
+            });
+            allEditForms.forEach(function (form) {
+                form.style.display = 'none';
+            });
+            
+            // Toggle current reply form
+            if (replyForm.style.display === 'none' || !replyForm.style.display) {
+                replyForm.style.display = 'block';
+                replyForm.querySelector('textarea').focus();
+            } else {
+                replyForm.style.display = 'none';
+            }
+        });
+    });
+    
+    // Handle cancel reply button clicks
+    document.querySelectorAll('.cancel-reply').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var commentId = this.getAttribute('data-comment-id');
+            var replyForm = document.getElementById('reply-form-' + commentId);
+            replyForm.style.display = 'none';
+        });
+    });
+    
+    // Handle edit button clicks
+    document.querySelectorAll('.edit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var commentId = this.getAttribute('data-comment-id');
+            var editForm = document.getElementById('edit-form-' + commentId);
+            var commentContent = document.querySelector('.comment-content-' + commentId);
+            var allReplyForms = document.querySelectorAll('.reply-form');
+            var allEditForms = document.querySelectorAll('.edit-form');
+            
+            // Hide all other forms
+            allReplyForms.forEach(function (form) {
+                form.style.display = 'none';
+            });
+            allEditForms.forEach(function (form) {
+                if (form !== editForm) {
+                    form.style.display = 'none';
+                }
+            });
+            
+            // Show edit form, hide content
+            if (editForm && commentContent) {
+                commentContent.style.display = 'none';
+                editForm.style.display = 'block';
+                editForm.querySelector('textarea').focus();
+            }
+        });
+    });
+    
+    // Handle cancel edit button clicks
+    document.querySelectorAll('.cancel-edit').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var commentId = this.getAttribute('data-comment-id');
+            var editForm = document.getElementById('edit-form-' + commentId);
+            var commentContent = document.querySelector('.comment-content-' + commentId);
+            
+            if (editForm && commentContent) {
+                editForm.style.display = 'none';
+                commentContent.style.display = 'block';
+            }
+        });
+    });
+    
+    // Handle delete button clicks
+    document.querySelectorAll('.delete-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var commentId = this.getAttribute('data-comment-id');
+            
+            if (confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+                // Create and submit delete form
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/forum/comment/' + commentId + '/delete/';
+                
+                var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = csrfToken;
+                
+                form.appendChild(csrfInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.comment-card, .reply-card {
+    transition: box-shadow 0.2s ease;
+}
+
+.comment-card:hover, .reply-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.comment-card .position-absolute {
+    z-index: 10;
+}
+
+.reply-card .position-absolute {
+    z-index: 10;
+}
+</style>
+{% endblock %}

@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <i class="bi bi-geo-alt me-2"></i>
                         Multiple locations found for "{{ search_term }}"
                     </h4>
                 </div>
@@ -26,14 +26,14 @@
                             <div class="d-flex w-100 justify-content-between align-items-center">
                                 <div>
                                     <h5 class="mb-1">
-                                        <i class="fas fa-map-pin text-primary me-2"></i>
+                                        <i class="bi bi-pin-map text-primary me-2"></i>
                                         {{ location.name }}
                                     </h5>
                                     <p class="mb-1">
                                         {% if location.state %}
                                             <span class="badge bg-secondary me-2">{{ location.state }}</span>
                                         {% endif %}
-                                        <span class="badge bg-primary">{{ location.country }}</span>
+                                        <span class="badge bg-primary">{{ location.country_name|default:location.country }}</span>
                                     </p>
                                     {% if location.local_names %}
                                         <small class="text-muted">
@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="text-end">
                                     <small class="text-muted">
-                                        <i class="fas fa-globe me-1"></i>
+                                        <i class="bi bi-globe me-1"></i>
                                         {{ location.lat|floatformat:4 }}, {{ location.lon|floatformat:4 }}
                                     </small>
                                 </div>
@@ -57,7 +57,7 @@
                     
                     <div class="mt-4 text-center">
                         <a href="{% url 'weather:dashboard' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>
+                            <i class="bi bi-arrow-left me-2"></i>
                             Back to Weather Dashboard
                         </a>
                     </div>

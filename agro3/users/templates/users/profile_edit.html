@@ -3,6 +3,84 @@
 
 {% block title %}Edit Profile - Batken Agri-Helper{% endblock %}
 
+{% block extra_css %}
+<style>
+.avatar-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.avatar-option {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-width: 80px;
+}
+
+.avatar-option:hover {
+    background-color: #f8f9fa;
+    border-color: #28a745;
+}
+
+.form-check-input:checked + .avatar-option {
+    background-color: #e8f5e8;
+    border-color: #28a745;
+    transform: scale(1.05);
+}
+
+.avatar-preview {
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.avatar-preview.avatar-farmer_man_1,
+.avatar-preview.avatar-farmer_man_2 {
+    filter: hue-rotate(20deg);
+}
+
+.avatar-preview.avatar-farmer_woman_1,
+.avatar-preview.avatar-farmer_woman_2 {
+    filter: hue-rotate(-20deg);
+}
+
+.form-check-input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.user-avatar-lg {
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+}
+
+.user-avatar-sm {
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row">
@@ -63,6 +141,31 @@
                                              class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
                                     </div>
                                 {% endif %}
+                                <div class="form-text">Upload a custom profile photo (optional)</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.avatar_choice.id_for_label }}" class="form-label">Or Choose Farmer Avatar</label>
+                                <div class="avatar-selection">
+                                    {% for value, label in profile_form.avatar_choice.field.choices %}
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="avatar_choice" 
+                                                   id="avatar_{{ value }}" value="{{ value }}"
+                                                   {% if profile_form.avatar_choice.value == value %}checked{% endif %}>
+                                            <label class="form-check-label avatar-option" for="avatar_{{ value }}">
+                                                <div class="avatar-preview avatar-{{ value }}">
+                                                    {% if value == 'farmer_man_1' %}👨‍🌾
+                                                    {% elif value == 'farmer_man_2' %}🧑‍🌾
+                                                    {% elif value == 'farmer_woman_1' %}👩‍🌾
+                                                    {% elif value == 'farmer_woman_2' %}🧕
+                                                    {% else %}�
+                                                    {% endif %}
+                                                </div>
+                                                <small class="d-block text-center mt-1">{{ label|slice:"2:" }}</small>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-text">Choose from pre-made farmer avatars</div>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="{{ profile_form.bio.id_for_label }}" class="form-label">Bio</label>
@@ -79,13 +182,52 @@
                                     Location
                                 </h5>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.region.id_for_label }}" class="form-label">Region</label>
-                                {{ profile_form.region }}
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ profile_form.country.id_for_label }}" class="form-label">Country</label>
+                                {{ profile_form.country }}
+                                {% if profile_form.country.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in profile_form.country.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.village_or_address.id_for_label }}" class="form-label">Village/Address</label>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ profile_form.region_new.id_for_label }}" class="form-label">Region/State</label>
+                                {{ profile_form.region_new }}
+                                {% if profile_form.region_new.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in profile_form.region_new.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ profile_form.village_or_address.id_for_label }}" class="form-label">City/Village</label>
                                 {{ profile_form.village_or_address }}
+                                {% if profile_form.village_or_address.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in profile_form.village_or_address.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Additional Details -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2">
+                                    <i class="bi bi-info-circle text-info"></i> 
+                                    Additional Details
+                                </h5>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ profile_form.bio.id_for_label }}" class="form-label">About You (Optional)</label>
+                                {{ profile_form.bio }}
                             </div>
                         </div>
 
@@ -102,21 +244,12 @@
                                 {{ profile_form.farmer_type }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.farm_size.id_for_label }}" class="form-label">Farm Size</label>
-                                {{ profile_form.farm_size }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.farming_experience.id_for_label }}" class="form-label">Years of Experience</label>
+                                <label for="{{ profile_form.farming_experience.id_for_label }}" class="form-label">Experience Level</label>
                                 {{ profile_form.farming_experience }}
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="{{ profile_form.preferred_language.id_for_label }}" class="form-label">Preferred Language</label>
                                 {{ profile_form.preferred_language }}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ profile_form.main_crops.id_for_label }}" class="form-label">Main Crops</label>
-                                {{ profile_form.main_crops }}
-                                <div class="form-text">List your main crops separated by commas (e.g., wheat, barley, potatoes)</div>
                             </div>
                         </div>
 
@@ -178,4 +311,71 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('{{ profile_form.country.id_for_label }}');
+    const regionSelect = document.getElementById('{{ profile_form.region_new.id_for_label }}');
+
+    // Get initial values (for editing existing profiles)
+    const initialCountry = countrySelect.value;
+    const initialRegion = regionSelect.value;
+
+    // Function to clear and disable select
+    function clearSelect(selectElement, placeholder = 'Select...') {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        selectElement.disabled = true;
+    }
+
+    // Function to populate select options
+    function populateSelect(selectElement, options, placeholder = 'Select...', selectedValue = '') {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.id;
+            optionElement.textContent = option.name;
+            if (option.id == selectedValue) {
+                optionElement.selected = true;
+            }
+            selectElement.appendChild(optionElement);
+        });
+        selectElement.disabled = false;
+    }
+
+    // Handle country selection
+    countrySelect.addEventListener('change', function() {
+        const countryId = this.value;
+        
+        // Clear region select
+        clearSelect(regionSelect, 'Select Region/State...');
+
+        if (countryId) {
+            fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    populateSelect(regionSelect, data.regions, 'Select Region/State...');
+                })
+                .catch(error => {
+                    console.error('Error fetching regions:', error);
+                });
+        }
+    });
+
+    // Initialize cascading dropdowns with existing values (for editing)
+    if (initialCountry) {
+        fetch(`{% url 'locations:get_regions' %}?country_id=${initialCountry}`)
+            .then(response => response.json())
+            .then(data => {
+                populateSelect(regionSelect, data.regions, 'Select Region/State...', initialRegion);
+            })
+            .catch(error => {
+                console.error('Error fetching regions:', error);
+            });
+    } else {
+        // Initialize: Clear region select on page load if no country selected
+        clearSelect(regionSelect, 'Select Region/State...');
+    }
+});
+</script>
+
 {% endblock %}
