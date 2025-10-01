@@ -39,6 +39,7 @@ urlpatterns = [
     path('soil/', include('soil.urls')),
     path('forum/', include('forum.urls')),
     path('weather/', include('weather.urls')),
+    path('agro-supplies/', include('agro_supplies.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 

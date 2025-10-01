@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Agro3{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'agro_supplies:product_list' %}">Chemical Products</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Product Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-flask"></i> {{ product.name }}</h3>
+                    <span class="badge bg-primary">{{ product.category.get_category_type_display }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Product Details</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Brand:</strong></td>
+                                    <td>{{ product.brand }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Active Ingredient:</strong></td>
+                                    <td>{{ product.active_ingredient }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Concentration:</strong></td>
+                                    <td>{{ product.concentration }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Package Size:</strong></td>
+                                    <td>{{ product.package_size }} {{ product.get_package_unit_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Application Method:</strong></td>
+                                    <td>{{ product.get_application_method_display }}</td>
+                                </tr>
+                                {% if product.registration_number %}
+                                <tr>
+                                    <td><strong>Registration No:</strong></td>
+                                    <td>{{ product.registration_number }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Usage Information</h5>
+                            <p><strong>Dosage:</strong> {{ product.dosage }}</p>
+                            <p><strong>Target Crops:</strong> {{ product.target_crops }}</p>
+                            {% if product.target_pests %}
+                            <p><strong>Target Pests:</strong> {{ product.target_pests }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Description</h5>
+                    <p>{{ product.description }}</p>
+                    
+                    {% if product.usage_instructions %}
+                    <h5>Usage Instructions</h5>
+                    <p>{{ product.usage_instructions }}</p>
+                    {% endif %}
+                    
+                    {% if product.safety_warnings %}
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Safety Warnings</h6>
+                        <p class="mb-0">{{ product.safety_warnings }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Price Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tags"></i> Price Information</h5>
+                </div>
+                <div class="card-body">
+                    {% if price_stats.min_price %}
+                    <div class="text-center mb-3">
+                        <div class="row">
+                            <div class="col-4">
+                                <small class="text-muted">Min Price</small>
+                                <div class="h6">{{ price_stats.min_price|floatformat:2 }} KGS</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Avg Price</small>
+                                <div class="h6">{{ price_stats.avg_price|floatformat:2 }} KGS</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Max Price</small>
+                                <div class="h6">{{ price_stats.max_price|floatformat:2 }} KGS</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> No price information available yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Location Filter -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6><i class="fas fa-map-marker-alt"></i> Filter by Location</h6>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="mb-2">
+                            <select class="form-select form-select-sm" name="country">
+                                <option value="">All Countries</option>
+                                {% for country in countries %}
+                                <option value="{{ country.id }}" {% if country.id|stringformat:"s" == selected_country %}selected{% endif %}>
+                                    {{ country.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <select class="form-select form-select-sm" name="region">
+                                <option value="">All Regions</option>
+                                {% for region in regions %}
+                                <option value="{{ region.id }}" {% if region.id|stringformat:"s" == selected_region %}selected{% endif %}>
+                                    {{ region.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <select class="form-select form-select-sm" name="city">
+                                <option value="">All Cities</option>
+                                {% for city in cities %}
+                                <option value="{{ city.id }}" {% if city.id|stringformat:"s" == selected_city %}selected{% endif %}>
+                                    {{ city.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Shops Selling This Product -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5><i class="fas fa-store"></i> Shops Selling This Product</h5>
+        </div>
+        <div class="card-body">
+            {% if prices %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Shop Name</th>
+                            <th>Location</th>
+                            <th>Price</th>
+                            <th>Stock Status</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for price in prices %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'agro_supplies:shop_detail' price.shop.pk %}">
+                                    {{ price.shop.name }}
+                                </a>
+                                <br>
+                                <small class="text-muted">{{ price.shop.get_shop_type_display }}</small>
+                            </td>
+                            <td>{{ price.shop.get_location_display }}</td>
+                            <td>
+                                <strong>{{ price.get_effective_price|floatformat:2 }} {{ price.currency }}</strong>
+                                {% if price.discount_percentage > 0 %}
+                                <br>
+                                <small class="text-success">
+                                    <s>{{ price.price|floatformat:2 }}</s> 
+                                    (-{{ price.discount_percentage }}%)
+                                </small>
+                                {% endif %}
+                                {% if price.bulk_price %}
+                                <br>
+                                <small class="text-info">
+                                    Bulk: {{ price.bulk_price|floatformat:2 }} {{ price.currency }}
+                                    ({{ price.bulk_price_threshold }}+ units)
+                                </small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if price.is_in_stock %}
+                                <span class="badge bg-success">In Stock</span>
+                                {% if price.stock_quantity %}
+                                <br><small>Qty: {{ price.stock_quantity }}</small>
+                                {% endif %}
+                                {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ price.last_updated|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'agro_supplies:shop_detail' price.shop.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-store"></i> Visit Shop
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No shops are currently selling this product in the selected location.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ shop.name }} - Shop Details - Agro3{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'agro_supplies:shop_list' %}">Shops</a></li>
+            <li class="breadcrumb-item active">{{ shop.name }}</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-store"></i> {{ shop.name }}</h3>
+                    <span class="badge bg-primary">{{ shop.get_shop_type_display }}</span>
+                    {% if shop.is_verified %}<span class="badge bg-success">Verified</span>{% endif %}
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>Owner:</strong></td>
+                            <td>{{ shop.owner_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone:</strong></td>
+                            <td>{{ shop.phone_number }}</td>
+                        </tr>
+                        {% if shop.email %}
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td>{{ shop.email }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if shop.website %}
+                        <tr>
+                            <td><strong>Website:</strong></td>
+                            <td><a href="{{ shop.website }}" target="_blank">{{ shop.website }}</a></td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td><strong>Location:</strong></td>
+                            <td>{{ shop.get_location_display }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address:</strong></td>
+                            <td>{{ shop.address }}</td>
+                        </tr>
+                        {% if shop.license_number %}
+                        <tr>
+                            <td><strong>License No:</strong></td>
+                            <td>{{ shop.license_number }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if shop.established_year %}
+                        <tr>
+                            <td><strong>Established:</strong></td>
+                            <td>{{ shop.established_year }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if shop.working_hours %}
+                        <tr>
+                            <td><strong>Working Hours:</strong></td>
+                            <td>{{ shop.working_hours }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td><strong>Delivery:</strong></td>
+                            <td>
+                                {% if shop.delivery_available %}
+                                <span class="badge bg-success">Available</span>
+                                {% if shop.delivery_radius_km %}<br>Radius: {{ shop.delivery_radius_km }} km{% endif %}
+                                {% else %}
+                                <span class="badge bg-secondary">Not Available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                    {% if shop.description %}
+                    <hr>
+                    <h6>Description</h6>
+                    <p>{{ shop.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-flask"></i> Products & Prices</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="mb-2">
+                            <select class="form-select form-select-sm" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>{{ category.get_category_type_display }} - {{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" class="form-control form-control-sm" name="search" placeholder="Search products..." value="{{ search_query }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-search"></i> Filter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fas fa-list"></i> Products Sold by This Shop</h5>
+        </div>
+        <div class="card-body">
+            {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for price in page_obj %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'agro_supplies:product_detail' price.product.pk %}">{{ price.product.name }}</a>
+                            </td>
+                            <td>{{ price.product.brand }}</td>
+                            <td>{{ price.product.category.get_category_type_display }}</td>
+                            <td>
+                                <strong>{{ price.get_effective_price|floatformat:2 }} {{ price.currency }}</strong>
+                                {% if price.discount_percentage > 0 %}
+                                <br><small class="text-success"><s>{{ price.price|floatformat:2 }}</s> (-{{ price.discount_percentage }}%)</small>
+                                {% endif %}
+                                {% if price.bulk_price %}
+                                <br><small class="text-info">Bulk: {{ price.bulk_price|floatformat:2 }} ({{ price.bulk_price_threshold }}+ units)</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if price.is_in_stock %}
+                                <span class="badge bg-success">In Stock</span>
+                                {% if price.stock_quantity %}<br>Qty: {{ price.stock_quantity }}{% endif %}
+                                {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ price.last_updated|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'agro_supplies:product_detail' price.product.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-flask"></i> View Product
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Products pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Previous</a>
+                    </li>
+                    {% endif %}
+                    {% for page in page_obj.paginator.page_range %}
+                    {% if page == page_obj.number %}
+                    <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ page }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No products found for this shop.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'soil',
     'forum',
     'weather',
+    'agro_supplies',
 ]
 
 MIDDLEWARE = [

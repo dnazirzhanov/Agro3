@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Price Comparison - Agro3{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Filters Sidebar -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-filter"></i> Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'agro_supplies:price_comparison' %}">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Search Products</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   value="{{ search_query }}" placeholder="Product name, brand, or ingredient...">
+                        </div>
+                        <!-- Category Filter -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>{{ category.get_category_type_display }} - {{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Location Filters -->
+                        <div class="mb-3">
+                            <label for="country" class="form-label">Country</label>
+                            <select class="form-select" id="country" name="country">
+                                <option value="">All Countries</option>
+                                {% for country in countries %}
+                                <option value="{{ country.id }}" {% if country.id|stringformat:"s" == selected_country %}selected{% endif %}>{{ country.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="region" class="form-label">Region</label>
+                            <select class="form-select" id="region" name="region">
+                                <option value="">All Regions</option>
+                                {% for region in regions %}
+                                <option value="{{ region.id }}" {% if region.id|stringformat:"s" == selected_region %}selected{% endif %}>{{ region.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <select class="form-select" id="city" name="city">
+                                <option value="">All Cities</option>
+                                {% for city in cities %}
+                                <option value="{{ city.id }}" {% if city.id|stringformat:"s" == selected_city %}selected{% endif %}>{{ city.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-search"></i> Apply Filters
+                        </button>
+                        <a href="{% url 'agro_supplies:price_comparison' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
+                    </form>
+                </div>
+            </div>
+            <!-- Quick Links -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-link"></i> Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'agro_supplies:product_list' %}" class="btn btn-outline-success btn-sm d-block mb-2">
+                        <i class="fas fa-flask"></i> Chemical Products
+                    </a>
+                    <a href="{% url 'agro_supplies:shop_list' %}" class="btn btn-outline-info btn-sm d-block">
+                        <i class="fas fa-store"></i> Find Shops
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-chart-line"></i> Price Comparison</h2>
+                    <p class="text-muted">Compare prices for chemical products across shops and locations.</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Min Price</th>
+                            <th>Avg Price</th>
+                            <th>Max Price</th>
+                            <th>Shops</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in product_prices %}
+                        <tr>
+                            <td><a href="{% url 'agro_supplies:product_detail' item.product.pk %}">{{ item.product.name }}</a></td>
+                            <td>{{ item.product.brand }}</td>
+                            <td>{{ item.product.category.get_category_type_display }}</td>
+                            <td>{{ item.stats.min_price|floatformat:2 }} KGS</td>
+                            <td>{{ item.stats.avg_price|floatformat:2 }} KGS</td>
+                            <td>{{ item.stats.max_price|floatformat:2 }} KGS</td>
+                            <td>{{ item.stats.shop_count }}</td>
+                            <td>
+                                <a href="{% url 'agro_supplies:product_detail' item.product.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle"></i> No products found for the selected criteria.
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

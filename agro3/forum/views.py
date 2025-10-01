@@ -11,8 +11,6 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
-from django import forms
-from ckeditor.widgets import CKEditorWidget
 from .models import BlogPost, Category, Tag, Comment, Like
 
 
@@ -71,23 +69,7 @@ def blog_index_view(request):
 
 
 def blog_post_detail_view(request, slug):
-    """
-    Display a single blog post with comments and replies.
-    
-    Handles GET requests to display post details and POST requests to submit
-    comments or replies. Automatically increments view count when accessed.
-    
-    Args:
-        slug: Unique slug identifier for the blog post
-    
-    POST parameters:
-        content: Comment/reply text content
-        parent_id: Optional parent comment ID for nested replies
-    
-    Returns:
-        Blog post detail page with hierarchical comment structure
-        and related posts from the same category
-    """
+    """Display a single blog post with comments and replies."""
     post = get_object_or_404(BlogPost, slug=slug, is_published=True)
     
     # Increment view count
