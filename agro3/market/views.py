@@ -1,3 +1,10 @@
+"""
+Views for market price tracking and comparison.
+
+This module handles HTTP requests for displaying market prices, filtering prices
+by product and market, comparing prices across markets, and providing price
+statistics to help farmers make informed selling decisions.
+"""
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Avg, Max, Min
@@ -7,7 +14,20 @@ from django.utils import timezone
 
 
 def market_price_list_view(request):
-    """Display market prices with filtering and search."""
+    """
+    Display market prices with filtering and search.
+    
+    Handles GET requests with optional filters:
+    - product: Filter by product ID
+    - market: Filter by market ID
+    - date_range: Filter by days (1, 7, 30, 90)
+    - search: Search products by name
+    - page: Pagination (20 prices per page)
+    
+    Returns:
+        Paginated list of market prices with optional price statistics
+        for the selected product including average, minimum, and maximum prices
+    """
     prices = MarketPrice.objects.select_related('product', 'market')
     
     # Filter by product
@@ -82,7 +102,17 @@ def market_price_list_view(request):
 
 
 def price_comparison_view(request):
-    """Compare prices across different markets for the same product."""
+    """
+    Compare prices across different markets for the same product.
+    
+    Handles GET requests to display price comparisons:
+    - product: Product ID to compare prices for
+    
+    Returns:
+        Price comparison page showing the latest prices (within last 7 days)
+        for the selected product across all markets, enabling farmers to
+        identify the best market for selling their produce
+    """
     products = Product.objects.all()
     selected_product = None
     price_data = []
@@ -112,3 +142,31 @@ def price_comparison_view(request):
     }
     
     return render(request, 'market/price_comparison.html', context)
+
+
+def market_detail_view(request, pk):
+    """Display all products and prices from a specific market/shop."""
+    market = get_object_or_404(Market, pk=pk)
+    
+    # Get all prices for this market, grouped by product with latest price first
+    prices = MarketPrice.objects.filter(market=market).select_related('product').order_by('product__name', '-date_recorded')
+    
+    # Group by product to get latest price for each product
+    product_prices = {}
+    for price in prices:
+        if price.product.id not in product_prices:
+            product_prices[price.product.id] = price
+    
+    latest_prices = list(product_prices.values())
+    
+    # Pagination
+    paginator = Paginator(latest_prices, 20)
+    page_number = request.GET.get('page')
+    paginated_prices = paginator.get_page(page_number)
+    
+    context = {
+        'market': market,
+        'prices': paginated_prices,
+    }
+    
+    return render(request, 'market/market_detail.html', context)

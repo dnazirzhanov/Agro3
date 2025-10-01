@@ -1,3 +1,10 @@
+"""
+Models for the agricultural forum/blog system.
+
+This module provides models for managing blog posts, categories, tags, and comments,
+enabling farmers and agricultural experts to share knowledge, ask questions, and
+discuss farming topics.
+"""
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
@@ -9,6 +16,12 @@ import os
 
 
 class Category(models.Model):
+    """
+    Represents blog post categories for organizing agricultural content.
+    
+    Categories help organize posts by topics such as crop management, market prices,
+    pest control, etc. Each category has a unique color for visual identification.
+    """
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True, null=True)
@@ -34,6 +47,12 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
+    """
+    Represents tags for blog posts, enabling detailed content classification.
+    
+    Tags provide additional categorization beyond categories, allowing posts to be
+    tagged with multiple relevant keywords for better searchability.
+    """
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
     
@@ -65,6 +84,13 @@ def get_post_video_path(instance, filename):
 
 
 class BlogPost(models.Model):
+    """
+    Represents a blog post in the agricultural knowledge-sharing forum.
+    
+    Blog posts allow users to share farming knowledge, experiences, and advice.
+    Supports rich text content, images, categorization, tagging, and features
+    like view counts and publication control.
+    """
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     author = models.ForeignKey(
@@ -174,6 +200,13 @@ class BlogPost(models.Model):
 
 
 class Comment(models.Model):
+    """
+    Represents comments and replies on blog posts.
+    
+    Enables discussion on blog posts through a hierarchical comment system.
+    Supports nested replies, approval moderation, and special marking for
+    agricultural expert responses.
+    """
     blog_post = models.ForeignKey(
         BlogPost,
         on_delete=models.CASCADE,

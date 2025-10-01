@@ -1,3 +1,10 @@
+"""
+Models for user profiles and social features.
+
+This module provides models for extended user profiles, farmer connections
+(follow/follower system), and user activity tracking for the agricultural
+community platform.
+"""
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -5,6 +12,14 @@ from django.utils import timezone
 
 
 class UserProfile(models.Model):
+    """
+    Extended user profile with agricultural and social features.
+    
+    Stores additional user information beyond Django's default User model,
+    including farming details, location, experience level, and social features
+    like verification status and reputation score. Used for personalization
+    and community networking.
+    """
     FARMER_TYPE_CHOICES = [
         ('individual', 'Individual Farmer'),
         ('cooperative', 'Agricultural Cooperative'),
@@ -252,7 +267,13 @@ class UserProfile(models.Model):
 
 
 class FarmerConnection(models.Model):
-    """Model for farmers to connect and follow each other"""
+    """
+    Model for farmers to connect and follow each other.
+    
+    Implements a social networking feature allowing users to follow other farmers
+    to receive updates about their activities and blog posts. Used for building
+    community connections and knowledge sharing networks.
+    """
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -266,7 +287,13 @@ class FarmerConnection(models.Model):
 
 
 class UserActivity(models.Model):
-    """Track user activities for analytics and dashboard"""
+    """
+    Track user activities for analytics and dashboard.
+    
+    Records various user actions in the system for analytics, personalization,
+    and displaying recent activity on user dashboards. Helps understand user
+    engagement and platform usage patterns.
+    """
     ACTIVITY_CHOICES = [
         ('login', 'Login'),
         ('post_created', 'Blog Post Created'),

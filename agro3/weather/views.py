@@ -1,3 +1,10 @@
+"""
+Views for weather information and forecasting.
+
+This module handles HTTP requests for weather data retrieval, location search,
+and weather dashboard display. Integrates with OpenWeatherMap API to provide
+current weather and forecasts for agricultural planning.
+"""
 import requests
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -11,12 +18,32 @@ import os
 
 
 def get_openweather_api_key():
-    """Get OpenWeatherMap API key from environment or settings."""
+    """
+    Get OpenWeatherMap API key from environment or settings.
+    
+    Returns:
+        API key string or None if not configured
+    """
     return os.getenv('OPENWEATHER_API_KEY') or getattr(settings, 'OPENWEATHER_API_KEY', None)
 
 
 def fetch_weather_data(lat, lon, location_name=None):
-    """Fetch weather data from OpenWeatherMap API."""
+    """
+    Fetch weather data from OpenWeatherMap API.
+    
+    Retrieves current weather and 24-hour forecast data for specified coordinates.
+    Caches the data in the database to reduce API calls and improve performance.
+    
+    Args:
+        lat: Latitude coordinate
+        lon: Longitude coordinate
+        location_name: Optional location name for display
+    
+    Returns:
+        Tuple of (weather_data_dict, error_message) where:
+        - weather_data_dict contains 'current', 'forecast', and 'location' keys
+        - error_message is None on success or contains error description on failure
+    """
     api_key = get_openweather_api_key()
     if not api_key:
         return None, "Weather API key not configured. Please set OPENWEATHER_API_KEY environment variable."
@@ -116,7 +143,22 @@ def fetch_weather_data(lat, lon, location_name=None):
 
 
 def weather_dashboard_view(request):
-    """Main weather dashboard with location search."""
+    """
+    Main weather dashboard with location search.
+    
+    Handles GET requests to display weather information for a location.
+    Uses cached data when available (less than 30 minutes old) to reduce API calls.
+    Defaults to Batken, Kyrgyzstan if no location specified.
+    
+    GET parameters:
+        lat: Latitude coordinate
+        lon: Longitude coordinate
+        location: Location name for display
+    
+    Returns:
+        Weather dashboard page with current weather, forecast, and
+        agricultural recommendations based on weather conditions
+    """
     # Default location (Batken, Kyrgyzstan)
     default_lat, default_lon = 40.0628, 70.8175
     default_name = "Batken"
@@ -180,7 +222,24 @@ def weather_dashboard_view(request):
 
 
 def weather_search_view(request):
-    """Search for weather by hierarchical location and city name."""
+    """
+    Search for weather by hierarchical location and city name.
+    
+    Handles POST requests to search for locations using OpenWeatherMap geocoding API.
+    Supports hierarchical location selection (country + region + city) for better accuracy.
+    Prioritizes results from Kyrgyzstan and Central Asian countries.
+    
+    POST parameters:
+        country: Country ID for hierarchical search
+        region: Region ID for hierarchical search (optional)
+        city_name: City name to search for
+        city_text: Alternative text-based city search (fallback)
+    
+    Returns:
+        If single result: Redirects to weather dashboard with coordinates
+        If multiple results: Shows location selection page for disambiguation
+        If no results: Redirects to dashboard with error message
+    """
     if request.method == 'POST':
         # Get form data
         country_id = request.POST.get('country')

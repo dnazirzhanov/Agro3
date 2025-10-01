@@ -1,4 +1,24 @@
 #!/usr/bin/env python
+"""
+Sample data population script for the Agro3 agricultural application.
+
+This script creates sample data for development and demonstration purposes,
+including:
+- Admin user account
+- Blog categories and tags
+- Sample blog posts
+- Soil types
+- Crop information
+- Market and product data
+- Sample market prices
+- Pest and disease information
+
+Usage:
+    python populate_sample_data.py
+
+Note: This script is designed for development/testing environments.
+For production, use proper data migration scripts and fixtures.
+"""
 import os
 import sys
 import django
@@ -21,6 +41,13 @@ from pests_diseases.models import PestOrDisease
 User = get_user_model()
 
 def populate_sample_data():
+    """
+    Populate the database with sample data for development and testing.
+    
+    Creates a comprehensive set of sample data including users, blog content,
+    agricultural information, market data, and pest/disease information.
+    Uses get_or_create to avoid duplicate entries on multiple runs.
+    """
     print("Creating sample data...")
     
     # Get admin user

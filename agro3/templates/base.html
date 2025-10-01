@@ -71,10 +71,14 @@
                             <li><a class="dropdown-item" href="{% url 'soil:questionnaire' %}">Soil Types</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pests_diseases:list' %}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-bug me-1"></i>Pests & Diseases
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'pests_diseases:list' %}">All Pests & Diseases</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pests_diseases:dose_calculator' %}">Dose Calculator</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'market:price_list' %}">

@@ -1,3 +1,10 @@
+"""
+Views for the agricultural forum/blog system.
+
+This module handles HTTP requests for the forum including displaying blog posts,
+managing comments, filtering by categories and tags, and creating new posts.
+Enables knowledge sharing and community discussion among farmers.
+"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,7 +16,7 @@ from .models import BlogPost, Category, Tag, Comment, Like
 
 def blog_index_view(request):
     """Display all published blog posts with search and filtering."""
-    posts = BlogPost.objects.filter(is_published=True).select_related('author', 'category').prefetch_related('tags', 'images')
+    posts = BlogPost.objects.filter(is_published=True).select_related('author', 'category').prefetch_related('tags')
     
     # Search functionality
     search = request.GET.get('search')
@@ -62,11 +69,24 @@ def blog_index_view(request):
 
 
 def blog_post_detail_view(request, slug):
-    """Display a single blog post with comments and replies."""
-    post = get_object_or_404(
-        BlogPost.objects.select_related('author', 'category').prefetch_related('tags', 'images'),
-        slug=slug, is_published=True
-    )
+    """
+    Display a single blog post with comments and replies.
+    
+    Handles GET requests to display post details and POST requests to submit
+    comments or replies. Automatically increments view count when accessed.
+    
+    Args:
+        slug: Unique slug identifier for the blog post
+    
+    POST parameters:
+        content: Comment/reply text content
+        parent_id: Optional parent comment ID for nested replies
+    
+    Returns:
+        Blog post detail page with hierarchical comment structure
+        and related posts from the same category
+    """
+    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
     
     # Increment view count
     post.views_count += 1
@@ -147,7 +167,18 @@ def blog_post_detail_view(request, slug):
 
 
 def blog_category_list_view(request, slug):
-    """Display posts filtered by category."""
+    """
+    Display posts filtered by category.
+    
+    Handles GET requests to show all published posts within a specific category
+    with pagination (10 posts per page).
+    
+    Args:
+        slug: Category slug identifier
+    
+    Returns:
+        Paginated list of posts in the specified category
+    """
     category = get_object_or_404(Category, slug=slug)
     posts = BlogPost.objects.filter(
         is_published=True,
@@ -169,7 +200,18 @@ def blog_category_list_view(request, slug):
 
 
 def blog_tag_list_view(request, slug):
-    """Display posts filtered by tag."""
+    """
+    Display posts filtered by tag.
+    
+    Handles GET requests to show all published posts tagged with a specific tag
+    with pagination (10 posts per page).
+    
+    Args:
+        slug: Tag slug identifier
+    
+    Returns:
+        Paginated list of posts with the specified tag
+    """
     tag = get_object_or_404(Tag, slug=slug)
     posts = BlogPost.objects.filter(
         is_published=True,
@@ -190,9 +232,51 @@ def blog_tag_list_view(request, slug):
     return render(request, 'forum/post_list_by_tag.html', context)
 
 
+class BlogPostForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorWidget())
+
+    class Meta:
+        model = BlogPost
+        fields = ['title', 'short_description', 'content', 'featured_image', 'category', 'tags', 'is_published']
+
+
+@login_required
+def blog_post_create_view(request):
+    """Create a new blog post (author is current user)."""
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post: BlogPost = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            form.save_m2m()
+            messages.success(request, 'Your post has been created!')
+            return redirect(post.get_absolute_url())
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = BlogPostForm()
+
+    return render(request, 'forum/post_form.html', {'form': form})
+
+
 @login_required
 def comment_edit_view(request, comment_id):
-    """Edit a comment (only by the author)."""
+    """
+    Edit a comment (only by the author).
+    
+    Handles POST requests to update comment content. Only the comment author
+    can edit their own comments. Requires user authentication.
+    
+    Args:
+        comment_id: ID of the comment to edit
+    
+    POST parameters:
+        content: Updated comment text
+    
+    Returns:
+        Redirects to the blog post detail page after editing
+    """
     comment = get_object_or_404(Comment, id=comment_id, author=request.user)
     
     if request.method == 'POST':
@@ -209,7 +293,18 @@ def comment_edit_view(request, comment_id):
 
 @login_required
 def comment_delete_view(request, comment_id):
-    """Delete a comment (only by the author or admin)."""
+    """
+    Delete a comment (only by the author or admin).
+    
+    Handles POST requests to delete comments. Users can delete their own comments,
+    and staff members can delete any comment. Requires user authentication.
+    
+    Args:
+        comment_id: ID of the comment to delete
+    
+    Returns:
+        Redirects to the blog post detail page after deletion
+    """
     comment = get_object_or_404(Comment, id=comment_id)
     
     # Check permissions

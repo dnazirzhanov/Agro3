@@ -133,7 +133,11 @@
                                         <small class="text-muted">{{ price.product.category }}</small>
                                     {% endif %}
                                 </td>
-                                <td>{{ price.market.name }}</td>
+                                <td>
+                                    <a href="{% url 'market:market_detail' price.market.pk %}" class="text-decoration-none">
+                                        {{ price.market.name }}
+                                    </a>
+                                </td>
                                 <td>
                                     <small class="text-muted">
                                         <i class="bi bi-geo-alt-fill"></i> {{ price.market.location }}
