@@ -1,10 +1,27 @@
+"""
+Views for crop and soil type information display and filtering.
+
+This module handles HTTP requests for viewing crop information, filtering crops
+by various criteria, and displaying detailed crop characteristics to help farmers
+make informed planting decisions.
+"""
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from .models import Crop, SoilType
 
 
 def crop_list_view(request):
-    """Display a list of all crops with pagination and filtering."""
+    """
+    Display a list of all crops with pagination and filtering.
+    
+    Handles GET requests to display crops with optional filters:
+    - sunlight: Filter by sunlight requirements (Full Sun, Partial Shade, Full Shade)
+    - water: Filter by water requirements (Low, Medium, High)
+    - search: Search crops by name
+    
+    Returns:
+        Paginated list of crops (12 per page) with applied filters
+    """
     crops = Crop.objects.all()
     
     # Filter by sunlight needs if provided
@@ -44,7 +61,19 @@ def crop_list_view(request):
 
 
 def crop_detail_view(request, pk):
-    """Display detailed information about a specific crop."""
+    """
+    Display detailed information about a specific crop.
+    
+    Handles GET requests to show comprehensive crop information including
+    growing requirements, planting seasons, harvest times, and nutrient needs.
+    Also displays related crops with similar characteristics.
+    
+    Args:
+        pk: Primary key of the crop to display
+    
+    Returns:
+        Detailed crop information page with related crop recommendations
+    """
     crop = get_object_or_404(Crop, pk=pk)
     
     # Get related crops with similar characteristics

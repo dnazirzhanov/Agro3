@@ -1,3 +1,10 @@
+"""
+Views for user management, profiles, and social features.
+
+This module handles HTTP requests for user registration, authentication,
+profile management, and social networking features like following other farmers
+and viewing community members.
+"""
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
@@ -14,7 +21,12 @@ from forum.models import BlogPost
 
 
 class CustomLoginView(LoginView):
-    """Custom login view with activity tracking"""
+    """
+    Custom login view with activity tracking.
+    
+    Extends Django's LoginView to track user login activity and update
+    user profile last activity timestamp. Shows welcome message on successful login.
+    """
     template_name = 'users/login.html'
     redirect_authenticated_user = True
     
@@ -34,7 +46,17 @@ class CustomLoginView(LoginView):
 
 
 def register_view(request):
-    """User registration view"""
+    """
+    User registration view.
+    
+    Handles GET requests to display registration form and POST requests
+    to create new user accounts. Creates associated UserProfile automatically
+    via Django signals.
+    
+    Returns:
+        GET: Registration form
+        POST: Redirects to login page on success with confirmation message
+    """
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -52,7 +74,20 @@ def register_view(request):
 
 @login_required
 def dashboard_view(request):
-    """User dashboard with personalized content"""
+    """
+    User dashboard with personalized content.
+    
+    Handles GET requests to display user dashboard with:
+    - Recent user activities
+    - User's blog posts
+    - Follower/following statistics
+    - Featured posts from followed users
+    
+    Requires user authentication. Creates UserProfile if not exists.
+    
+    Returns:
+        Personalized dashboard page with user content and statistics
+    """
     user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
     
     # Get recent activities
@@ -89,7 +124,19 @@ def dashboard_view(request):
 
 @login_required
 def profile_edit_view(request):
-    """Edit user profile view"""
+    """
+    Edit user profile view.
+    
+    Handles GET requests to display profile edit form and POST requests
+    to update user information and profile details including bio, location,
+    farming experience, and profile picture.
+    
+    Requires user authentication.
+    
+    Returns:
+        GET: Profile edit form with current user data
+        POST: Redirects to dashboard on success with confirmation message
+    """
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     
     if request.method == 'POST':
@@ -116,7 +163,13 @@ def profile_edit_view(request):
 
 
 class ProfileDetailView(DetailView):
-    """Public profile view"""
+    """
+    Public profile view for viewing other users' profiles.
+    
+    Displays user profile information including bio, location, farming details,
+    blog posts, and follower/following statistics. Shows follow button if
+    viewing another user's profile while authenticated.
+    """
     model = User
     template_name = 'users/profile_detail.html'
     context_object_name = 'profile_user'
@@ -148,7 +201,21 @@ class ProfileDetailView(DetailView):
 
 @login_required
 def follow_user_view(request, user_id):
-    """Follow/unfollow a user"""
+    """
+    Follow or unfollow a user.
+    
+    Handles POST requests to toggle follow/unfollow status for a user.
+    Users cannot follow themselves. If already following, unfollows the user.
+    If not following, creates a new connection.
+    
+    Args:
+        user_id: ID of the user to follow/unfollow
+    
+    Requires user authentication.
+    
+    Returns:
+        Redirects to the user's profile page with status message
+    """
     user_to_follow = get_object_or_404(User, pk=user_id)
     
     if user_to_follow == request.user:
@@ -171,7 +238,20 @@ def follow_user_view(request, user_id):
 
 @login_required
 def farmers_list_view(request):
-    """List of all farmers with filtering options"""
+    """
+    List of all farmers with filtering options.
+    
+    Handles GET requests to display a searchable and filterable list of farmers:
+    - region: Filter by geographical region
+    - farmer_type: Filter by farmer type (small, medium, large, etc.)
+    - experience: Filter by farming experience level (beginner, intermediate, experienced, expert)
+    - search: Search by name or crops grown
+    
+    Requires user authentication.
+    
+    Returns:
+        Filtered list of farmer profiles with search and filter options
+    """
     farmers = UserProfile.objects.select_related('user').all()
     
     # Filter by region

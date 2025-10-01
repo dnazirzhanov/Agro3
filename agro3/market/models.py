@@ -1,9 +1,23 @@
+"""
+Models for market price tracking and agricultural product management.
+
+This module provides models for tracking agricultural product prices across
+different markets, enabling farmers to make informed decisions about where
+and when to sell their produce.
+"""
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
 
 class Product(models.Model):
+    """
+    Represents an agricultural product available in markets.
+    
+    Stores information about agricultural products such as crops, livestock,
+    or farm supplies that are traded in various markets. Used for price tracking
+    and market comparison.
+    """
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -19,6 +33,13 @@ class Product(models.Model):
 
 
 class Market(models.Model):
+    """
+    Represents a physical marketplace where agricultural products are sold.
+    
+    Contains information about markets in the Batken region including location,
+    contact details, and operating hours. Used for organizing price data by
+    geographical location.
+    """
     name = models.CharField(max_length=150)
     location = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
@@ -38,6 +59,13 @@ class Market(models.Model):
 
 
 class MarketPrice(models.Model):
+    """
+    Represents the price of a product at a specific market on a specific date.
+    
+    Tracks historical and current prices of agricultural products across different
+    markets. Enables price comparison, trend analysis, and helps farmers find the
+    best prices for their products.
+    """
     UNIT_CHOICES = [
         ('kg', 'Kilogram'),
         ('piece', 'Piece'),

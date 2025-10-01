@@ -1,8 +1,20 @@
+"""
+Models for crop and soil type management in the agricultural application.
+
+This module contains models representing different types of soil and crops,
+including their characteristics, growing requirements, and relationships.
+"""
 from django.db import models
 from django.urls import reverse
 
 
 class SoilType(models.Model):
+    """
+    Represents different soil types with their characteristics and properties.
+    
+    Used for soil identification and to provide recommendations for suitable crops
+    based on soil texture, drainage, and nutrient retention capabilities.
+    """
     TEXTURE_CHOICES = [
         ('Sandy', 'Sandy'),
         ('Loamy', 'Loamy'),
@@ -31,6 +43,13 @@ class SoilType(models.Model):
 
 
 class Crop(models.Model):
+    """
+    Represents agricultural crops with detailed growing requirements and characteristics.
+    
+    Stores information about various crops including their sunlight needs, water requirements,
+    preferred soil type, planting seasons, and harvest times. Used for crop recommendation
+    and agricultural planning.
+    """
     SUNLIGHT_CHOICES = [
         ('Full Sun', 'Full Sun'),
         ('Partial Shade', 'Partial Shade'),

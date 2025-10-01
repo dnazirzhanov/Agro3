@@ -1,10 +1,23 @@
+"""
+Models for weather data tracking and location management.
+
+This module provides models for storing weather information and location data,
+supporting weather forecasts and agricultural planning based on meteorological
+conditions.
+"""
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 
 
 class WeatherLocation(models.Model):
-    """Store weather locations for caching and user preferences."""
+    """
+    Represents a geographic location for weather tracking.
+    
+    Stores location information including coordinates and place names.
+    Used for caching weather data and managing user location preferences
+    for weather forecasts.
+    """
     name = models.CharField(max_length=100)
     latitude = models.FloatField()
     longitude = models.FloatField()
@@ -21,7 +34,14 @@ class WeatherLocation(models.Model):
 
 
 class WeatherData(models.Model):
-    """Cache weather data to reduce API calls."""
+    """
+    Represents weather data for a specific location and time.
+    
+    Caches weather information from external APIs to reduce API calls and
+    improve performance. Stores comprehensive weather metrics including
+    temperature, humidity, wind conditions, and weather descriptions.
+    Used for current weather display and forecast generation.
+    """
     location = models.ForeignKey(WeatherLocation, on_delete=models.CASCADE, related_name='weather_data')
     timestamp = models.DateTimeField()
     temperature = models.FloatField(help_text='Temperature in Celsius')
