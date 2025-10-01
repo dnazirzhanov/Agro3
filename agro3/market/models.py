@@ -32,6 +32,9 @@ class Market(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.location}"
+    
+    def get_absolute_url(self):
+        return reverse('market:market_detail', kwargs={'pk': self.pk})
 
 
 class MarketPrice(models.Model):

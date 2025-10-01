@@ -77,7 +77,11 @@
                 </div>
             {% endif %}
             <div class="card-body">
-                <h5 class="card-title">{{ price.market.name }}</h5>
+                <h5 class="card-title">
+                    <a href="{% url 'market:market_detail' price.market.pk %}" class="text-decoration-none">
+                        {{ price.market.name }}
+                    </a>
+                </h5>
                 <h6 class="card-subtitle mb-2 text-muted">
                     <i class="bi bi-geo-alt me-1"></i>{{ price.market.location }}
                 </h6>
@@ -137,7 +141,9 @@
                             {% for price in price_data %}
                             <tr {% if forloop.first %}class="table-success"{% endif %}>
                                 <td class="fw-bold">
-                                    {{ price.market.name }}
+                                    <a href="{% url 'market:market_detail' price.market.pk %}" class="text-decoration-none">
+                                        {{ price.market.name }}
+                                    </a>
                                     {% if forloop.first %}
                                         <span class="badge bg-success ms-2">Best Price</span>
                                     {% endif %}
