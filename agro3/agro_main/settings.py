@@ -34,14 +34,16 @@ except ImportError:
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-p^+zq2855yb-st(4=ul52n9x0@1bl3i31_#)&cq2@v9%%mq0cr"
+# In production, set this via environment variable
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-p^+zq2855yb-st(4=ul52n9x0@1bl3i31_#)&cq2@v9%%mq0cr")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() in ['true', '1', 'yes']
 
-ALLOWED_HOSTS = [
-    'localhost', '127.0.0.1', '[::1]', '0.0.0.0', 'testserver'
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1],0.0.0.0,testserver").split(",")
+
+# CSRF trusted origins for production deployments
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
 
 # Application definition
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # Added for i18n
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -88,6 +91,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",  # Added for i18n
             ],
         },
     },
@@ -133,7 +137,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
+
+# Supported languages for the platform
+LANGUAGES = [
+    ('en', 'English'),
+    ('ru', 'Русский'),  # Russian
+    ('ky', 'Кыргызча'),  # Kyrgyz
+]
+
+# Path where translation files will be stored
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 TIME_ZONE = "UTC"
 
@@ -234,6 +250,28 @@ OPENWEATHER_API_KEY = '4f767064463296c602c6ddd6903a7db6'
 # Session Settings
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 1 week
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Security Settings for Production
+if not DEBUG:
+    # HTTPS/SSL settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # HSTS (HTTP Strict Transport Security)
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Additional security headers
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+else:
+    # Development settings
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
