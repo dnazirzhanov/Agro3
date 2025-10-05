@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'modeltranslation',  # Must come before apps with translations
     'ckeditor',
     'ckeditor_uploader',
     'locations.apps.LocationsConfig',

@@ -6,9 +6,28 @@ from django.utils.html import format_html
 
 
 class BlogPostAdminForm(forms.ModelForm):
-    content = forms.CharField(
+    """
+    Custom form for BlogPost admin with CKEditor for rich text content.
+    
+    Uses the 'agricultural' CKEditor configuration for specialized farming content
+    with support for multiple languages.
+    """
+    content_en = forms.CharField(
         widget=CKEditorWidget(config_name='agricultural'),
+        label='Content (English)',
         help_text="Use the image styles: Disease/Symptom Photo (red border), Pest/Insect Photo (orange border), Crop/Plant Photo (green border)"
+    )
+    content_ru = forms.CharField(
+        widget=CKEditorWidget(config_name='agricultural'),
+        label='Content (Russian - Русский)',
+        required=False,
+        help_text="Optional: Provide Russian translation for wider accessibility"
+    )
+    content_ky = forms.CharField(
+        widget=CKEditorWidget(config_name='agricultural'),
+        label='Content (Kyrgyz - Кыргызча)',
+        required=False,
+        help_text="Optional: Provide Kyrgyz translation for local farmers"
     )
     
     class Meta:
@@ -34,36 +53,93 @@ class PostImageInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    """
+    Admin interface for Category model with multi-language support.
+    
+    Enables creation and management of blog categories with translations in
+    English, Russian, and Kyrgyz for better content organization across languages.
+    """
     list_display = ['name', 'slug', 'color', 'created_at']
-    search_fields = ['name', 'description']
-    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ['name', 'name_en', 'name_ru', 'name_ky', 'description']
+    prepopulated_fields = {'slug': ('name_en',)}
     ordering = ['name']
+    
+    fieldsets = (
+        ('English', {
+            'fields': ('name_en', 'slug', 'description_en', 'color'),
+        }),
+        ('Russian (Русский)', {
+            'fields': ('name_ru', 'description_ru'),
+            'classes': ('collapse',),
+        }),
+        ('Kyrgyz (Кыргызча)', {
+            'fields': ('name_ky', 'description_ky'),
+            'classes': ('collapse',),
+        }),
+    )
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    """
+    Admin interface for Tag model with multi-language support.
+    
+    Allows creation and management of tags with translations for improved
+    content discoverability across different language preferences.
+    """
     list_display = ['name', 'slug', 'created_at']
-    search_fields = ['name']
-    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ['name', 'name_en', 'name_ru', 'name_ky']
+    prepopulated_fields = {'slug': ('name_en',)}
     ordering = ['name']
+    
+    fieldsets = (
+        ('English', {
+            'fields': ('name_en', 'slug'),
+        }),
+        ('Russian (Русский)', {
+            'fields': ('name_ru',),
+            'classes': ('collapse',),
+        }),
+        ('Kyrgyz (Кыргызча)', {
+            'fields': ('name_ky',),
+            'classes': ('collapse',),
+        }),
+    )
 
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
+    """
+    Admin interface for BlogPost model with comprehensive multi-language support.
+    
+    Provides a rich editing experience with separate fields for English, Russian,
+    and Kyrgyz content, enabling agricultural knowledge sharing across language barriers.
+    Features organized fieldsets for content, media, categorization, and publishing controls.
+    """
     form = BlogPostAdminForm
     inlines = [PostImageInline]
     list_display = ['title', 'author', 'category', 'publication_date', 'is_published', 'is_featured', 'views_count', 'has_media']
     list_filter = ['category', 'tags', 'is_published', 'is_featured', 'publication_date', 'created_at']
-    search_fields = ['title', 'content', 'short_description']
-    prepopulated_fields = {'slug': ('title',)}
+    search_fields = ['title', 'title_en', 'title_ru', 'title_ky', 'content', 'short_description']
+    prepopulated_fields = {'slug': ('title_en',)}
     filter_horizontal = ['tags']
     readonly_fields = ['views_count', 'created_at', 'updated_at', 'featured_image_preview']
     date_hierarchy = 'publication_date'
     
     fieldsets = (
-        ('Content', {
-            'fields': ('title', 'slug', 'short_description', 'content'),
-            'description': 'For agricultural content: Use image styles to categorize photos - Disease/Symptom (red), Pest/Insect (orange), Crop/Plant (green). Images will be automatically sized and formatted consistently.'
+        ('Content - English', {
+            'fields': ('title_en', 'slug', 'short_description_en', 'content_en'),
+            'description': 'Primary content in English (required). Use image styles to categorize photos - Disease/Symptom (red), Pest/Insect (orange), Crop/Plant (green).'
+        }),
+        ('Content - Russian (Русский)', {
+            'fields': ('title_ru', 'short_description_ru', 'content_ru'),
+            'description': 'Optional: Russian translation for wider reach in Central Asia',
+            'classes': ('collapse',)
+        }),
+        ('Content - Kyrgyz (Кыргызча)', {
+            'fields': ('title_ky', 'short_description_ky', 'content_ky'),
+            'description': 'Optional: Kyrgyz translation for local farmers',
+            'classes': ('collapse',)
         }),
         ('Media', {
             'fields': ('featured_image', 'featured_image_preview', 'featured_video', 'youtube_url'),

@@ -139,6 +139,12 @@ class BlogPost(models.Model):
     
     class Meta:
         ordering = ['-publication_date']
+        indexes = [
+            models.Index(fields=['-publication_date', 'is_published']),
+            models.Index(fields=['slug']),
+            models.Index(fields=['category', '-publication_date']),
+            models.Index(fields=['is_featured', 'is_published']),
+        ]
     
     def __str__(self):
         return self.title
@@ -237,6 +243,10 @@ class Comment(models.Model):
     
     class Meta:
         ordering = ['publication_date']
+        indexes = [
+            models.Index(fields=['blog_post', 'is_approved', 'parent_comment']),
+            models.Index(fields=['author', '-publication_date']),
+        ]
     
     def __str__(self):
         return f'Comment by {self.author.username} on {self.blog_post.title}'
