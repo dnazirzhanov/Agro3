@@ -401,7 +401,7 @@ body {
                 </div>
                 <div class="form-group">
                     <label for="{{ form.city.id_for_label }}" class="form-label">City/Village (recommended)</label>
-                    {{ form.city|add_class:'form-select' }}
+                    {{ form.city|add_class:'form-control' }}
                     {% if form.city.errors %}
                         <div class="error-text">
                             {% for error in form.city.errors %}{{ error }}{% endfor %}
@@ -459,9 +459,13 @@ body {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const countrySelect = document.getElementById('{{ form.country.id_for_label }}');
-    const regionSelect = document.getElementById('{{ form.region.id_for_label }}');
-    // City is now a text input, no need for JavaScript handling
+    const countrySelect = document.getElementById('id_country');
+    const regionSelect = document.getElementById('id_region');
+    
+    if (!countrySelect || !regionSelect) {
+        console.error('Required form elements not found');
+        return;
+    }
 
     // Function to clear and disable select
     function clearSelect(selectElement, placeholder = 'Select...') {
