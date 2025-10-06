@@ -67,6 +67,9 @@ INSTALLED_APPS = [
     'forum',
     'weather',
     'agro_supplies',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -242,8 +245,34 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 # Email Settings (for password reset, etc.)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'dastanforneobis@gmail.com'
+EMAIL_HOST_PASSWORD = 'pfro utja wnoi urqv'
+DEFAULT_FROM_EMAIL = 'dastanforneobis@gmail.com'
 
+# Django REST Framework configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+# Simple JWT settings (optional, can be customized further)
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 # Weather API Configuration
 # Get your free API key from https://openweathermap.org/api
 OPENWEATHER_API_KEY = '4f767064463296c602c6ddd6903a7db6'

@@ -61,6 +61,19 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            # Create or update user profile with additional fields
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.phone_number = form.cleaned_data.get('phone_number')
+            profile.whatsapp_number = form.cleaned_data.get('whatsapp_number')
+            profile.farmer_type = form.cleaned_data.get('farmer_type')
+            profile.farming_experience = form.cleaned_data.get('farming_experience')
+            profile.country = form.cleaned_data.get('country')
+            profile.region_new = form.cleaned_data.get('region')
+            profile.city = form.cleaned_data.get('city')
+            profile.avatar_choice = form.cleaned_data.get('avatar_choice')
+            profile.save()
+            
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect('users:login')

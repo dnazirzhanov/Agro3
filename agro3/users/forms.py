@@ -12,6 +12,18 @@ class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, help_text="Your first name")
     last_name = forms.CharField(max_length=30, required=True, help_text="Your last name")
     phone_number = forms.CharField(max_length=20, required=True, help_text="Your contact phone number for other farmers to reach you")
+    whatsapp_number = forms.CharField(
+        max_length=20, 
+        required=False, 
+        help_text="WhatsApp number for easy communication (optional)",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+996 XXX XXX XXX'})
+    )
+    same_as_phone = forms.BooleanField(
+        required=False,
+        initial=False,
+        help_text="Check this if your WhatsApp number is the same as your phone number",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'same_as_phone'})
+    )
     
     # Profile fields required during registration
     farmer_type = forms.ChoiceField(
@@ -27,27 +39,43 @@ class CustomUserCreationForm(UserCreationForm):
     # Location fields - will be handled by JavaScript
     country = forms.ModelChoiceField(
         queryset=None,  # Will be set in __init__
-        required=False,
-        help_text="Select your country",
+        required=True,
+        help_text={
+            'en': "Select your country (required)",
+            'ru': "Выберите вашу страну (обязательно)",
+            'ky': "Өлкөңүздү тандаңыз (милдеттүү)"
+        },
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_country'})
     )
     region = forms.ModelChoiceField(
         queryset=None,
-        required=False,
-        help_text="Select your region/state/oblast",
+        required=True,
+        help_text={
+            'en': "Select your region/state/oblast (required)",
+            'ru': "Регион/область тандаңыз (обязательно)",
+            'ky': "Регионду/областы тандаңыз (милдеттүү)"
+        },
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_region', 'disabled': True})
     )
     city = forms.ModelChoiceField(
         queryset=None,
         required=False,
-        help_text="Select your city/village/town",
+        help_text={
+            'en': "Select your city/village/town (recommended)",
+            'ru': "Город/поселок тандаңыз (рекомендуется)",
+            'ky': "Шаарды/айылды тандаңыз (сунушталат)"
+        },
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_city', 'disabled': True})
     )
     avatar_choice = forms.ChoiceField(
-        choices=UserProfile.AVATAR_CHOICES,
+        choices=[('farmer_man_1', '👨‍🌾'), ('farmer_woman_1', '👩‍🌾'), ('default', 'default_user')],
         required=False,
         initial='default',
-        help_text="Choose your farmer avatar"
+        help_text={
+            'en': "Choose your avatar",
+            'ru': "Аватарыңызды тандаңыз",
+            'ky': "Аватарыңызды тандаңыз"
+        }
     )
     
     class Meta:
@@ -56,12 +84,13 @@ class CustomUserCreationForm(UserCreationForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Initialize location querysets
+        # No prepopulated data in dropdowns
         self.fields['country'].queryset = Country.objects.all().order_by('name')
         self.fields['region'].queryset = Region.objects.none()
         self.fields['city'].queryset = City.objects.none()
-        
+        self.fields['country'].empty_label = None
+        self.fields['region'].empty_label = None
+        self.fields['city'].empty_label = None
         # If form has data, populate dependent fields
         if 'country' in self.data:
             try:
@@ -70,7 +99,6 @@ class CustomUserCreationForm(UserCreationForm):
                 self.fields['region'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
                 pass
-        
         if 'region' in self.data:
             try:
                 region_id = int(self.data.get('region'))

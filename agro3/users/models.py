@@ -38,17 +38,16 @@ class UserProfile(models.Model):
 # Remove old region choices - will use dynamic location system
     
     AVATAR_CHOICES = [
-        ('farmer_man_1', '👨‍🌾 Male Farmer 1'),
-        ('farmer_man_2', '🧑‍🌾 Male Farmer 2'),
-        ('farmer_woman_1', '👩‍🌾 Female Farmer 1'),
-        ('farmer_woman_2', '🧕 Female Farmer 2'),
-        ('default', '👤 Default'),
+        ('farmer_man_1', '👨‍🌾'),
+        ('farmer_woman_1', '👩‍🌾'),
+        ('default', 'default_user'),
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     
     # Personal Information
     phone_number = models.CharField(max_length=20, blank=False, help_text="Contact phone number for other farmers to reach you")
+    whatsapp_number = models.CharField(max_length=20, blank=True, null=True, help_text="WhatsApp number for easy communication (optional)")
     date_of_birth = models.DateField(blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     avatar_choice = models.CharField(max_length=20, choices=AVATAR_CHOICES, default='default', help_text="Choose a farmer avatar")
@@ -119,7 +118,7 @@ class UserProfile(models.Model):
             'farmer_man_2': '🧑‍🌾', 
             'farmer_woman_1': '👩‍🌾',
             'farmer_woman_2': '🧕',
-            'default': '�',
+            'default': 'default_user',  # Special case for SVG icon
         }
         return avatar_map.get(self.avatar_choice, avatar_map['default'])
     

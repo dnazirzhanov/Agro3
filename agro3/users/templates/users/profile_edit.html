@@ -157,7 +157,9 @@
                                                     {% elif value == 'farmer_man_2' %}🧑‍🌾
                                                     {% elif value == 'farmer_woman_1' %}👩‍🌾
                                                     {% elif value == 'farmer_woman_2' %}🧕
-                                                    {% else %}�
+                                                    {% elif value == 'default' %}
+                                                        <img src="{% static 'images/default_user_icon.svg' %}" alt="User" style="width: 30px; height: 30px;">
+                                                    {% else %}👤
                                                     {% endif %}
                                                 </div>
                                                 <small class="d-block text-center mt-1">{{ label|slice:"2:" }}</small>

@@ -31,6 +31,7 @@ from locations.views import LocationSearchPageView
 # Language-independent URLs (API endpoints, media files, etc.)
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),  # Language switcher
+    path('api/users/', include('users.api_urls')),
 ]
 
 # Language-dependent URLs (all user-facing pages)
