@@ -49,11 +49,11 @@ class CustomUserCreationForm(UserCreationForm):
         help_text="Select your region/state/oblast (required for local farming network)",
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_region', 'disabled': True})
     )
-    city = forms.ModelChoiceField(
-        queryset=None,
+    city = forms.CharField(
+        max_length=100,
         required=False,
-        help_text="Select your city/village/town (recommended for finding nearby farmers)",
-        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_city', 'disabled': True})
+        help_text="Enter your city/village/town (recommended for finding nearby farmers)",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your city or village'})
     )
     avatar_choice = forms.ChoiceField(
         choices=[('farmer_man_1', '👨‍🌾'), ('farmer_woman_1', '👩‍🌾'), ('default', 'default_user')],
@@ -74,10 +74,8 @@ class CustomUserCreationForm(UserCreationForm):
             code__in=supported_countries
         ).order_by('code')
         self.fields['region'].queryset = Region.objects.none()
-        self.fields['city'].queryset = City.objects.none()
         self.fields['country'].empty_label = "-- Select Country --"
         self.fields['region'].empty_label = "-- Select Region --"
-        self.fields['city'].empty_label = "-- Select City (Optional) --"
         # If form has data, populate dependent fields
         if 'country' in self.data:
             try:
@@ -86,11 +84,12 @@ class CustomUserCreationForm(UserCreationForm):
                 self.fields['region'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
                 pass
+        # Region handling for dependent dropdown
         if 'region' in self.data:
             try:
                 region_id = int(self.data.get('region'))
-                self.fields['city'].queryset = City.objects.filter(region_id=region_id).order_by('name')
-                self.fields['city'].widget.attrs.pop('disabled', None)
+                self.fields['region'].queryset = Region.objects.filter(country_id=self.data.get('country')).order_by('name')
+                self.fields['region'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
                 pass
         
@@ -117,7 +116,7 @@ class CustomUserCreationForm(UserCreationForm):
                     'farming_experience': self.cleaned_data['farming_experience'],
                     'country': self.cleaned_data.get('country'),
                     'region_new': self.cleaned_data.get('region'),
-                    'city': self.cleaned_data.get('city'),
+                    'village_or_address': self.cleaned_data.get('city', '').strip(),
                     'avatar_choice': self.cleaned_data.get('avatar_choice', 'default'),
                 }
             )
@@ -128,7 +127,7 @@ class CustomUserCreationForm(UserCreationForm):
                 profile.farming_experience = self.cleaned_data['farming_experience'] 
                 profile.country = self.cleaned_data.get('country')
                 profile.region_new = self.cleaned_data.get('region')
-                profile.city = self.cleaned_data.get('city')
+                profile.village_or_address = self.cleaned_data.get('city', '').strip()
                 profile.avatar_choice = self.cleaned_data.get('avatar_choice', 'default')
                 profile.save()
         return user
@@ -141,7 +140,7 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = [
             'phone_number', 'date_of_birth', 'avatar', 'avatar_choice', 'bio',
-            'country', 'region_new', 'city', 'village_or_address', 'farmer_type',
+            'country', 'region_new', 'village_or_address', 'farmer_type',
             'farming_experience', 'receive_notifications',
             'receive_market_alerts', 'preferred_language'
         ]

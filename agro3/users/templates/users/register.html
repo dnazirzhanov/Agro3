@@ -17,9 +17,15 @@ body {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-}
-
-.auth-card {
+                <div class="col-md-4">
+                    <label for="{{ form.city.id_for_label }}" class="form-label">City/Village (recommended)</label>
+                    {{ form.city|add_class:'form-control' }}
+                    {% if form.city.errors %}
+                        <div class="error-text">
+                            {% for error in form.city.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -455,7 +461,7 @@ body {
 document.addEventListener('DOMContentLoaded', function() {
     const countrySelect = document.getElementById('{{ form.country.id_for_label }}');
     const regionSelect = document.getElementById('{{ form.region.id_for_label }}');
-    const citySelect = document.getElementById('{{ form.city.id_for_label }}');
+    // City is now a text input, no need for JavaScript handling
 
     // Function to clear and disable select
     function clearSelect(selectElement, placeholder = 'Select...') {
@@ -479,9 +485,8 @@ document.addEventListener('DOMContentLoaded', function() {
     countrySelect.addEventListener('change', function() {
         const countryId = this.value;
         
-        // Clear region and city selects
+        // Clear region select
         clearSelect(regionSelect, 'Select Region/State...');
-        clearSelect(citySelect, 'Select City/Village...');
 
         if (countryId) {
             fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
@@ -495,28 +500,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle region selection
-    regionSelect.addEventListener('change', function() {
-        const regionId = this.value;
-        
-        // Clear city select
-        clearSelect(citySelect, 'Select City/Village...');
+    // Region selection - city is now a text input, no need for dynamic loading
 
-        if (regionId) {
-            fetch(`{% url 'locations:get_cities' %}?region_id=${regionId}`)
-                .then(response => response.json())
-                .then(data => {
-                    populateSelect(citySelect, data.cities, 'Select City/Village...');
-                })
-                .catch(error => {
-                    console.error('Error fetching cities:', error);
-                });
-        }
-    });
-
-    // Initialize: Clear region and city selects on page load
+    // Initialize: Clear region select on page load
     clearSelect(regionSelect, 'Select Region/State...');
-    clearSelect(citySelect, 'Select City/Village...');
 
     // Handle "Same as phone number" checkbox
     const phoneInput = document.getElementById('id_phone_number');
