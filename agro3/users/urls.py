@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import (
-    PasswordResetView, PasswordResetDoneView, 
+    PasswordResetDoneView, 
     PasswordResetConfirmView, PasswordResetCompleteView,
     LogoutView
 )
@@ -25,11 +25,7 @@ urlpatterns = [
     
     # Password Reset URLs
     path('password-reset/', 
-         PasswordResetView.as_view(
-             template_name='users/password_reset.html',
-             email_template_name='users/password_reset_email.html',
-             success_url='/users/password-reset/done/'
-         ), 
+         views.CustomPasswordResetView.as_view(),
          name='password_reset'),
     
     path('password-reset/done/', 

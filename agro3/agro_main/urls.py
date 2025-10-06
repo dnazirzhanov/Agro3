@@ -26,6 +26,11 @@ def home_view(request):
     return render(request, 'home.html')
 
 
+def location_test_view(request):
+    """Test view for location cascading dropdowns"""
+    return render(request, 'location_test.html')
+
+
 from locations.views import LocationSearchPageView
 
 # Language-independent URLs (API endpoints, media files, etc.)
@@ -38,6 +43,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
+    path('location-test/', location_test_view, name='location_test'),
     path('search/', LocationSearchPageView.as_view(), name='location_search'),
     path('locations/', include('locations.urls')),
     path('users/', include('users.urls')),

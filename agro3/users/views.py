@@ -11,7 +11,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView
+from django.core.mail import send_mail, EmailMultiAlternatives, BadHeaderError
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 from django.views.generic import CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
@@ -43,6 +52,83 @@ class CustomLoginView(LoginView):
             self.request.user.profile.update_activity()
         messages.success(self.request, f'Welcome back, {self.request.user.first_name or self.request.user.username}!')
         return response
+
+
+class CustomPasswordResetView(PasswordResetView):
+    """Enhanced password reset view with better diagnostics and email handling.
+
+    Adds:
+    - Explicit from_email fallback
+    - Safe domain/protocol resolution if not provided
+    - HTML + plain text multi-part option
+    - Logging of success/fail events
+    - Graceful degradation if email backend errors occur
+    """
+    template_name = 'users/password_reset.html'
+    email_template_name = 'users/password_reset_email.html'
+    subject_template_name = None  # We include Subject inline in template for now
+    success_url = '/users/password-reset/done/'
+    token_generator = default_token_generator
+    html_email_template_name = None  # could add later
+
+    def get_from_email(self):
+        return getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+
+    def get_domain_and_protocol(self):
+        # Prefer Site framework if installed later; for now derive from request
+        request = self.request
+        host = request.get_host()
+        # If running locally with 0.0.0.0 include http, else assume https in production
+        if host.startswith('localhost') or host.startswith('127.') or host.startswith('0.'):
+            protocol = 'http'
+        else:
+            protocol = 'https' if not settings.DEBUG else 'http'
+        return host, protocol
+
+    def form_valid(self, form):
+        """Override to inject improved email sending & logging."""
+        email = form.cleaned_data.get('email')
+        users = list(form.get_users(email))
+        if not users:
+            # Mimic default behavior (still show success) but log
+            logger.warning("Password reset requested for non-existent email: %s", email)
+            return super().form_valid(form)
+
+        domain, protocol = self.get_domain_and_protocol()
+        for user in users:
+            try:
+                context = {
+                    'email': email,
+                    'domain': domain,
+                    'site_name': 'Batken Agri-Helper',
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'user': user,
+                    'token': self.token_generator.make_token(user),
+                    'protocol': protocol,
+                }
+                body = render_to_string(self.email_template_name, context)
+                # Extract subject if first line starts with 'Subject:'
+                lines = body.splitlines()
+                subject = 'Password Reset'
+                if lines and lines[0].lower().startswith('subject:'):
+                    subject = lines[0].split(':', 1)[1].strip()
+                    body = '\n'.join(lines[1:]).lstrip('\n')
+
+                email_message = EmailMultiAlternatives(
+                    subject=subject,
+                    body=body,
+                    from_email=self.get_from_email(),
+                    to=[email],
+                )
+                # Optional: attach HTML later if template added
+                email_message.send(fail_silently=False)
+                logger.info("Password reset email sent to %s (user id=%s)", email, user.id)
+            except BadHeaderError:
+                logger.error("Bad header error when sending password reset email to %s", email, exc_info=True)
+            except Exception as e:
+                logger.exception("Unexpected error sending password reset email to %s: %s", email, e)
+        # Continue normal flow
+        return super().form_valid(form)
 
 
 def register_view(request):

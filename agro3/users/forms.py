@@ -40,42 +40,26 @@ class CustomUserCreationForm(UserCreationForm):
     country = forms.ModelChoiceField(
         queryset=None,  # Will be set in __init__
         required=True,
-        help_text={
-            'en': "Select your country (required)",
-            'ru': "Выберите вашу страну (обязательно)",
-            'ky': "Өлкөңүздү тандаңыз (милдеттүү)"
-        },
+        help_text="Select your country (required for connecting with local farmers)",
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_country'})
     )
     region = forms.ModelChoiceField(
         queryset=None,
         required=True,
-        help_text={
-            'en': "Select your region/state/oblast (required)",
-            'ru': "Регион/область тандаңыз (обязательно)",
-            'ky': "Регионду/областы тандаңыз (милдеттүү)"
-        },
+        help_text="Select your region/state/oblast (required for local farming network)",
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_region', 'disabled': True})
     )
     city = forms.ModelChoiceField(
         queryset=None,
         required=False,
-        help_text={
-            'en': "Select your city/village/town (recommended)",
-            'ru': "Город/поселок тандаңыз (рекомендуется)",
-            'ky': "Шаарды/айылды тандаңыз (сунушталат)"
-        },
+        help_text="Select your city/village/town (recommended for finding nearby farmers)",
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_city', 'disabled': True})
     )
     avatar_choice = forms.ChoiceField(
         choices=[('farmer_man_1', '👨‍🌾'), ('farmer_woman_1', '👩‍🌾'), ('default', 'default_user')],
         required=False,
         initial='default',
-        help_text={
-            'en': "Choose your avatar",
-            'ru': "Аватарыңызды тандаңыз",
-            'ky': "Аватарыңызды тандаңыз"
-        }
+        help_text="Choose your profile avatar"
     )
     
     class Meta:
@@ -84,13 +68,16 @@ class CustomUserCreationForm(UserCreationForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # No prepopulated data in dropdowns
-        self.fields['country'].queryset = Country.objects.all().order_by('name')
+        # Only show the specific countries we support
+        supported_countries = ['US', 'KG', 'UZ', 'TJ', 'RU']
+        self.fields['country'].queryset = Country.objects.filter(
+            code__in=supported_countries
+        ).order_by('code')
         self.fields['region'].queryset = Region.objects.none()
         self.fields['city'].queryset = City.objects.none()
-        self.fields['country'].empty_label = None
-        self.fields['region'].empty_label = None
-        self.fields['city'].empty_label = None
+        self.fields['country'].empty_label = "-- Select Country --"
+        self.fields['region'].empty_label = "-- Select Region --"
+        self.fields['city'].empty_label = "-- Select City (Optional) --"
         # If form has data, populate dependent fields
         if 'country' in self.data:
             try:

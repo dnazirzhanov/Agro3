@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Location Cascade Test</h1>
+    
+    <select id="country" onchange="loadRegions()">
+        <option value="">Select Country</option>
+        <option value="1">United States</option>
+        <option value="2">Kyrgyzstan</option>
+        <option value="3">Uzbekistan</option>
+        <option value="4">Tajikistan</option>
+        <option value="5">Russia</option>
+    </select>
+    
+    <select id="region" onchange="loadCities()" disabled>
+        <option value="">Select Region</option>
+    </select>
+    
+    <select id="city" disabled>
+        <option value="">Select City</option>
+    </select>
+    
+    <script>
+        function loadRegions() {
+            const countryId = document.getElementById('country').value;
+            const regionSelect = document.getElementById('region');
+            const citySelect = document.getElementById('city');
+            
+            // Reset dependent dropdowns
+            regionSelect.innerHTML = '<option value="">Select Region</option>';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            regionSelect.disabled = true;
+            citySelect.disabled = true;
+            
+            if (countryId) {
+                fetch(`/en/locations/ajax/regions/?country_id=${countryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        regionSelect.disabled = false;
+                        data.regions.forEach(region => {
+                            const option = document.createElement('option');
+                            option.value = region.id;
+                            option.textContent = region.name;
+                            regionSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading regions:', error));
+            }
+        }
+        
+        function loadCities() {
+            const regionId = document.getElementById('region').value;
+            const citySelect = document.getElementById('city');
+            
+            // Reset city dropdown
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            citySelect.disabled = true;
+            
+            if (regionId) {
+                fetch(`/en/locations/ajax/cities/?region_id=${regionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.cities.length > 0) {
+                            citySelect.disabled = false;
+                            data.cities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.id;
+                                option.textContent = city.name;
+                                citySelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error loading cities:', error));
+            }
+        }
+    </script>
+</body>
+</html>
