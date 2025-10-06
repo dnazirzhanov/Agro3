@@ -28,6 +28,10 @@ class WeatherLocation(models.Model):
     class Meta:
         unique_together = ['latitude', 'longitude']
         ordering = ['name']
+        indexes = [
+            models.Index(fields=['latitude', 'longitude']),
+            models.Index(fields=['country', 'name']),
+        ]
     
     def __str__(self):
         return f"{self.name}, {self.country}"
@@ -60,6 +64,10 @@ class WeatherData(models.Model):
     class Meta:
         ordering = ['timestamp']
         unique_together = ['location', 'timestamp']
+        indexes = [
+            models.Index(fields=['location', '-timestamp']),
+            models.Index(fields=['created_at']),
+        ]
     
     def __str__(self):
         return f"{self.location.name} - {self.timestamp.strftime('%Y-%m-%d %H:%M')} - {self.temperature}°C"

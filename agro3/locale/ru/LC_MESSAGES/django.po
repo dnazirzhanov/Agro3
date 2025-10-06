@@ -1,0 +1,122 @@
+# Russian translations for Batken Agri-Helper
+# Copyright (C) 2025 Batken Agri-Helper
+# This file is distributed under the same license as the Batken Agri-Helper package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Batken Agri-Helper 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-05 19:58+0000\n"
+"PO-Revision-Date: 2025-10-05 20:00+0000\n"
+"Last-Translator: GitHub Copilot\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+#: templates/base.html:7 templates/base.html:54 templates/base.html:222
+msgid "Batken Agri-Helper"
+msgstr "Баткен Агро-Помощник"
+
+#: templates/base.html:63
+msgid "Home"
+msgstr "Главная"
+
+#: templates/base.html:68
+msgid "Crops"
+msgstr "Культуры"
+
+#: templates/base.html:71
+msgid "All Crops"
+msgstr "Все культуры"
+
+#: templates/base.html:72
+msgid "Soil Types"
+msgstr "Типы почв"
+
+#: templates/base.html:77
+msgid "Pests & Diseases"
+msgstr "Вредители и болезни"
+
+#: templates/base.html:80
+msgid "All Pests & Diseases"
+msgstr "Все вредители и болезни"
+
+#: templates/base.html:81
+msgid "Dose Calculator"
+msgstr "Калькулятор дозировки"
+
+#: templates/base.html:86
+msgid "Market Prices"
+msgstr "Рыночные цены"
+
+#: templates/base.html:91
+msgid "Weather"
+msgstr "Погода"
+
+#: templates/base.html:96
+msgid "Community"
+msgstr "Сообщество"
+
+#: templates/base.html:101
+msgid "Agro Supplies"
+msgstr "Агро товары"
+
+#: templates/base.html:104
+msgid "Chemical Products"
+msgstr "Химические продукты"
+
+#: templates/base.html:105
+msgid "Shops & Vendors"
+msgstr "Магазины и продавцы"
+
+#: templates/base.html:106
+msgid "Price Comparison"
+msgstr "Сравнение цен"
+
+#: templates/base.html:160
+msgid "Dashboard"
+msgstr "Панель управления"
+
+#: templates/base.html:163
+msgid "Edit Profile"
+msgstr "Редактировать профиль"
+
+#: templates/base.html:166
+msgid "View Profile"
+msgstr "Просмотр профиля"
+
+#: templates/base.html:170
+msgid "Find Farmers"
+msgstr "Найти фермеров"
+
+#: templates/base.html:175
+msgid "Admin Panel"
+msgstr "Админ панель"
+
+#: templates/base.html:180
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/base.html:187
+msgid "Login"
+msgstr "Войти"
+
+#: templates/base.html:192
+msgid "Register"
+msgstr "Регистрация"
+
+#: templates/base.html:223
+msgid ""
+"Empowering farmers in Batken region, Kyrgyzstan with data-driven "
+"agricultural solutions."
+msgstr ""
+"Расширение возможностей фермеров Баткенской области, Кыргызстан, с помощью "
+"сельскохозяйственных решений на основе данных."
+
+#: templates/base.html:226
+msgid "&copy; 2025 Batken Agri-Helper. Built for the farming community."
+msgstr "&copy; 2025 Баткен Агро-Помощник. Создано для фермерского сообщества."
