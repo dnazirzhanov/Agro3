@@ -1,10 +1,11 @@
 {% load i18n %}
+{% load user_tags %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% trans "Batken Agri-Helper" %}{% endblock %}</title>
+    <title>{% block title %}AgroSovet{% endblock %}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -51,7 +52,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-success">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-                <i class="bi bi-tree me-2"></i>{% trans "Batken Agri-Helper" %}
+                <i class="bi bi-tree me-2"></i>AgroSovet
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -63,23 +64,10 @@
                             <i class="bi bi-house me-1"></i>{% trans "Home" %}
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-flower3 me-1"></i>{% trans "Crops" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pests_diseases:dose_calculator' %}">
+                            <i class="bi bi-calculator me-1"></i>{% trans "Dosage Calculator" %}
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'crops:list' %}">{% trans "All Crops" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'soil:questionnaire' %}">{% trans "Soil Types" %}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-bug me-1"></i>{% trans "Pests & Diseases" %}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'pests_diseases:list' %}">{% trans "All Pests & Diseases" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pests_diseases:dose_calculator' %}">{% trans "Dose Calculator" %}</a></li>
-                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'market:price_list' %}">
@@ -102,8 +90,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'agro_supplies:product_list' %}"><i class="bi bi-flask me-2"></i>{% trans "Chemical Products" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'agro_supplies:shop_list' %}"><i class="bi bi-shop me-2"></i>{% trans "Shops & Vendors" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'agro_supplies:price_comparison' %}"><i class="bi bi-bar-chart-line me-2"></i>{% trans "Price Comparison" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'agro_supplies:calculator' %}"><i class="bi bi-calculator me-2"></i>{% trans "Price Calculator" %}</a></li>
                         </ul>
                     </li>
                     
@@ -145,15 +132,13 @@
                             {% endfor %}
                         </ul>
                     </li>
-                </ul>
-                
-                <!-- User Authentication -->
-                <div class="navbar-nav ms-auto">
+                    
+                    <!-- User Authentication -->
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                                <span class="user-avatar me-2" style="font-size: 1.8rem;">{{ user.profile.get_avatar_emoji }}</span>
-                                {{ user.get_full_name|default:user.username }}
+                                <span class="user-avatar me-2" style="font-size: 1.8rem; display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; color: #6c757d;">{{ user|user_avatar }}</span>
+                                <span>{{ user|user_display_name }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{% url 'users:dashboard' %}">
@@ -176,9 +161,14 @@
                                     </a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'users:logout' %}">
-                                    <i class="bi bi-box-arrow-right me-2"></i>{% trans "Logout" %}
-                                </a></li>
+                                <li>
+                                    <form method="post" action="{% url 'users:logout' %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item border-0 bg-transparent w-100 text-start" style="padding: 0.25rem 1rem;">
+                                            <i class="bi bi-box-arrow-right me-2"></i>{% trans "Logout" %}
+                                        </button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
                     {% else %}
@@ -189,11 +179,10 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-success text-white ms-2 px-3" href="{% url 'users:register' %}">
-                                <i class="bi bi-person-plus me-1"></i>{% trans "Register" %}
-                            </a>
+                                <i class="bi bi-person-plus me-1"></i>{% trans "Register" %}</a>
                         </li>
                     {% endif %}
-                </div>
+                </ul>
             </div>
         </div>
     </nav>
@@ -219,11 +208,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5><i class="bi bi-tree me-2"></i>{% trans "Batken Agri-Helper" %}</h5>
+                    <h5><i class="bi bi-tree me-2"></i>AgroSovet</h5>
                     <p class="mb-0">{% trans "Empowering farmers in Batken region, Kyrgyzstan with data-driven agricultural solutions." %}</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-0">{% trans "&copy; 2025 Batken Agri-Helper. Built for the farming community." %}</p>
+                    <p class="mb-0">&copy; 2025 AgroSovet. Built for the farming community.</p>
                 </div>
             </div>
         </div>

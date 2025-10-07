@@ -1,105 +1,194 @@
 {% extends 'base.html' %}
 
-{% block title %}Chemical Products - Agro3{% endblock %}
+{% block title %}Chemical Product Prices - Agro3{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-3">
-            <!-- Filters Sidebar -->
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="bi bi-flask text-primary me-2"></i>Chemical Product Prices</h1>
+            </div>
+            <p class="lead">Search and compare prices for agricultural chemical products across different suppliers.</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-filter"></i> Filters</h5>
+                    <h5 class="mb-0"><i class="bi bi-funnel me-1"></i>Search Chemical Products</h5>
                 </div>
                 <div class="card-body">
-                    <form method="get" action="{% url 'agro_supplies:product_list' %}">
-                        <!-- Search -->
-                        <div class="mb-3">
+                    <form method="get" action="{% url 'agro_supplies:product_list' %}" class="row g-3">
+                        <div class="col-md-3">
                             <label for="search" class="form-label">Search Products</label>
                             <input type="text" class="form-control" id="search" name="search" 
-                                   value="{{ search_query }}" placeholder="Product name, brand, or ingredient...">
+                                   value="{{ search_query|default:'' }}" placeholder="Product name, brand, ingredient...">
                         </div>
-                        
-                        <!-- Category Filter -->
-                        <div class="mb-3">
+                        <div class="col-md-2">
                             <label for="category" class="form-label">Category</label>
                             <select class="form-select" id="category" name="category">
                                 <option value="">All Categories</option>
                                 {% for category in categories %}
                                 <option value="{{ category.id }}" 
                                         {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
-                                    {{ category.get_category_type_display }} - {{ category.name }}
+                                    {{ category.get_category_type_display }}
                                 </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fas fa-search"></i> Apply Filters
-                        </button>
-                        <a href="{% url 'agro_supplies:product_list' %}" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-times"></i> Clear
-                        </a>
+                        <div class="col-md-2">
+                            <label for="country" class="form-label">Country</label>
+                            <select class="form-select" id="country" name="country">
+                                <option value="">All Countries</option>
+                                {% for country in countries %}
+                                <option value="{{ country.id }}" 
+                                        {% if country.id|stringformat:"s" == selected_country %}selected{% endif %}>
+                                    {{ country.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="region" class="form-label">Region</label>
+                            <select class="form-select" id="region" name="region">
+                                <option value="">All Regions</option>
+                                {% for region in regions %}
+                                <option value="{{ region.id }}" 
+                                        {% if region.id|stringformat:"s" == selected_region %}selected{% endif %}>
+                                    {{ region.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-search me-1"></i>Search
+                            </button>
+                            <a href="{% url 'agro_supplies:product_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Clear
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
-            
-            <!-- Quick Links -->
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5><i class="fas fa-link"></i> Quick Links</h5>
-                </div>
-                <div class="card-body">
-                    <a href="{% url 'agro_supplies:shop_list' %}" class="btn btn-outline-success btn-sm d-block mb-2">
-                        <i class="fas fa-store"></i> Find Shops
-                    </a>
-                    <a href="{% url 'agro_supplies:price_comparison' %}" class="btn btn-outline-info btn-sm d-block">
-                        <i class="fas fa-chart-line"></i> Compare Prices
-                    </a>
-                </div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    {% if page_obj %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>{{ total_products }} products found</strong>
+                {% if search_query %} - Searching for "{{ search_query }}"{% endif %}
+                {% if selected_category %} - Category filtered{% endif %}
+                {% if selected_country %} - Location filtered{% endif %}
             </div>
         </div>
-        
-        <div class="col-md-9">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2><i class="fas fa-flask"></i> Chemical Products</h2>
-                    <p class="text-muted">{{ total_products }} products found</p>
-                </div>
+    </div>
+    {% endif %}    <!-- Product Prices Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Shop</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in page_obj %}
+                            {% for price in product.prices.all %}
+                            <tr>
+                                <td>{{ forloop.parentloop.counter }}{% if product.prices.all.count > 1 %}.{{ forloop.counter }}{% endif %}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            {% if product.category.category_type == 'fertilizer' %}
+                                                <span class="badge bg-success">{{ product.category.get_category_type_display }}</span>
+                                            {% elif product.category.category_type == 'pesticide' or product.category.category_type == 'insecticide' %}
+                                                <span class="badge bg-danger">{{ product.category.get_category_type_display }}</span>
+                                            {% elif product.category.category_type == 'herbicide' %}
+                                                <span class="badge bg-warning">{{ product.category.get_category_type_display }}</span>
+                                            {% elif product.category.category_type == 'fungicide' %}
+                                                <span class="badge bg-info">{{ product.category.get_category_type_display }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ product.category.get_category_type_display }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>{{ product.brand }} {{ product.name }}</strong>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{% url 'agro_supplies:shop_detail' price.shop.pk %}" 
+                                       class="text-decoration-none">
+                                        <i class="bi bi-shop me-1"></i>{{ price.shop.name }}
+                                    </a>
+                                    <br>
+                                    <small class="text-muted">{{ price.shop.get_location_display }}</small>
+                                </td>
+                                <td>
+                                    <strong class="text-success">{{ price.get_standardized_price|floatformat:2 }}</strong>
+                                    <small class="text-muted d-block">{{ product.get_standard_unit_display }}</small>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            {% if product.category.category_type == 'fertilizer' %}
+                                                <span class="badge bg-success">{{ product.category.get_category_type_display }}</span>
+                                            {% elif product.category.category_type == 'pesticide' or product.category.category_type == 'insecticide' %}
+                                                <span class="badge bg-danger">{{ product.category.get_category_type_display }}</span>
+                                            {% elif product.category.category_type == 'herbicide' %}
+                                                <span class="badge bg-warning">{{ product.category.get_category_type_display }}</span>
+                                            {% elif product.category.category_type == 'fungicide' %}
+                                                <span class="badge bg-info">{{ product.category.get_category_type_display }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ product.category.get_category_type_display }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>{{ product.brand }} {{ product.name }}</strong>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted">
+                                        <i class="bi bi-dash-circle me-1"></i>No shops available
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">N/A</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <i class="bi bi-search me-2"></i>
+                                <strong>No chemical products found.</strong><br>
+                                <small>Try adjusting your search criteria or browse all categories.</small>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            
-            <!-- Products Grid -->
-            <div class="row">
-                {% for product in page_obj %}
-                <div class="col-md-4 col-lg-3 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <span class="badge bg-secondary mb-2">{{ product.category.get_category_type_display }}</span>
-                            <h6 class="card-title">{{ product.name }}</h6>
-                            <p class="card-text">
-                                <strong>Brand:</strong> {{ product.brand }}<br>
-                                <strong>Size:</strong> {{ product.package_size }} {{ product.get_package_unit_display }}<br>
-                                <strong>Active Ingredient:</strong> {{ product.active_ingredient|truncatechars:30 }}
-                            </p>
-                            <div class="mt-auto">
-                                <a href="{% url 'agro_supplies:product_detail' product.pk %}" 
-                                   class="btn btn-primary btn-sm">
-                                    <i class="fas fa-info-circle"></i> View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-12">
-                    <div class="alert alert-info text-center">
-                        <i class="fas fa-info-circle"></i>
-                        No products found. Try adjusting your search criteria.
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
+        </div>
+    </div>
             
             <!-- Pagination -->
             {% if page_obj.has_other_pages %}
@@ -107,7 +196,7 @@
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_country %}&country={{ selected_country }}{% endif %}{% if selected_region %}&region={{ selected_region }}{% endif %}">
                             Previous
                         </a>
                     </li>
@@ -120,7 +209,7 @@
                     </li>
                     {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        <a class="page-link" href="?page={{ page }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_country %}&country={{ selected_country }}{% endif %}{% if selected_region %}&region={{ selected_region }}{% endif %}">
                             {{ page }}
                         </a>
                     </li>
@@ -129,7 +218,7 @@
                     
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_country %}&country={{ selected_country }}{% endif %}{% if selected_region %}&region={{ selected_region }}{% endif %}">
                             Next
                         </a>
                     </li>
@@ -140,4 +229,48 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('country');
+    const regionSelect = document.getElementById('region');
+    
+    if (countrySelect && regionSelect) {
+        // Load regions when country changes
+        countrySelect.addEventListener('change', function() {
+            const countryId = this.value;
+            
+            // Clear region select
+            regionSelect.innerHTML = '<option value="">All Regions</option>';
+            
+            if (countryId) {
+                // Fetch regions for selected country
+                fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.regions.forEach(function(region) {
+                            const option = new Option(region.name, region.id);
+                            regionSelect.add(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading regions:', error));
+            }
+        });
+        
+        // Initialize: Load regions if country is pre-selected
+        const initialCountry = countrySelect.value;
+        if (initialCountry) {
+            fetch(`{% url 'locations:get_regions' %}?country_id=${initialCountry}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.regions.forEach(function(region) {
+                        const option = new Option(region.name, region.id);
+                        option.selected = region.id == "{{ selected_region }}";
+                        regionSelect.add(option);
+                    });
+                });
+        }
+    }
+});
+</script>
 {% endblock %}

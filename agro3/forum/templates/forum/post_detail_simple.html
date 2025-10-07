@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="{{ current_language|default:'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - Community - AgroSovet</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Extracted styles from HTML file -->
+    {% if extracted_styles %}
+    <style type="text/css">
+        {{ extracted_styles|safe }}
+    </style>
+    {% endif %}
+    
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            background: #fafafa !important;
+        }
+        
+        /* Navigation bar styling - always on top */
+        .top-nav {
+            background: #2c5530 !important;
+            padding: 1rem 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            position: relative !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        .top-nav .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 1rem !important;
+        }
+        
+        .top-nav .navbar-brand {
+            color: white !important;
+            font-weight: bold !important;
+            font-size: 1.5rem !important;
+            text-decoration: none !important;
+        }
+        
+        .top-nav .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            margin: 0 0.5rem !important;
+            text-decoration: none !important;
+            transition: color 0.2s ease !important;
+        }
+        
+        .top-nav .nav-link:hover {
+            color: white !important;
+        }
+        
+        /* Main content area - Medium.com style */
+        .html-content-wrapper {
+            width: 100% !important;
+            min-height: calc(100vh - 80px) !important;
+            background: white !important;
+            position: relative !important;
+            padding: 3rem 0 !important;
+        }
+        
+        /* Medium.com style content container */
+        .html-content-inner {
+            max-width: 740px !important;
+            margin: 0 auto !important;
+            padding: 0 2rem !important;
+            line-height: 1.6 !important;
+            background: white !important;
+        }
+        
+        /* Medium.com typography enhancements - only apply when no custom styles exist */
+        .html-content-inner:not(:has(style)) h1 {
+            font-size: 2.5rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            margin: 2rem 0 1.5rem 0 !important;
+            color: #1a1a1a !important;
+        }
+        
+        .html-content-inner:not(:has(style)) h2 {
+            font-size: 2rem !important;
+            font-weight: 600 !important;
+            line-height: 1.3 !important;
+            margin: 2rem 0 1rem 0 !important;
+            color: #1a1a1a !important;
+        }
+        
+        .html-content-inner:not(:has(style)) h3 {
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            line-height: 1.4 !important;
+            margin: 1.5rem 0 1rem 0 !important;
+            color: #1a1a1a !important;
+        }
+        
+        .html-content-inner:not(:has(style)) p {
+            font-size: 1.125rem !important;
+            line-height: 1.75 !important;
+            margin: 1.5rem 0 !important;
+            color: #2e2e2e !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+        }
+        
+        /* Preserve custom styling from HTML files */
+        .html-content-inner style {
+            display: block !important;
+        }
+        
+        /* Responsive images - always apply */
+        .html-content-inner img {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block !important;
+            margin: 2rem auto !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Code blocks styling */
+        .html-content-inner pre,
+        .html-content-inner code {
+            background: #f6f8fa !important;
+            border-radius: 6px !important;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+        }
+        
+        .html-content-inner pre {
+            padding: 1rem !important;
+            overflow-x: auto !important;
+            margin: 1.5rem 0 !important;
+        }
+        
+        .html-content-inner code {
+            padding: 0.2rem 0.4rem !important;
+            font-size: 0.9em !important;
+        }
+        
+        /* Lists styling */
+        .html-content-inner ul,
+        .html-content-inner ol {
+            margin: 1.5rem 0 !important;
+            padding-left: 2rem !important;
+        }
+        
+        .html-content-inner li {
+            margin: 0.5rem 0 !important;
+            line-height: 1.6 !important;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .html-content-inner {
+                padding: 0 1rem !important;
+            }
+            
+            .html-content-wrapper {
+                padding: 2rem 0 !important;
+            }
+            
+            .top-nav .container {
+                padding: 0 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Simple Navigation -->
+    <nav class="navbar navbar-expand-lg top-nav">
+        <div class="container">
+            <a class="navbar-brand" href="/{{ current_language|default:'en' }}/">
+                🌱 AgroSovet
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/{{ current_language|default:'en' }}/forum/">
+                    <i class="bi bi-arrow-left"></i> Back to Community
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HTML Content (Full Width with Centered Content) -->
+    <div class="html-content-wrapper">
+        <div class="html-content-inner">
+            {{ html_content|safe }}
+        </div>
+    </div>
+            
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

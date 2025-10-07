@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Create New Post" %} - {% trans "Agricultural Forum" %}{% endblock %}
+
+{% block extra_head %}
+    <!-- Quill Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <link href="{% static 'css/quill-agricultural.css' %}" rel="stylesheet">
+    
+    <style>
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+        
+        .form-body {
+            background: white;
+            padding: 2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn-create {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            color: white;
+            border-radius: 8px;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancel:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .required-field::after {
+            content: ' *';
+            color: #dc3545;
+        }
+        
+        /* Quill editor custom styling */
+        #editor-container {
+            height: 400px;
+        }
+        
+        .ql-toolbar {
+            border-top: 1px solid #ccc;
+        }
+        
+        .ql-container {
+            border-bottom: 1px solid #ccc;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .form-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="form-container">
+        <div class="form-header">
+            <h1><i class="bi bi-pencil-square"></i> {% trans "Create New Post" %}</h1>
+            <p class="mb-0">{% trans "Share your agricultural knowledge with the community" %}</p>
+        </div>
+        
+        <div class="form-body">
+            <form method="post" enctype="multipart/form-data" id="blog-form">
+                {% csrf_token %}
+                
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}" class="form-label required-field">{% trans "Title" %}</label>
+                    {{ form.title }}
+                    {% if form.title.help_text %}
+                        <div class="help-text">{{ form.title.help_text }}</div>
+                    {% endif %}
+                    {% if form.title.errors %}
+                        <div class="text-danger">
+                            {% for error in form.title.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Short Description -->
+                <div class="form-group">
+                    <label for="{{ form.short_description.id_for_label }}" class="form-label">{% trans "Short Description" %}</label>
+                    {{ form.short_description }}
+                    {% if form.short_description.help_text %}
+                        <div class="help-text">{{ form.short_description.help_text }}</div>
+                    {% endif %}
+                    {% if form.short_description.errors %}
+                        <div class="text-danger">
+                            {% for error in form.short_description.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Content Editor -->
+                <div class="form-group">
+                    <label class="form-label required-field">{% trans "Content" %}</label>
+                    <div id="editor-container" class="agricultural-editor"></div>
+                    <input type="hidden" name="content" id="quill-content">
+                    {% if form.content.errors %}
+                        <div class="text-danger">
+                            {% for error in form.content.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">
+                        {% trans "Use the rich text editor to format your content. You can add images, links, lists, and more." %}
+                    </div>
+                </div>
+                
+                <!-- Featured Image -->
+                <div class="form-group">
+                    <label for="{{ form.featured_image.id_for_label }}" class="form-label">{% trans "Featured Image" %}</label>
+                    {{ form.featured_image }}
+                    {% if form.featured_image.help_text %}
+                        <div class="help-text">{{ form.featured_image.help_text }}</div>
+                    {% endif %}
+                    {% if form.featured_image.errors %}
+                        <div class="text-danger">
+                            {% for error in form.featured_image.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Category and Tags Row -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">{% trans "Category" %}</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.category.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.tags.id_for_label }}" class="form-label">{% trans "Tags" %}</label>
+                            {{ form.tags }}
+                            <div class="help-text">{% trans "Hold Ctrl/Cmd to select multiple tags" %}</div>
+                            {% if form.tags.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.tags.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Publish Status -->
+                <div class="form-group">
+                    <div class="form-check">
+                        {{ form.is_published }}
+                        <label class="form-check-label" for="{{ form.is_published.id_for_label }}">
+                            {% trans "Publish immediately" %}
+                        </label>
+                    </div>
+                    <div class="help-text">{% trans "Uncheck to save as draft" %}</div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-group mt-4">
+                    <a href="{% url 'forum:index' %}" class="btn-cancel">
+                        <i class="bi bi-arrow-left"></i> {% trans "Cancel" %}
+                    </a>
+                    <button type="submit" class="btn-create">
+                        <i class="bi bi-check-circle"></i> {% trans "Create Post" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Quill Editor JavaScript -->
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Quill editor
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: '{% trans "Share your agricultural knowledge, tips, and experiences..." %}',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [2, 3, 4, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        ['link', 'image', 'video'],
+                        ['blockquote', 'code-block'],
+                        ['clean']
+                    ],
+                    imageResize: {
+                        displaySize: true
+                    }
+                }
+            });
+            
+            // Handle form submission
+            var form = document.getElementById('blog-form');
+            form.addEventListener('submit', function(e) {
+                // Get HTML content from Quill
+                var content = quill.root.innerHTML;
+                
+                // Check if content is empty (just contains default empty paragraph)
+                if (content === '<p><br></p>' || content.trim() === '') {
+                    e.preventDefault();
+                    alert('{% trans "Please add some content to your post." %}');
+                    return false;
+                }
+                
+                // Set the hidden input value
+                document.getElementById('quill-content').value = content;
+            });
+            
+            // Auto-save functionality (optional)
+            var saveTimeout;
+            quill.on('text-change', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(function() {
+                    // Auto-save logic could go here
+                    console.log('Content changed, could auto-save here');
+                }, 2000);
+            });
+            
+            // Handle image uploads (basic implementation)
+            quill.getModule('toolbar').addHandler('image', function() {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.click();
+                
+                input.onchange = function() {
+                    var file = input.files[0];
+                    if (file) {
+                        // Here you would typically upload the file to your server
+                        // For now, we'll use FileReader to create a data URL
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var range = quill.getSelection();
+                            quill.insertEmbed(range.index, 'image', e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
+            });
+        });
+    </script>
+{% endblock %}

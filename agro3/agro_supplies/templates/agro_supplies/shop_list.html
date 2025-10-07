@@ -114,7 +114,14 @@
                                 {% if shop.owner_name %}
                                 <strong>Owner:</strong> {{ shop.owner_name }}<br>
                                 {% endif %}
-                                <strong>Phone:</strong> {{ shop.phone_number }}<br>
+                                <strong>Phone:</strong> 
+                                <a href="tel:{{ shop.phone_number }}" class="text-decoration-none">{{ shop.phone_number }}</a><br>
+                                {% if shop.whatsapp_number %}
+                                <strong>WhatsApp:</strong> 
+                                <a href="https://wa.me/{{ shop.whatsapp_number|cut:'+' }}" target="_blank" class="text-success text-decoration-none">
+                                    {{ shop.whatsapp_number }} <i class="bi bi-whatsapp"></i>
+                                </a><br>
+                                {% endif %}
                                 {% if shop.delivery_available %}
                                 <small class="text-success">
                                     <i class="fas fa-truck"></i> Delivery Available
@@ -192,4 +199,85 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('country');
+    const regionSelect = document.getElementById('region');
+    const citySelect = document.getElementById('city');
+    
+    if (countrySelect && regionSelect && citySelect) {
+        // Load regions when country changes
+        countrySelect.addEventListener('change', function() {
+            const countryId = this.value;
+            
+            // Clear region and city selects
+            regionSelect.innerHTML = '<option value="">All Regions</option>';
+            citySelect.innerHTML = '<option value="">All Cities</option>';
+            
+            if (countryId) {
+                // Fetch regions for selected country
+                fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.regions.forEach(function(region) {
+                            const option = new Option(region.name, region.id);
+                            regionSelect.add(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading regions:', error));
+            }
+        });
+        
+        // Load cities when region changes
+        regionSelect.addEventListener('change', function() {
+            const regionId = this.value;
+            
+            // Clear city select
+            citySelect.innerHTML = '<option value="">All Cities</option>';
+            
+            if (regionId) {
+                // Fetch cities for selected region
+                fetch(`{% url 'locations:get_cities' %}?region_id=${regionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.cities.forEach(function(city) {
+                            const option = new Option(city.name, city.id);
+                            citySelect.add(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading cities:', error));
+            }
+        });
+        
+        // Initialize: Load regions if country is pre-selected
+        const initialCountry = countrySelect.value;
+        if (initialCountry) {
+            fetch(`{% url 'locations:get_regions' %}?country_id=${initialCountry}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.regions.forEach(function(region) {
+                        const option = new Option(region.name, region.id);
+                        option.selected = region.id == "{{ selected_region }}";
+                        regionSelect.add(option);
+                    });
+                    
+                    // Load cities if region is pre-selected
+                    const initialRegion = regionSelect.value;
+                    if (initialRegion) {
+                        fetch(`{% url 'locations:get_cities' %}?region_id=${initialRegion}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.cities.forEach(function(city) {
+                                    const option = new Option(city.name, city.id);
+                                    option.selected = city.id == "{{ selected_city }}";
+                                    citySelect.add(option);
+                                });
+                            });
+                    }
+                });
+        }
+    }
+});
+</script>
 {% endblock %}

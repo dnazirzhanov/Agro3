@@ -1,45 +1,11 @@
 """
-Models for crop and soil type management in the agricultural application.
+Models for crop management in the agricultural application.
 
-This module contains models representing different types of soil and crops,
-including their characteristics, growing requirements, and relationships.
+This module contains models representing different types of crops,
+including their characteristics and growing requirements.
 """
 from django.db import models
 from django.urls import reverse
-
-
-class SoilType(models.Model):
-    """
-    Represents different soil types with their characteristics and properties.
-    
-    Used for soil identification and to provide recommendations for suitable crops
-    based on soil texture, drainage, and nutrient retention capabilities.
-    """
-    TEXTURE_CHOICES = [
-        ('Sandy', 'Sandy'),
-        ('Loamy', 'Loamy'),
-        ('Clay', 'Clay'),
-        ('Silty', 'Silty'),
-    ]
-    
-    DRAINAGE_CHOICES = [
-        ('Good', 'Good'),
-        ('Moderate', 'Moderate'),
-        ('Poor', 'Poor'),
-    ]
-    
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField()
-    texture = models.CharField(max_length=20, choices=TEXTURE_CHOICES)
-    drainage = models.CharField(max_length=20, choices=DRAINAGE_CHOICES)
-    nutrient_retention = models.CharField(max_length=100)
-    recommended_amendments = models.TextField(blank=True, null=True)
-    
-    def __str__(self):
-        return self.name
-    
-    def get_absolute_url(self):
-        return reverse('soil:detail', kwargs={'pk': self.pk})
 
 
 class Crop(models.Model):
@@ -67,13 +33,6 @@ class Crop(models.Model):
     description = models.TextField()
     sunlight_needs = models.CharField(max_length=20, choices=SUNLIGHT_CHOICES)
     water_needs = models.CharField(max_length=20, choices=WATER_CHOICES)
-    soil_preference = models.ForeignKey(
-        SoilType, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='preferred_crops'
-    )
     climate_preference = models.CharField(max_length=200)
     planting_seasons = models.TextField(blank=True, null=True)
     harvest_time = models.CharField(max_length=100, blank=True, null=True)

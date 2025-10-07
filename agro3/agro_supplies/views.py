@@ -1,19 +1,38 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q, Avg, Min, Max
+from django.db.models import Q, Avg, Min, Max, Count
+from django.db import models
 from django.core.paginator import Paginator
 from .models import ChemicalCategory, ChemicalProduct, Shop, ChemicalPrice
 from locations.models import Country, Region, City
 
 
 def product_list(request):
-    """List all chemical products with filtering and search"""
-    products = ChemicalProduct.objects.filter(is_active=True).select_related('category')
+    """List all chemical products with filtering and search - focused on pricing"""
+    products = ChemicalProduct.objects.filter(is_active=True).select_related('category').prefetch_related('prices__shop')
     categories = ChemicalCategory.objects.all()
+    
+    # Get location options for filtering - based on shops that sell products
+    countries = Country.objects.filter(shops__product_prices__product__is_active=True).distinct().order_by('name')
+    regions = Region.objects.none()  # Will be populated based on country selection
     
     # Filtering
     category_id = request.GET.get('category')
     if category_id:
         products = products.filter(category_id=category_id)
+    
+    # Location filtering - filter products based on shops in selected locations
+    country_id = request.GET.get('country')
+    region_id = request.GET.get('region')
+    
+    if country_id:
+        # Filter products available in the selected country
+        products = products.filter(prices__shop__country_id=country_id).distinct()
+        # Get regions for selected country
+        regions = Region.objects.filter(country_id=country_id, shops__product_prices__product__is_active=True).distinct().order_by('name')
+        
+        if region_id:
+            # Further filter by region
+            products = products.filter(prices__shop__region_id=region_id).distinct()
     
     # Search
     search_query = request.GET.get('search')
@@ -25,15 +44,28 @@ def product_list(request):
             Q(target_crops__icontains=search_query)
         )
     
+    # Order products with prices - prioritize products with available prices
+    products = products.annotate(
+        min_price=Min('prices__price'),
+        price_count=models.Count('prices')
+    ).order_by('-price_count', 'min_price', 'brand', 'name')
+    
+    # Prefetch prices with shop information for efficient querying
+    products = products.prefetch_related('prices__shop__country', 'prices__shop__region', 'prices__shop__city')
+    
     # Pagination
-    paginator = Paginator(products, 12)  # Show 12 products per page
+    paginator = Paginator(products, 15)  # Show 15 products per page for table display
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
         'page_obj': page_obj,
         'categories': categories,
+        'countries': countries,
+        'regions': regions,
         'selected_category': category_id,
+        'selected_country': country_id,
+        'selected_region': region_id,
         'search_query': search_query,
         'total_products': products.count()
     }
@@ -122,8 +154,16 @@ def shop_list(request):
     
     # Filter options
     countries = Country.objects.filter(shops__is_active=True).distinct()
-    regions = Region.objects.filter(shops__is_active=True).distinct()
-    cities = City.objects.filter(shops__is_active=True).distinct()
+    
+    # Only load regions/cities if country/region is selected (for form resubmission)
+    regions = []
+    cities = []
+    
+    if country_id:
+        regions = Region.objects.filter(country_id=country_id, shops__is_active=True).distinct()
+        
+        if region_id:
+            cities = City.objects.filter(region_id=region_id, shops__is_active=True).distinct()
     
     context = {
         'page_obj': page_obj,
@@ -248,3 +288,55 @@ def price_comparison(request):
         'search_query': search_query,
     }
     return render(request, 'agro_supplies/price_comparison.html', context)
+
+
+def price_calculator(request):
+    """Chemical product price calculator"""
+    products = ChemicalProduct.objects.filter(is_active=True, prices__isnull=False).distinct().select_related('category').order_by('brand', 'name')
+    categories = ChemicalCategory.objects.all()
+    countries = Country.objects.filter(shops__product_prices__product__is_active=True).distinct().order_by('name')
+    
+    context = {
+        'products': products,
+        'categories': categories,
+        'countries': countries,
+    }
+    return render(request, 'agro_supplies/calculator.html', context)
+
+
+def get_product_prices(request, product_id):
+    """API endpoint to get prices for a specific product"""
+    from django.http import JsonResponse
+    
+    try:
+        product = ChemicalProduct.objects.get(id=product_id, is_active=True)
+        prices = ChemicalPrice.objects.filter(
+            product=product, 
+            is_in_stock=True
+        ).select_related('shop', 'shop__country', 'shop__region', 'shop__city').order_by('price')
+        
+        price_data = []
+        for price in prices:
+            price_data.append({
+                'id': price.id,
+                'shop_name': price.shop.name,
+                'shop_location': price.shop.get_location_display(),
+                'price': float(price.price),  # This is the price per package at this shop
+                'currency': price.currency,
+                'package_size': float(product.package_size),
+                'package_unit': product.get_package_unit_display(),
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'product_name': f"{product.brand} {product.name}",
+            'package_size': float(product.package_size),
+            'package_unit': product.get_package_unit_display(),
+            'prices': price_data
+        })
+    
+    except ChemicalProduct.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Product not found'
+        })

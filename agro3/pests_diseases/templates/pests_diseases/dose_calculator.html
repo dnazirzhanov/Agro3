@@ -1,32 +1,32 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Dose Calculator - Batken Agri-Helper{% endblock %}
+{% block title %}{% trans "Dose Calculator" %} - AgroSovet{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'pests_diseases:list' %}">Pests & Diseases</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Dose Calculator</li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pests_diseases:list' %}">{% trans "Pests & Diseases" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Dose Calculator" %}</li>
     </ol>
 </nav>
 
 <div class="row">
     <!-- Main Calculator Card -->
-    <div class="col-lg-8 mx-auto">
+    <div class="col-lg-10 mx-auto">
         <div class="card shadow-sm border-success">
             <div class="card-header bg-success text-white">
                 <h3 class="mb-0">
-                    <i class="bi bi-calculator me-2"></i>Chemical Dose Calculator
+                    <i class="bi bi-calculator me-2"></i>{% trans "Chemical Dose Calculator" %}
                 </h3>
             </div>
             <div class="card-body">
                 <!-- Information Alert -->
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
-                    <strong>How to use:</strong> Enter the recommended dose per liter (usually provided by chemical sellers) 
-                    and the total volume of water you need to prepare. The calculator will show you the exact amount of chemical needed.
+                    <strong>{% trans "How to use:" %}</strong> {% trans "Enter the recommended dose per liter (usually provided by chemical sellers) and the total volume of water you need to prepare. The calculator will show you the exact amount of chemical needed." %}
                 </div>
 
                 <!-- Calculator Form -->
@@ -36,7 +36,7 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label for="dose_per_liter" class="form-label fw-bold">
-                                <i class="bi bi-droplet me-1"></i>Dose per Liter
+                                <i class="bi bi-droplet me-1"></i>{% trans "Dose per Liter" %}
                             </label>
                             <div class="input-group">
                                 <input type="number" 
@@ -45,19 +45,19 @@
                                        name="dose_per_liter" 
                                        step="0.01" 
                                        min="0.01"
-                                       placeholder="e.g., 10"
-                                       {% if result and not result.error %}value="{{ result.dose_per_liter }}"{% endif %}
+                                       placeholder="{% trans "e.g., 10" %}"
+                                       {% if result and not result.error %}value="{{ result.dose_per_liter|stringformat:".2f" }}"{% endif %}
                                        required>
-                                <span class="input-group-text">grams</span>
+                                <span class="input-group-text">{% trans "grams" %}</span>
                             </div>
                             <div class="form-text">
-                                Amount of chemical recommended per liter of water
+                                {% trans "Amount of chemical recommended per liter of water" %}
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <label for="total_liters" class="form-label fw-bold">
-                                <i class="bi bi-bucket me-1"></i>Total Volume Needed
+                                <i class="bi bi-bucket me-1"></i>{% trans "Total Volume Needed" %}
                             </label>
                             <div class="input-group">
                                 <input type="number" 
@@ -66,20 +66,20 @@
                                        name="total_liters" 
                                        step="1" 
                                        min="1"
-                                       placeholder="e.g., 560"
-                                       {% if result and not result.error %}value="{{ result.total_liters }}"{% endif %}
+                                       placeholder="{% trans "e.g., 560" %}"
+                                       {% if result and not result.error %}value="{{ result.total_liters|stringformat:".0f" }}"{% endif %}
                                        required>
-                                <span class="input-group-text">liters</span>
+                                <span class="input-group-text">{% trans "liters" %}</span>
                             </div>
                             <div class="form-text">
-                                Total volume of solution you need to prepare
+                                {% trans "Total volume of solution you need to prepare" %}
                             </div>
                         </div>
                     </div>
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-success btn-lg">
-                            <i class="bi bi-calculator me-2"></i>Calculate Dose
+                            <i class="bi bi-calculator me-2"></i>{% trans "Calculate Dose" %}
                         </button>
                     </div>
                 </form>
@@ -94,37 +94,42 @@
                     {% else %}
                         <div class="mt-4 p-4 bg-light rounded border border-success">
                             <h4 class="text-success mb-3">
-                                <i class="bi bi-check-circle me-2"></i>Calculation Result
+                                <i class="bi bi-check-circle me-2"></i>{% trans "Calculation Result" %}
                             </h4>
                             
                             <div class="row text-center mb-3">
                                 <div class="col-md-4">
                                     <div class="p-3">
-                                        <div class="text-muted small mb-1">Dose per Liter</div>
-                                        <div class="h5 mb-0">{{ result.dose_per_liter }} g</div>
+                                        <div class="text-muted small mb-1">{% trans "Dose per Liter" %}</div>
+                                        <div class="h5 mb-0">{{ result.dose_per_liter|stringformat:".2f" }} {% trans "g" %}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="p-3">
-                                        <div class="text-muted small mb-1">Total Volume</div>
-                                        <div class="h5 mb-0">{{ result.total_liters }} L</div>
+                                        <div class="text-muted small mb-1">{% trans "Total Volume" %}</div>
+                                        <div class="h5 mb-0">{{ result.total_liters|stringformat:".0f" }} {% trans "L" %}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="p-3 bg-success text-white rounded">
-                                        <div class="small mb-1">Total Chemical Needed</div>
-                                        <div class="h4 mb-0 fw-bold">{{ result.total_dose }} g</div>
+                                        <div class="small mb-1">{% trans "Total Chemical Needed" %}</div>
+                                        <div class="h4 mb-0 fw-bold">{{ result.total_dose|stringformat:".2f" }} {% trans "g" %}</div>
+                                        {% if result.total_dose >= 1000 %}
+                                        <div class="h3 mb-0 fw-bold mt-2" style="font-size: 1.8rem;">
+                                            {{ result.total_dose_kg|stringformat:".2f" }} {% trans "kg" %}
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Conversion Helper -->
                             <div class="alert alert-success mb-0">
-                                <strong><i class="bi bi-lightbulb me-2"></i>Quick Reference:</strong>
+                                <strong><i class="bi bi-lightbulb me-2"></i>{% trans "Quick Reference:" %}</strong>
                                 <ul class="mb-0 mt-2">
-                                    <li>Total needed: {{ result.total_dose|floatformat:2 }} grams</li>
+                                    <li>{% blocktrans with total_dose=result.total_dose|stringformat:".2f" %}Total needed: {{ total_dose }} grams{% endblocktrans %}</li>
                                     {% if result.total_dose >= 1000 %}
-                                    <li>This equals: {{ result.total_dose_kg|floatformat:2 }} kg ({{ result.total_dose|floatformat:2 }} ÷ 1000)</li>
+                                    <li>{% blocktrans with total_dose_kg=result.total_dose_kg|stringformat:".2f" total_dose=result.total_dose|stringformat:".2f" %}This equals: {{ total_dose_kg }} kg ({{ total_dose }} ÷ 1000){% endblocktrans %}</li>
                                     {% endif %}
                                 </ul>
                             </div>
@@ -138,32 +143,30 @@
         <div class="card shadow-sm mt-4">
             <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="bi bi-question-circle me-2"></i>Usage Examples
+                    <i class="bi bi-question-circle me-2"></i>{% trans "Usage Examples" %}
                 </h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded">
-                            <h6 class="text-primary">Example 1:</h6>
+                            <h6 class="text-primary">{% trans "Example 1:" %}</h6>
                             <p class="small mb-2">
-                                If the chemical seller recommends <strong>10 grams per liter</strong> and you need 
-                                <strong>560 liters</strong> of solution:
+                                {% blocktrans %}If the chemical seller recommends <strong>10 grams per liter</strong> and you need <strong>560 liters</strong> of solution:{% endblocktrans %}
                             </p>
                             <p class="small mb-0 text-success">
-                                <strong>Result:</strong> You need 5,600 grams (5.6 kg) of chemical
+                                <strong>{% trans "Result:" %}</strong> {% trans "You need 5,600 grams (5.6 kg) of chemical" %}
                             </p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded">
-                            <h6 class="text-primary">Example 2:</h6>
+                            <h6 class="text-primary">{% trans "Example 2:" %}</h6>
                             <p class="small mb-2">
-                                If the recommendation is <strong>25 grams per liter</strong> and you need 
-                                <strong>200 liters</strong> of solution:
+                                {% blocktrans %}If the recommendation is <strong>25 grams per liter</strong> and you need <strong>200 liters</strong> of solution:{% endblocktrans %}
                             </p>
                             <p class="small mb-0 text-success">
-                                <strong>Result:</strong> You need 5,000 grams (5 kg) of chemical
+                                <strong>{% trans "Result:" %}</strong> {% trans "You need 5,000 grams (5 kg) of chemical" %}
                             </p>
                         </div>
                     </div>
@@ -175,62 +178,23 @@
         <div class="card shadow-sm mt-4 border-warning">
             <div class="card-header bg-warning">
                 <h5 class="mb-0">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Safety Tips
+                    <i class="bi bi-exclamation-triangle me-2"></i>{% trans "Safety Tips" %}
                 </h5>
             </div>
             <div class="card-body">
                 <ul class="mb-0">
-                    <li>Always wear protective equipment when handling chemicals</li>
-                    <li>Follow the manufacturer's instructions on the chemical label</li>
-                    <li>Mix chemicals in well-ventilated areas</li>
-                    <li>Keep chemicals away from children and animals</li>
-                    <li>Dispose of empty containers properly</li>
-                    <li>If in doubt, consult with agricultural experts</li>
+                    <li>{% trans "Always wear protective equipment when handling chemicals" %}</li>
+                    <li>{% trans "Follow the manufacturer's instructions on the chemical label" %}</li>
+                    <li>{% trans "Mix chemicals in well-ventilated areas" %}</li>
+                    <li>{% trans "Keep chemicals away from children and animals" %}</li>
+                    <li>{% trans "Dispose of empty containers properly" %}</li>
+                    <li>{% trans "If in doubt, consult with agricultural experts" %}</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Quick Links Sidebar -->
-    <div class="col-lg-4 mt-4 mt-lg-0">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="bi bi-link-45deg me-2"></i>Related Resources
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning">
-                        <i class="bi bi-bug me-1"></i>Pests & Diseases List
-                    </a>
-                    <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
-                        <i class="bi bi-flower3 me-1"></i>View Crops
-                    </a>
-                    <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-people me-1"></i>Ask Community
-                    </a>
-                </div>
-            </div>
-        </div>
 
-        <!-- Help Card -->
-        <div class="card shadow-sm mt-4 bg-light">
-            <div class="card-body">
-                <h6 class="card-title">
-                    <i class="bi bi-info-circle text-info me-2"></i>Need Help?
-                </h6>
-                <p class="small mb-2">
-                    If you're unsure about the correct dosage, please consult with:
-                </p>
-                <ul class="small mb-0">
-                    <li>Local agricultural extension services</li>
-                    <li>Chemical product labels</li>
-                    <li>Experienced farmers in your community</li>
-                </ul>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>

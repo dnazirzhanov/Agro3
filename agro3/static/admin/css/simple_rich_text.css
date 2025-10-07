@@ -1,0 +1,126 @@
+/* Simple Rich Text Editor Styles */
+.simple-rich-text {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 200px;
+    background: white;
+}
+
+.simple-rich-text:focus {
+    border-color: #417690;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(65, 118, 144, 0.2);
+}
+
+.rich-text-toolbar {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 8px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.rich-text-btn {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.rich-text-btn:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.rich-text-btn.active {
+    background: #417690;
+    color: white;
+    border-color: #417690;
+}
+
+.rich-text-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.rich-text-separator {
+    width: 1px;
+    background: #ddd;
+    margin: 0 4px;
+}
+
+/* Content styling */
+.simple-rich-text h1,
+.simple-rich-text h2,
+.simple-rich-text h3 {
+    margin: 0.5em 0;
+    color: #333;
+}
+
+.simple-rich-text p {
+    margin: 0.5em 0;
+}
+
+.simple-rich-text strong {
+    font-weight: 600;
+}
+
+.simple-rich-text em {
+    font-style: italic;
+}
+
+.simple-rich-text ul,
+.simple-rich-text ol {
+    margin: 0.5em 0;
+    padding-left: 2em;
+}
+
+.simple-rich-text blockquote {
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    border-left: 4px solid #417690;
+    background: #f8f9fa;
+    font-style: italic;
+}
+
+.simple-rich-text a {
+    color: #417690;
+    text-decoration: underline;
+}
+
+.simple-rich-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 0.5em 0;
+}
+
+.simple-rich-text pre {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 1em;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+
+.simple-rich-text code {
+    background: #f8f9fa;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}

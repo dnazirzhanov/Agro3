@@ -7,7 +7,7 @@ make informed planting decisions.
 """
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from .models import Crop, SoilType
+from .models import Crop
 
 
 def crop_list_view(request):

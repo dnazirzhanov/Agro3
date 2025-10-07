@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block title %}Chemical Product Price Calculator - Agro3{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="bi bi-calculator text-primary me-2"></i>Chemical Product Price Calculator</h1>
+                <a href="{% url 'agro_supplies:product_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Products
+                </a>
+            </div>
+            <p class="lead">Calculate the total cost for your chemical product purchases across different suppliers.</p>
+        </div>
+    </div>
+
+    <!-- Calculator Form -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-calculator me-2"></i>Price Calculator</h5>
+                </div>
+                <div class="card-body">
+                    <form id="calculatorForm">
+                        <!-- Product Selection -->
+                        <div class="mb-4">
+                            <label for="product" class="form-label">
+                                <i class="bi bi-flask me-1"></i>Select Chemical Product
+                            </label>
+                            <select class="form-select" id="product" name="product" required>
+                                <option value="">Choose a product...</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}" 
+                                        data-package-size="{{ product.package_size }}"
+                                        data-package-unit="{{ product.get_package_unit_display }}"
+                                        data-is-liquid="{{ product.is_liquid }}">
+                                    [{{ product.category.get_category_type_display }}] {{ product.brand }} {{ product.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+
+                        <!-- Shop Selection -->
+                        <div class="mb-4">
+                            <label for="shop" class="form-label">
+                                <i class="bi bi-shop me-1"></i>Select Shop
+                            </label>
+                            <select class="form-select" id="shop" name="shop" required disabled>
+                                <option value="">First select a product...</option>
+                            </select>
+                        </div>
+
+                        <!-- Quantity Input -->
+                        <div class="mb-4">
+                            <label for="quantity" class="form-label">
+                                <i class="bi bi-box me-1"></i>Quantity
+                            </label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="quantity" name="quantity" 
+                                       min="0.1" step="0.1" placeholder="Enter quantity" required disabled>
+                                <span class="input-group-text" id="quantityUnit">units</span>
+                            </div>
+                            <div class="form-text">Enter the amount you want to purchase</div>
+                        </div>
+
+                        <!-- Calculate Button -->
+                        <div class="mb-4">
+                            <button type="button" class="btn btn-primary btn-lg w-100" id="calculateBtn" disabled>
+                                <i class="bi bi-calculator me-2"></i>Calculate Total Price
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Results -->
+                    <div id="results" class="d-none">
+                        <hr>
+                        <h5><i class="bi bi-receipt me-2"></i>Calculation Results</h5>
+                        <div id="calculationDetails"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Calculations -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-clock-history me-1"></i>Recent Calculations</h6>
+                </div>
+                <div class="card-body">
+                    <div id="recentCalculations">
+                        <p class="text-muted mb-0">No recent calculations. Use the calculator above to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('product');
+    const shopSelect = document.getElementById('shop');
+    const quantityInput = document.getElementById('quantity');
+    const quantityUnit = document.getElementById('quantityUnit');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const results = document.getElementById('results');
+    const calculationDetails = document.getElementById('calculationDetails');
+    const recentCalculations = document.getElementById('recentCalculations');
+
+    let currentProductData = null;
+    let recentCalcs = JSON.parse(localStorage.getItem('recentCalculations') || '[]');
+
+    // Load recent calculations
+    loadRecentCalculations();
+
+    productSelect.addEventListener('change', function() {
+        const productId = this.value;
+        if (productId) {
+
+            // Load product prices
+            fetch(`/en/agro-supplies/api/product-prices/${productId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentProductData = data;
+                        populateShopSelect(data.prices);
+                        quantityUnit.textContent = data.package_unit;
+                        quantityInput.disabled = false;
+                        shopSelect.disabled = false;
+                    } else {
+                        alert('Error loading product prices: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading product prices');
+                });
+        } else {
+            shopSelect.disabled = true;
+            quantityInput.disabled = true;
+            calculateBtn.disabled = true;
+            shopSelect.innerHTML = '<option value="">First select a product...</option>';
+            results.classList.add('d-none');
+        }
+    });
+
+    function populateShopSelect(prices) {
+        shopSelect.innerHTML = '<option value="">Choose a shop...</option>';
+        prices.forEach(price => {
+            const option = document.createElement('option');
+            option.value = price.id;
+            option.textContent = `${price.shop_name} - ${price.price.toFixed(2)} som per ${currentProductData.package_unit}`;
+            option.dataset.price = price.price;
+            option.dataset.shopName = price.shop_name;
+            option.dataset.shopLocation = price.shop_location;
+            shopSelect.appendChild(option);
+        });
+    }
+
+    shopSelect.addEventListener('change', function() {
+        calculateBtn.disabled = !this.value || !quantityInput.value;
+    });
+
+    quantityInput.addEventListener('input', function() {
+        calculateBtn.disabled = !this.value || !shopSelect.value;
+    });
+
+    calculateBtn.addEventListener('click', function() {
+        const selectedShop = shopSelect.options[shopSelect.selectedIndex];
+        const quantity = parseFloat(quantityInput.value);
+        const shopPrice = parseFloat(selectedShop.dataset.price); // Use actual shop price per package
+        
+        // Calculate total based on shop's price per package multiplied by quantity
+        const totalPrice = shopPrice * quantity;
+
+        // Display results
+        let calculationHtml = `
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary">Order Summary</h6>
+                            <p class="mb-1"><strong>Product:</strong> ${currentProductData.product_name}</p>
+                            <p class="mb-1"><strong>Shop:</strong> ${selectedShop.dataset.shopName}</p>
+                            <p class="mb-1"><strong>Location:</strong> ${selectedShop.dataset.shopLocation}</p>
+                            <p class="mb-1"><strong>Quantity:</strong> ${quantity} ${currentProductData.package_unit}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Cost</h6>
+                            <h3 class="mb-0">${totalPrice.toFixed(2)} som</h3>
+                            <small>Price per ${currentProductData.package_unit}: ${shopPrice.toFixed(2)} som</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        calculationDetails.innerHTML = calculationHtml;
+        results.classList.remove('d-none');
+
+        // Save to recent calculations
+        const calculation = {
+            product: currentProductData.product_name,
+            shop: selectedShop.dataset.shopName,
+            quantity: quantity,
+            unit: currentProductData.package_unit,
+            totalPrice: totalPrice.toFixed(2),
+            timestamp: new Date().toLocaleString()
+        };
+
+        recentCalcs.unshift(calculation);
+        recentCalcs = recentCalcs.slice(0, 5); // Keep only last 5
+        localStorage.setItem('recentCalculations', JSON.stringify(recentCalcs));
+        loadRecentCalculations();
+    });
+
+    function loadRecentCalculations() {
+        if (recentCalcs.length === 0) {
+            recentCalculations.innerHTML = '<p class="text-muted mb-0">No recent calculations. Use the calculator above to get started.</p>';
+            return;
+        }
+
+        let html = '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Product</th><th>Shop</th><th>Quantity</th><th>Total</th><th>Date</th></tr></thead><tbody>';
+        recentCalcs.forEach(calc => {
+            html += `<tr>
+                <td>${calc.product}</td>
+                <td>${calc.shop}</td>
+                <td>${calc.quantity} ${calc.unit}</td>
+                <td><strong>${calc.totalPrice} som</strong></td>
+                <td><small>${calc.timestamp}</small></td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+        recentCalculations.innerHTML = html;
+    }
+});
+</script>
+{% endblock %}

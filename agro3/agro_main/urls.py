@@ -11,6 +11,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.shortcuts import render
+from locations.views import GetRegionsView, GetCitiesView, SearchLocationsView
 
 
 def home_view(request):
@@ -37,6 +38,11 @@ from locations.views import LocationSearchPageView
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),  # Language switcher
     path('api/users/', include('users.api_urls')),
+    path('locations/ajax/', include([
+        path('regions/', GetRegionsView.as_view(), name='api_get_regions'),
+        path('cities/', GetCitiesView.as_view(), name='api_get_cities'),
+        path('search/', SearchLocationsView.as_view(), name='api_search_locations'),
+    ])),
 ]
 
 # Language-dependent URLs (all user-facing pages)
@@ -44,17 +50,16 @@ urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
     path('location-test/', location_test_view, name='location_test'),
-    path('search/', LocationSearchPageView.as_view(), name='location_search'),
-    path('locations/', include('locations.urls')),
+    path('locations/', include('locations.urls')),  # Regular location pages with language prefixes
     path('users/', include('users.urls')),
     path('crops/', include('crops.urls')),
     path('pests-diseases/', include('pests_diseases.urls')),
     path('market/', include('market.urls')),
-    path('soil/', include('soil.urls')),
+
     path('forum/', include('forum.urls')),
     path('weather/', include('weather.urls')),
     path('agro-supplies/', include('agro_supplies.urls')),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),  # Temporarily kept for compatibility
     prefix_default_language=True,  # Include language prefix for default language too
 )
 

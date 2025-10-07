@@ -1,0 +1,231 @@
+/**
+ * Agricultural Quill Editor Styles
+ * Modern rich text editor styling for agricultural content
+ */
+
+/* Quill Editor Container */
+.agricultural-editor {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: border-color 0.3s ease;
+}
+
+.agricultural-editor:focus-within {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Quill Toolbar */
+.ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    padding: 12px;
+}
+
+.ql-toolbar .ql-formats {
+    margin-right: 15px;
+}
+
+.ql-toolbar button:hover,
+.ql-toolbar button:focus {
+    color: #28a745;
+}
+
+.ql-toolbar button.ql-active {
+    color: #28a745;
+}
+
+/* Quill Editor Content */
+.ql-editor {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 300px;
+    padding: 20px;
+}
+
+.ql-editor.ql-blank::before {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Agricultural-specific content styles */
+.ql-editor h1, .ql-editor h2 {
+    color: #2d5a27;
+    border-bottom: 2px solid #28a745;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.ql-editor h3, .ql-editor h4 {
+    color: #2d5a27;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Agricultural image styling */
+.ql-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ql-editor img[alt*="disease"], 
+.ql-editor img[alt*="symptom"] {
+    border: 3px solid #dc3545;
+}
+
+.ql-editor img[alt*="pest"], 
+.ql-editor img[alt*="insect"] {
+    border: 3px solid #fd7e14;
+}
+
+.ql-editor img[alt*="crop"], 
+.ql-editor img[alt*="plant"] {
+    border: 3px solid #28a745;
+}
+
+.ql-editor img[alt*="treatment"], 
+.ql-editor img[alt*="solution"] {
+    border: 3px solid #17a2b8;
+}
+
+/* Lists */
+.ql-editor ul li, .ql-editor ol li {
+    margin-bottom: 0.5rem;
+}
+
+.ql-editor ul {
+    list-style-type: disc;
+}
+
+.ql-editor ol {
+    list-style-type: decimal;
+}
+
+/* Blockquotes for tips and important notes */
+.ql-editor blockquote {
+    border-left: 4px solid #28a745;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Code blocks for technical instructions */
+.ql-editor pre.ql-syntax {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Links */
+.ql-editor a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+.ql-editor a:hover {
+    color: #1e7e34;
+    text-decoration: underline;
+}
+
+/* Tables */
+.ql-editor table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.ql-editor table td, .ql-editor table th {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.ql-editor table th {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+.ql-editor table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .ql-toolbar .ql-formats {
+        margin-right: 8px;
+    }
+    
+    .ql-editor {
+        font-size: 14px;
+        padding: 15px;
+        min-height: 250px;
+    }
+    
+    .agricultural-editor {
+        border-radius: 4px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .agricultural-editor {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .ql-toolbar {
+        background: #1a202c;
+        border-color: #4a5568;
+    }
+    
+    .ql-editor {
+        color: #e2e8f0;
+        background: #2d3748;
+    }
+    
+    .ql-editor.ql-blank::before {
+        color: #a0aec0;
+    }
+    
+    .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4 {
+        color: #68d391;
+    }
+    
+    .ql-editor blockquote {
+        background-color: #1a202c;
+        border-color: #68d391;
+        color: #e2e8f0;
+    }
+    
+    .ql-editor pre.ql-syntax {
+        background-color: #1a202c;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+}
+
+/* Custom agricultural color schemes */
+.agricultural-success { color: #28a745; }
+.agricultural-warning { color: #ffc107; }
+.agricultural-danger { color: #dc3545; }
+.agricultural-info { color: #17a2b8; }
+
+/* Seasonal color themes */
+.spring-theme { border-color: #28a745; }
+.summer-theme { border-color: #ffc107; }
+.autumn-theme { border-color: #fd7e14; }
+.winter-theme { border-color: #6c757d; }

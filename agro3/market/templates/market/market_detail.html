@@ -107,7 +107,44 @@
                                 </td>
                                 <td>
                                     {% if price.notes %}
-                                        <small class="text-muted">{{ price.notes|truncatewords:10 }}</small>
+                                        {% if price.notes|length <= 80 %}
+                                            <small class="text-muted">{{ price.notes }}</small>
+                                        {% elif price.notes|length <= 200 %}
+                                            <small class="text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ price.notes }}">
+                                                {{ price.notes|truncatechars:80 }}
+                                            </small>
+                                        {% else %}
+                                            <small class="text-muted">
+                                                <span id="note-preview-{{ price.id }}">{{ price.notes|truncatechars:80 }}</span>
+                                                <a href="#" class="text-primary ms-1" data-bs-toggle="modal" data-bs-target="#noteModal-{{ price.id }}">
+                                                    <i class="bi bi-eye me-1"></i>Read more
+                                                </a>
+                                            </small>
+                                            
+                                            <!-- Modal for long notes -->
+                                            <div class="modal fade" id="noteModal-{{ price.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h6 class="modal-title">
+                                                                <i class="bi bi-chat-text me-1"></i>
+                                                                Note for {{ price.product.name }} at {{ price.market.name }}
+                                                            </h6>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="mb-0">{{ price.notes|linebreaks }}</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <small class="text-muted me-auto">
+                                                                <i class="bi bi-calendar me-1"></i>{{ price.date_recorded|date:"M d, Y g:i A" }}
+                                                            </small>
+                                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
                                     {% else %}
                                         <span class="text-muted">-</span>
                                     {% endif %}
@@ -192,4 +229,13 @@
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
 {% endblock %}

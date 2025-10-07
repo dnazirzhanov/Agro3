@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django import forms
-from ckeditor.widgets import CKEditorWidget
+# Removed django_quill dependency
 from .models import BlogPost, Category, Tag, Comment, Like
 
 
@@ -71,85 +71,26 @@ def blog_index_view(request):
 
 
 def blog_post_detail_view(request, slug):
-    """Display a single blog post with comments and replies."""
+    """Display a single blog post using uploaded HTML file content."""
     post = get_object_or_404(BlogPost, slug=slug, is_published=True)
     
     # Increment view count
     post.views_count += 1
     post.save(update_fields=['views_count'])
     
-    # Get threaded comments using the model method
-    comments = post.get_threaded_comments()
-    
-    # Handle comment/reply submission
-    if request.method == 'POST' and request.user.is_authenticated:
-        content = request.POST.get('content')
-        parent_id = request.POST.get('parent_id')
-        
-        if content:
-            parent_comment = None
-            if parent_id:
-                try:
-                    parent_comment = Comment.objects.get(
-                        id=parent_id, 
-                        blog_post=post, 
-                        is_approved=True
-                    )
-                except Comment.DoesNotExist:
-                    parent_comment = None
-            
-            Comment.objects.create(
-                blog_post=post,
-                author=request.user,
-                content=content,
-                parent_comment=parent_comment
-            )
-            
-            if parent_comment:
-                messages.success(request, 'Your reply has been posted successfully!')
-            else:
-                messages.success(request, 'Your comment has been posted successfully!')
-                
-            return redirect('forum:post_detail', slug=post.slug)
-    
-    # Get related posts
-    related_posts = BlogPost.objects.filter(
-        is_published=True,
-        category=post.category
-    ).exclude(pk=post.pk)[:4]
-    
-    # Check if current user has liked this post
-    user_has_liked_post = False
-    if request.user.is_authenticated:
-        user_has_liked_post = post.is_liked_by(request.user)
-    
-    # Add liked status to comments for the current user
-    comment_likes = {}
-    if request.user.is_authenticated:
-        # Get all comments for this post (including replies)
-        all_comments = Comment.objects.filter(blog_post=post, is_approved=True)
-        
-        # Create a function to recursively add like status
-        def add_like_status_to_comments(comment_queryset):
-            for comment in comment_queryset:
-                comment.user_has_liked = comment.is_liked_by(request.user)
-                comment_likes[comment.id] = comment.user_has_liked
-                # Add like status to replies if they exist
-                if hasattr(comment, 'replies'):
-                    add_like_status_to_comments(comment.replies.all())
-        
-        # Add like status to top-level comments and their replies
-        add_like_status_to_comments(comments)
+    # Get HTML content and styles for current language
+    current_language = getattr(request, 'LANGUAGE_CODE', 'en')
+    html_content = post.get_html_content_for_language(current_language)
+    extracted_styles = post.get_extracted_styles_for_language(current_language)
     
     context = {
         'post': post,
-        'comments': comments,
-        'related_posts': related_posts,
-        'user_has_liked_post': user_has_liked_post,
-        'comment_likes': comment_likes if request.user.is_authenticated else {},
+        'html_content': html_content,
+        'extracted_styles': extracted_styles,
+        'current_language': current_language,
     }
     
-    return render(request, 'forum/post_detail.html', context)
+    return render(request, 'forum/post_detail_simple.html', context)
 
 
 def blog_category_list_view(request, slug):
@@ -219,11 +160,33 @@ def blog_tag_list_view(request, slug):
 
 
 class BlogPostForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorWidget())
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 10, 'class': 'form-control'}))
 
     class Meta:
         model = BlogPost
         fields = ['title', 'short_description', 'content', 'featured_image', 'category', 'tags', 'is_published']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter an engaging title for your post...'
+        })
+        self.fields['short_description'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Write a brief description (optional)...',
+            'rows': 2
+        })
+        self.fields['featured_image'].widget.attrs.update({
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
+        self.fields['category'].widget.attrs.update({
+            'class': 'form-select'
+        })
+        self.fields['tags'].widget.attrs.update({
+            'class': 'form-select'
+        })
 
 
 @login_required

@@ -1,8 +1,7 @@
 from django.urls import path
 from django.contrib.auth.views import (
     PasswordResetDoneView, 
-    PasswordResetConfirmView, PasswordResetCompleteView,
-    LogoutView
+    PasswordResetConfirmView, PasswordResetCompleteView
 )
 from . import views
 
@@ -11,7 +10,7 @@ app_name = 'users'
 urlpatterns = [
     # Authentication URLs
     path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     path('register/', views.register_view, name='register'),
     
     # Profile URLs
@@ -22,6 +21,8 @@ urlpatterns = [
     # Social Features
     path('follow/<int:user_id>/', views.follow_user_view, name='follow'),
     path('farmers/', views.farmers_list_view, name='farmers_list'),
+    path('ajax/regions/', views.get_regions_by_country, name='ajax_regions'),
+    path('ajax/follow/<int:user_id>/', views.ajax_follow_user, name='ajax_follow'),
     
     # Password Reset URLs
     path('password-reset/', 

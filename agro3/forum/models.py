@@ -11,7 +11,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
 from django.core.validators import FileExtensionValidator
-from ckeditor.fields import RichTextField
+# Removed django_quill dependency - using simple TextField for content
 import os
 
 
@@ -83,6 +83,11 @@ def get_post_video_path(instance, filename):
     return f'blog/videos/{instance.slug}/{filename}'
 
 
+def get_post_html_path(instance, filename):
+    """Generate upload path for blog post HTML files"""
+    return f'blog/html/{instance.slug}/{filename}'
+
+
 class BlogPost(models.Model):
     """
     Represents a blog post in the agricultural knowledge-sharing forum.
@@ -100,7 +105,17 @@ class BlogPost(models.Model):
     )
     publication_date = models.DateTimeField(default=timezone.now)
     short_description = models.CharField(max_length=300, blank=True, null=True)
-    content = RichTextField(config_name='agricultural')
+    content = models.TextField(blank=True, null=True, help_text="Rich text content")
+    
+    # HTML file upload for blog content (modeltranslation will create language variants)
+    html_file = models.FileField(
+        upload_to=get_post_html_path,
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+        help_text='Upload an HTML file for the blog post content'
+    )
+    
     featured_image = models.ImageField(
         upload_to='blog/featured/', 
         blank=True, 
@@ -157,6 +172,50 @@ class BlogPost(models.Model):
     def get_absolute_url(self):
         return reverse('forum:post_detail', kwargs={'slug': self.slug})
     
+    def get_title_for_language(self, language_code='en'):
+        """Get title for specific language, falling back to default title."""
+        if language_code == 'ru' and hasattr(self, 'title_ru') and self.title_ru:
+            return self.title_ru
+        elif language_code == 'ky' and hasattr(self, 'title_ky') and self.title_ky:
+            return self.title_ky
+        elif language_code == 'en' and hasattr(self, 'title_en') and self.title_en:
+            return self.title_en
+        return self.title  # Fallback to default title
+    
+    def get_description_for_language(self, language_code='en'):
+        """Get description for specific language, falling back to default description."""
+        if language_code == 'ru' and hasattr(self, 'short_description_ru') and self.short_description_ru:
+            return self.short_description_ru
+        elif language_code == 'ky' and hasattr(self, 'short_description_ky') and self.short_description_ky:
+            return self.short_description_ky
+        elif language_code == 'en' and hasattr(self, 'short_description_en') and self.short_description_en:
+            return self.short_description_en
+        return self.short_description  # Fallback to default description
+    
+    def get_html_file_for_language(self, language_code='en'):
+        """Get HTML file for specific language, falling back to default file."""
+        if language_code == 'ru' and hasattr(self, 'html_file_ru') and self.html_file_ru:
+            return self.html_file_ru
+        elif language_code == 'ky' and hasattr(self, 'html_file_ky') and self.html_file_ky:
+            return self.html_file_ky
+        return self.html_file  # Fallback to default HTML file
+    
+    def has_translation(self, language_code):
+        """Check if post has content in specific language."""
+        if language_code == 'ru':
+            html_file_ru = getattr(self, 'html_file_ru', None)
+            title_ru = getattr(self, 'title_ru', None)
+            return bool(html_file_ru or title_ru)
+        elif language_code == 'ky':
+            html_file_ky = getattr(self, 'html_file_ky', None)
+            title_ky = getattr(self, 'title_ky', None)
+            return bool(html_file_ky or title_ky)
+        elif language_code == 'en':
+            html_file_en = getattr(self, 'html_file_en', self.html_file)
+            title_en = getattr(self, 'title_en', self.title)
+            return bool(html_file_en or title_en)
+        return False
+    
     def get_comment_count(self):
         return self.comments.filter(is_approved=True).count()
     
@@ -203,6 +262,112 @@ class BlogPost(models.Model):
         if user.is_anonymous:
             return False
         return self.likes.filter(user=user).exists()
+    
+    def get_html_content(self):
+        """Get HTML content from uploaded file or fall back to QuillField content"""
+        if self.html_file:
+            try:
+                with self.html_file.open('r', encoding='utf-8') as f:
+                    return f.read()
+            except Exception as e:
+                # Log the error and fall back to content field
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Error reading HTML file for post {self.id}: {e}")
+        
+        # Fall back to QuillField content
+        return str(self.content) if self.content else ""
+    
+    def has_html_file(self):
+        """Check if the post has an uploaded HTML file"""
+        return bool(self.html_file)
+    
+    def get_html_file_for_language(self, language_code='en'):
+        """Get the appropriate HTML file based on language preference"""
+        if language_code == 'ru' and hasattr(self, 'html_file_ru') and self.html_file_ru:
+            return self.html_file_ru
+        elif language_code == 'ky' and hasattr(self, 'html_file_ky') and self.html_file_ky:
+            return self.html_file_ky
+        elif hasattr(self, 'html_file_en') and self.html_file_en:
+            return self.html_file_en
+        elif self.html_file:
+            return self.html_file
+        return None
+    
+    def get_html_content_for_language(self, language_code='en'):
+        """Get HTML content for specific language, extracting only body content"""
+        content, _ = self.get_html_and_styles_for_language(language_code)
+        return content
+    
+    def get_extracted_styles_for_language(self, language_code='en'):
+        """Get CSS styles from HTML file for specific language"""
+        _, styles = self.get_html_and_styles_for_language(language_code)
+        return styles
+    
+    def get_html_and_styles_for_language(self, language_code='en'):
+        """Get both HTML content and CSS styles for specific language in one read"""
+        html_file = self.get_html_file_for_language(language_code)
+        if html_file:
+            try:
+                content = html_file.read().decode('utf-8')
+                html_file.close()
+                
+                # If this is a complete HTML document, extract body content and styles
+                if '<!DOCTYPE html>' in content or '<html' in content:
+                    import re
+                    
+                    # Extract styles from head section
+                    extracted_styles = None
+                    head_match = re.search(r'<head[^>]*>(.*?)</head>', content, re.DOTALL | re.IGNORECASE)
+                    if head_match:
+                        head_content = head_match.group(1)
+                        style_matches = re.findall(r'<style[^>]*>(.*?)</style>', head_content, re.DOTALL | re.IGNORECASE)
+                        if style_matches:
+                            # Combine all styles
+                            combined_styles = '\n'.join(style_matches)
+                            # Remove problematic styles that interfere with our layout
+                            combined_styles = re.sub(r'body\s*\{[^}]*\}', '', combined_styles, flags=re.IGNORECASE)
+                            combined_styles = re.sub(r'html\s*\{[^}]*\}', '', combined_styles, flags=re.IGNORECASE)
+                            # Remove any margin/padding on universal selectors that might break layout
+                            combined_styles = re.sub(r'\*\s*\{[^}]*margin[^}]*\}', '', combined_styles, flags=re.IGNORECASE)
+                            combined_styles = re.sub(r'\*\s*\{[^}]*padding[^}]*\}', '', combined_styles, flags=re.IGNORECASE)
+                            
+                            extracted_styles = combined_styles.strip() if combined_styles.strip() else None
+                    
+                    # Extract content between <body> tags
+                    body_content = ""
+                    body_match = re.search(r'<body[^>]*>(.*?)</body>', content, re.DOTALL | re.IGNORECASE)
+                    if body_match:
+                        body_content = body_match.group(1).strip()
+                        
+                        # Remove any existing style tags from body (we already extracted them from head)
+                        body_content = re.sub(r'<style[^>]*>.*?</style>', '', body_content, flags=re.DOTALL | re.IGNORECASE)
+                        
+                        # Remove any script tags that might cause issues
+                        body_content = re.sub(r'<script[^>]*>.*?</script>', '', body_content, flags=re.DOTALL | re.IGNORECASE)
+                    else:
+                        # If no body tag found, try to extract content inside html tag
+                        html_match = re.search(r'<html[^>]*>(.*?)</html>', content, re.DOTALL | re.IGNORECASE)
+                        if html_match:
+                            body_content = html_match.group(1)
+                            # Remove head section
+                            body_content = re.sub(r'<head[^>]*>.*?</head>', '', body_content, flags=re.DOTALL | re.IGNORECASE)
+                            # Remove any remaining style tags
+                            body_content = re.sub(r'<style[^>]*>.*?</style>', '', body_content, flags=re.DOTALL | re.IGNORECASE)
+                    
+                    return body_content.strip(), extracted_styles
+                else:
+                    # If it's just HTML fragments, return as is with no styles
+                    return content, None
+                    
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Error reading HTML file for post {self.id} (lang: {language_code}): {e}")
+        
+        # Fallback to regular content field
+        fallback_content = str(self.content) if self.content else f"<p>No content available in {language_code}.</p>"
+        return fallback_content, None
 
 
 class Comment(models.Model):

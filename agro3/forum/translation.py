@@ -14,10 +14,10 @@ class BlogPostTranslationOptions(TranslationOptions):
     """
     Define translatable fields for BlogPost model.
     
-    Title, description, and content will be available in English, Russian, and Kyrgyz.
+    Title, description, content, and HTML files will be available in English, Russian, and Kyrgyz.
     This allows agricultural content to be accessible to farmers in their native language.
     """
-    fields = ('title', 'short_description', 'content')
+    fields = ('title', 'short_description', 'content', 'html_file')
     required_languages = ('en',)  # English is required, others optional
 
 

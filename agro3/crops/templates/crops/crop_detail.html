@@ -56,21 +56,9 @@
                     </div>
                 </div>
                 
-                <!-- Soil and Climate -->
+                <!-- Climate -->
                 <div class="row g-3 mt-3">
-                    {% if crop.soil_preference %}
-                    <div class="col-md-6">
-                        <div class="border rounded p-3 h-100">
-                            <h6 class="fw-bold text-success mb-2">
-                                <i class="bi bi-dirt me-1"></i>Preferred Soil Type
-                            </h6>
-                            <p class="mb-0">{{ crop.soil_preference.name }}</p>
-                            <small class="text-muted">{{ crop.soil_preference.texture }} soil</small>
-                        </div>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="col-md-{% if crop.soil_preference %}6{% else %}12{% endif %}">
+                    <div class="col-md-12">
                         <div class="border rounded p-3 h-100">
                             <h6 class="fw-bold text-success mb-2">
                                 <i class="bi bi-thermometer me-1"></i>Climate Preference
@@ -185,11 +173,7 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    {% if crop.soil_preference %}
-                    <a href="{% url 'soil:questionnaire' %}" class="btn btn-outline-info">
-                        <i class="bi bi-dirt me-1"></i>Test Your Soil
-                    </a>
-                    {% endif %}
+
                     <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning">
                         <i class="bi bi-bug me-1"></i>Check Pests & Diseases
                     </a>

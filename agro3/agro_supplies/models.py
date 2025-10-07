@@ -89,6 +89,27 @@ class ChemicalProduct(models.Model):
     
     def get_absolute_url(self):
         return reverse('agro_supplies:product_detail', kwargs={'pk': self.pk})
+    
+    def is_liquid(self):
+        """Determine if product is liquid based on unit and concentration"""
+        liquid_units = ['liter', 'ml']
+        liquid_indicators = ['EC', 'SL', 'SC', 'AS']  # Common liquid formulation codes
+        
+        # Check if unit indicates liquid
+        if self.package_unit in liquid_units:
+            return True
+        
+        # Check concentration for liquid indicators
+        concentration_upper = self.concentration.upper()
+        return any(indicator in concentration_upper for indicator in liquid_indicators)
+    
+    def get_standard_unit(self):
+        """Get the standard unit for pricing (som per liter or som per kg)"""
+        return "liter" if self.is_liquid() else "kg"
+    
+    def get_standard_unit_display(self):
+        """Get display text for standard unit"""
+        return "som/liter" if self.is_liquid() else "som/kg"
 
 
 class Shop(models.Model):
@@ -107,8 +128,10 @@ class Shop(models.Model):
     
     # Contact information
     phone_number = models.CharField(max_length=20)
+    whatsapp_number = models.CharField(max_length=20, blank=True, help_text="WhatsApp contact number")
     email = models.EmailField(blank=True)
     website = models.URLField(blank=True)
+    google_maps_link = models.URLField(blank=True, help_text="Google Maps link to shop location")
     
     # Location using hierarchical system
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='shops')
@@ -207,6 +230,43 @@ class ChemicalPrice(models.Model):
         if self.bulk_price and self.bulk_price < self.price:
             return self.price - self.bulk_price
         return Decimal('0.00')
+    
+    def get_standardized_price(self):
+        """Get price per standard unit (som per liter for liquids, som per kg for solids)"""
+        effective_price = self.get_effective_price()
+        package_size = self.product.package_size
+        package_unit = self.product.package_unit
+        
+        # Convert package size to standard unit
+        if self.product.is_liquid():
+            # Convert to liters
+            if package_unit == 'ml':
+                standard_size = package_size / 1000
+            elif package_unit == 'liter':
+                standard_size = package_size
+            else:
+                # Assume 1 bottle/packet = package_size liters for liquids
+                standard_size = package_size
+        else:
+            # Convert to kg
+            if package_unit == 'gram':
+                standard_size = package_size / 1000
+            elif package_unit == 'kg':
+                standard_size = package_size
+            else:
+                # Assume 1 bag/packet = package_size kg for solids
+                standard_size = package_size
+        
+        # Calculate price per standard unit
+        if standard_size > 0:
+            return effective_price / standard_size
+        return effective_price
+    
+    def get_standardized_price_display(self):
+        """Get formatted standardized price with currency and unit"""
+        price = self.get_standardized_price()
+        unit = self.product.get_standard_unit_display()
+        return f"{price:.2f} {unit}"
 
 
 class PriceHistory(models.Model):

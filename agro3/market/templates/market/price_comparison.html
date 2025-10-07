@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Price Comparison - Market Prices - Batken Agri-Helper{% endblock %}
+{% block title %}Price Comparison - Market Prices - AgroSovet{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
@@ -97,9 +97,42 @@
                     </small>
                     {% if price.notes %}
                         <div class="mt-2">
-                            <small class="text-muted">
-                                <i class="bi bi-chat-text me-1"></i>{{ price.notes }}
-                            </small>
+                            {% if price.notes|length <= 150 %}
+                                <small class="text-muted">
+                                    <i class="bi bi-chat-text me-1"></i>{{ price.notes }}
+                                </small>
+                            {% else %}
+                                <small class="text-muted">
+                                    <i class="bi bi-chat-text me-1"></i>{{ price.notes|truncatechars:150 }}
+                                    <a href="#" class="text-primary ms-1" data-bs-toggle="modal" data-bs-target="#noteModal-comp-{{ price.id }}">
+                                        Read more
+                                    </a>
+                                </small>
+                                
+                                <!-- Modal for long notes -->
+                                <div class="modal fade" id="noteModal-comp-{{ price.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h6 class="modal-title">
+                                                    <i class="bi bi-chat-text me-1"></i>
+                                                    Note for {{ price.product.name }} at {{ price.market.name }}
+                                                </h6>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="mb-0">{{ price.notes|linebreaks }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <small class="text-muted me-auto">
+                                                    <i class="bi bi-calendar me-1"></i>{{ price.date_recorded|date:"M d, Y g:i A" }}
+                                                </small>
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     {% endif %}
                     
@@ -214,4 +247,14 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
 {% endblock %}

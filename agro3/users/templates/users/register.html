@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load i18n %}
 
-{% block title %}Register - Batken Agri-Helper{% endblock %}
+{% block title %}{% trans "Register" %} - AgroSovet{% endblock %}
 
 {% block extra_css %}
 <style>
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
     min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .auth-container {
@@ -17,20 +19,14 @@ body {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-                <div class="col-md-4">
-                    <label for="{{ form.city.id_for_label }}" class="form-label">City/Village (recommended)</label>
-                    {{ form.city|add_class:'form-control' }}
-                    {% if form.city.errors %}
-                        <div class="error-text">
-                            {% for error in form.city.errors %}{{ error }}{% endfor %}
-                        </div>
-                    {% endif %}
-                </div>card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     padding: 40px;
     width: 100%;
     max-width: 600px;
@@ -67,10 +63,10 @@ body {
 .section-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2d3748;
+    color: #1a202c;
     margin-bottom: 1rem;
     text-align: center;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid #cbd5e0;
     padding-bottom: 0.5rem;
 }
 
@@ -91,7 +87,7 @@ body {
 
 .form-label {
     font-weight: 600;
-    color: #4a5568;
+    color: #1a202c;
     margin-bottom: 0.5rem;
     display: block;
     font-size: 0.9rem;
@@ -162,6 +158,65 @@ body {
     position: absolute;
     opacity: 0;
     pointer-events: none;
+}
+
+/* Custom Checkbox Styles */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.custom-checkbox .checkbox-square {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #cbd5e0;
+    border-radius: 4px;
+    background: white;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.custom-checkbox:hover .checkbox-square {
+    border-color: #4299e1;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkbox-square {
+    background: #4299e1;
+    border-color: #4299e1;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkbox-square::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.custom-checkbox input[type="checkbox"]:disabled + .checkbox-square {
+    background: #f7fafc;
+    border-color: #e2e8f0;
+    opacity: 0.6;
+}
+
+.custom-checkbox .checkbox-label {
+    color: #1a202c;
+    font-size: 0.9rem;
+    font-weight: 500;
+    user-select: none;
 }
 
 .btn-primary {
@@ -235,8 +290,8 @@ body {
 <div class="auth-container">
     <div class="auth-card">
         <div class="auth-logo">🌱</div>
-        <h1 class="auth-title">Join Our Community</h1>
-        <p class="auth-subtitle">Create your account to connect with farmers in your region</p>
+        <h1 class="auth-title">{% trans "Join Our Community" %}</h1>
+        <p class="auth-subtitle">{% trans "Create your account to connect with farmers in your region" %}</p>
         
         {% if messages %}
             {% for message in messages %}
@@ -252,7 +307,7 @@ body {
             
             <!-- Avatar Selection -->
             <div class="avatar-section">
-                <h3 class="section-title">Choose Your Avatar</h3>
+                <h3 class="section-title">{% trans "Choose Your Avatar" %}</h3>
                 <div class="avatar-selection">
                     {% for value, label in form.avatar_choice.field.choices %}
                         <div class="form-check">
@@ -282,10 +337,10 @@ body {
             
             <!-- Personal Information -->
             <div class="form-section">
-                <h3 class="section-title">Personal Information</h3>
+                <h3 class="section-title">{% trans "Personal Information" %}</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">{% trans "First Name" %}</label>
                         {{ form.first_name|add_class:'form-control'|attr:'placeholder:Your first name' }}
                         {% if form.first_name.errors %}
                             <div class="error-text">
@@ -294,7 +349,7 @@ body {
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">{% trans "Last Name" %}</label>
                         {{ form.last_name|add_class:'form-control'|attr:'placeholder:Your last name' }}
                         {% if form.last_name.errors %}
                             <div class="error-text">
@@ -305,7 +360,7 @@ body {
                 </div>
                 
                 <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    <label for="{{ form.username.id_for_label }}" class="form-label">{% trans "Username" %}</label>
                     {{ form.username|add_class:'form-control'|attr:'placeholder:Choose a unique username' }}
                     {% if form.username.errors %}
                         <div class="error-text">
@@ -315,7 +370,7 @@ body {
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email {% trans "Address" %}</label>
                     {{ form.email|add_class:'form-control'|attr:'placeholder:your@email.com' }}
                     {% if form.email.errors %}
                         <div class="error-text">
@@ -325,7 +380,7 @@ body {
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number *</label>
+                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">{% trans "Phone Number" %} *</label>
                     {{ form.phone_number|add_class:'form-control'|attr:'placeholder:+996 XXX XXX XXX'|attr:'id:id_phone_number' }}
                     {% if form.phone_number.errors %}
                         <div class="error-text">
@@ -335,14 +390,13 @@ body {
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.whatsapp_number.id_for_label }}" class="form-label">WhatsApp Number (optional)</label>
+                    <label for="{{ form.whatsapp_number.id_for_label }}" class="form-label">WhatsApp {% trans "Number" %} ({% trans "optional" %})</label>
                     {{ form.whatsapp_number|add_class:'form-control'|attr:'placeholder:+996 XXX XXX XXX'|attr:'id:id_whatsapp_number' }}
-                    <div class="form-check mt-2">
+                    <label class="custom-checkbox mt-2">
                         {{ form.same_as_phone }}
-                        <label class="form-check-label" for="same_as_phone">
-                            Same as phone number
-                        </label>
-                    </div>
+                        <span class="checkbox-square"></span>
+                        <span class="checkbox-label">{% trans "Use the same number as above" %}</span>
+                    </label>
                     {% if form.whatsapp_number.errors %}
                         <div class="error-text">
                             {% for error in form.whatsapp_number.errors %}{{ error }}{% endfor %}
@@ -353,10 +407,10 @@ body {
             
             <!-- Farming Information -->
             <div class="form-section">
-                <h3 class="section-title">Farming Information</h3>
+                <h3 class="section-title">{% trans "Farming Information" %}</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="{{ form.farmer_type.id_for_label }}" class="form-label">Farmer Type</label>
+                        <label for="{{ form.farmer_type.id_for_label }}" class="form-label">{% trans "Farmer Type" %}</label>
                         {{ form.farmer_type|add_class:'form-select' }}
                         {% if form.farmer_type.errors %}
                             <div class="error-text">
@@ -365,7 +419,7 @@ body {
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        <label for="{{ form.farming_experience.id_for_label }}" class="form-label">Experience Level</label>
+                        <label for="{{ form.farming_experience.id_for_label }}" class="form-label">{% trans "Experience Level" %}</label>
                         {{ form.farming_experience|add_class:'form-select' }}
                         {% if form.farming_experience.errors %}
                             <div class="error-text">
@@ -378,10 +432,10 @@ body {
 
             <!-- Location Information -->
             <div class="form-section">
-                <h3 class="section-title">Location Information</h3>
+                <h3 class="section-title">{% trans "Location Information" %}</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="{{ form.country.id_for_label }}" class="form-label">Country *</label>
+                        <label for="{{ form.country.id_for_label }}" class="form-label">{% trans "Country" %} *</label>
                         {{ form.country|add_class:'form-select' }}
                         {% if form.country.errors %}
                             <div class="error-text">
@@ -390,7 +444,7 @@ body {
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        <label for="{{ form.region.id_for_label }}" class="form-label">Region/State *</label>
+                        <label for="{{ form.region.id_for_label }}" class="form-label">{% trans "Region" %}/{% trans "State" %} *</label>
                         {{ form.region|add_class:'form-select' }}
                         {% if form.region.errors %}
                             <div class="error-text">
@@ -400,7 +454,7 @@ body {
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="{{ form.city.id_for_label }}" class="form-label">City/Village (recommended)</label>
+                    <label for="{{ form.city.id_for_label }}" class="form-label">{% trans "City" %}/{% trans "Village" %} ({% trans "recommended" %})</label>
                     {{ form.city|add_class:'form-control' }}
                     {% if form.city.errors %}
                         <div class="error-text">
@@ -412,10 +466,10 @@ body {
 
             <!-- Password Information -->
             <div class="form-section">
-                <h3 class="section-title">Security</h3>
+                <h3 class="section-title">{% trans "Security" %}</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">{% trans "Password" %}</label>
                         {{ form.password1|add_class:'form-control'|attr:'placeholder:Create a strong password' }}
                         {% if form.password1.errors %}
                             <div class="error-text">
@@ -424,8 +478,19 @@ body {
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
-                        {{ form.password2|add_class:'form-control'|attr:'placeholder:Confirm your password' }}
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">{% trans "Confirm Password" %}</label>
+                        {{ form.password2|add_class:'form-control'|attr:'placeholder:Type your password again' }}
+                        <small class="form-text text-muted mt-1">
+                            {% load i18n %}
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% if LANGUAGE_CODE == 'ru' %}
+                                Введите тот же пароль еще раз для подтверждения
+                            {% elif LANGUAGE_CODE == 'ky' %}
+                                Ырастоо үчүн ошол эле сырсөздү кайталаңыз
+                            {% else %}
+                                Type the same password again to confirm it
+                            {% endif %}
+                        </small>
                         {% if form.password2.errors %}
                             <div class="error-text">
                                 {% for error in form.password2.errors %}{{ error }}{% endfor %}
@@ -444,13 +509,13 @@ body {
             {% endif %}
 
             <button type="submit" class="btn-primary">
-                Create Account
+                {% trans "Create Account" %}
             </button>
         </form>
         
         <div class="auth-links">
             <div>
-                Already have an account? 
+                {% trans "Already have an account?" %} 
                 <a href="{% url 'users:login' %}">Sign in here</a>
             </div>
         </div>
@@ -489,38 +554,88 @@ document.addEventListener('DOMContentLoaded', function() {
     countrySelect.addEventListener('change', function() {
         const countryId = this.value;
         
-        // Clear region select
+        // Always clear region select when country changes
         clearSelect(regionSelect, 'Select Region/State...');
 
         if (countryId) {
+            // Use Django URL reverse for proper routing
             fetch(`{% url 'locations:get_regions' %}?country_id=${countryId}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    populateSelect(regionSelect, data.regions, 'Select Region/State...');
+                    if (data.regions) {
+                        populateSelect(regionSelect, data.regions, 'Select Region/State...');
+                    } else {
+                        console.error('No regions data received');
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching regions:', error);
+                    console.error('Failed URL:', baseUrl);
                 });
         }
     });
 
     // Region selection - city is now a text input, no need for dynamic loading
 
-    // Initialize: Clear region select on page load
-    clearSelect(regionSelect, 'Select Region/State...');
+    // Initialize: Handle form state on page load (including resubmissions)
+    function initializeForm() {
+        const selectedCountryId = countrySelect.value;
+        const selectedRegionId = regionSelect.value; // Store current region value
+        
+        if (selectedCountryId) {
+            // If a country is already selected (form resubmission), load its regions
+            fetch(`{% url 'locations:get_regions' %}?country_id=${selectedCountryId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.regions) {
+                        populateSelect(regionSelect, data.regions, 'Select Region/State...');
+                        
+                        // Restore the previously selected region if it exists
+                        if (selectedRegionId) {
+                            regionSelect.value = selectedRegionId;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error initializing regions:', error);
+                    clearSelect(regionSelect, 'Select Region/State...');
+                });
+        } else {
+            // No country selected, clear region select
+            clearSelect(regionSelect, 'Select Region/State...');
+        }
+    }
+    
+    // Initialize form on page load
+    initializeForm();
 
-    // Handle "Same as phone number" checkbox
+    // Handle "Same as phone number" checkbox with better UX
     const phoneInput = document.getElementById('id_phone_number');
     const whatsappInput = document.getElementById('id_whatsapp_number');
     const sameAsPhoneCheckbox = document.getElementById('same_as_phone');
 
-    if (sameAsPhoneCheckbox) {
+    if (phoneInput && whatsappInput && sameAsPhoneCheckbox) {
         sameAsPhoneCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 whatsappInput.value = phoneInput.value;
                 whatsappInput.disabled = true;
+                whatsappInput.style.backgroundColor = '#f8f9fa';
+                whatsappInput.style.opacity = '0.7';
             } else {
                 whatsappInput.disabled = false;
+                whatsappInput.style.backgroundColor = '';
+                whatsappInput.style.opacity = '';
+                whatsappInput.focus();
             }
         });
 

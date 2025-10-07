@@ -56,14 +56,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'modeltranslation',  # Must come before apps with translations
-    'ckeditor',
-    'ckeditor_uploader',
+    'ckeditor',  # Temporarily kept for migration compatibility
+    'ckeditor_uploader',  # Temporarily kept for migration compatibility
+    # 'django_quill',  # Removed - problematic migrations
     'locations.apps.LocationsConfig',
     'users.apps.UsersConfig',
     'crops',
     'pests_diseases',
     'market',
-    'soil',
     'forum',
     'weather',
     'agro_supplies',
@@ -161,6 +161,12 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Number formatting - use dots for decimals, not commas
+USE_L10N = False  # Disable localized formatting
+DECIMAL_SEPARATOR = '.'
+THOUSAND_SEPARATOR = ','
+USE_THOUSAND_SEPARATOR = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -182,30 +188,61 @@ if os.getenv("AZURE_ACCOUNT_NAME") and os.getenv("AZURE_ACCOUNT_KEY") and os.get
     AZURE_ACCOUNT_KEY = os.getenv("AZURE_ACCOUNT_KEY")
     AZURE_CONTAINER = os.getenv("AZURE_MEDIA_CONTAINER")
 
-# CKEditor Configuration
+# Quill Editor Configuration (Modern Rich Text Editor)
+QUILL_CONFIGS = {
+    'default': {
+        'theme': 'snow',  # 'snow' or 'bubble'
+        'modules': {
+            'syntax': True,
+            'toolbar': [
+                [{'header': [1, 2, 3, False]}],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
+                [{'color': []}, {'background': []}],
+                [{'align': []}],
+                ['link', 'image', 'video'],
+                ['clean']
+            ],
+            'imageResize': {
+                'displaySize': True
+            }
+        },
+        'bounds': '.quill-container',
+        'scrollingContainer': '.quill-container'
+    },
+    'agricultural': {
+        'theme': 'snow',
+        'modules': {
+            'syntax': True,
+            'toolbar': [
+                [{'header': [2, 3, 4, False]}],
+                ['bold', 'italic', 'underline'],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
+                [{'indent': '-1'}, {'indent': '+1'}],
+                [{'color': []}, {'background': []}],
+                [{'align': []}],
+                ['link', 'image'],
+                ['blockquote', 'code-block'],
+                ['clean']
+            ],
+            'imageResize': {
+                'displaySize': True,
+                'modules': ['Resize', 'DisplaySize', 'Toolbar']
+            }
+        },
+        'bounds': '.agricultural-editor',
+        'scrollingContainer': '.agricultural-editor',
+        'placeholder': 'Share your agricultural knowledge, tips, and experiences...'
+    }
+}
+
+# CKEditor Configuration (Temporary for migration compatibility)
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
         'height': 400,
         'width': '100%',
-        'extraPlugins': ','.join([
-            'uploadimage',
-            'image2',
-        ]),
-        'uploadUrl': '/ckeditor/upload/',
-        'image2_alignClasses': ['image-align-left', 'image-align-center', 'image-align-right'],
-        'image2_captionedClass': 'image-captioned',
-        'removePlugins': 'image',  # Remove old image plugin in favor of image2
-        'stylesSet': [
-            {'name': 'Disease Image', 'element': 'img', 'attributes': {'class': 'agricultural-image disease-image'}},
-            {'name': 'Pest Image', 'element': 'img', 'attributes': {'class': 'agricultural-image pest-image'}},
-            {'name': 'Crop Image', 'element': 'img', 'attributes': {'class': 'agricultural-image'}},
-            {'name': 'Full Width Image', 'element': 'img', 'attributes': {'class': 'img-fluid'}},
-        ],
-        'contentsCss': [
-            '/static/css/ckeditor-custom.css'
-        ],
     },
     'agricultural': {
         'toolbar': [
@@ -218,24 +255,6 @@ CKEDITOR_CONFIGS = {
         ],
         'height': 500,
         'width': '100%',
-        'extraPlugins': ','.join([
-            'uploadimage',
-            'image2',
-        ]),
-        'uploadUrl': '/ckeditor/upload/',
-        'image2_alignClasses': ['image-align-left', 'image-align-center', 'image-align-right'],
-        'image2_captionedClass': 'image-captioned',
-        'removePlugins': 'image',
-        'stylesSet': [
-            {'name': 'Disease/Symptom Photo', 'element': 'img', 'attributes': {'class': 'agricultural-image disease-image'}},
-            {'name': 'Pest/Insect Photo', 'element': 'img', 'attributes': {'class': 'agricultural-image pest-image'}},
-            {'name': 'Crop/Plant Photo', 'element': 'img', 'attributes': {'class': 'agricultural-image'}},
-            {'name': 'Treatment Result', 'element': 'img', 'attributes': {'class': 'agricultural-image treatment-image'}},
-        ],
-        'format_tags': 'p;h2;h3;h4',
-        'contentsCss': [
-            '/static/css/ckeditor-custom.css'
-        ],
     }
 }
 

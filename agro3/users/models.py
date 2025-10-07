@@ -9,6 +9,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class UserProfile(models.Model):
@@ -21,18 +22,18 @@ class UserProfile(models.Model):
     and community networking.
     """
     FARMER_TYPE_CHOICES = [
-        ('individual', 'Individual Farmer'),
-        ('cooperative', 'Agricultural Cooperative'),
-        ('commercial', 'Commercial Farm Enterprise'),
-        ('expert', 'Agricultural Expert/Consultant'),
+        ('individual', _('Individual Farmer')),
+        ('cooperative', _('Agricultural Cooperative')),
+        ('commercial', _('Commercial Farm Enterprise')),
+        ('expert', _('Agricultural Expert/Consultant')),
     ]
     
     EXPERIENCE_CHOICES = [
-        ('0-1', '0-1 years (Beginner)'),
-        ('1-3', '1-3 years (Novice)'),
-        ('3-9', '3-9 years (Intermediate)'),
-        ('9-15', '9-15 years (Experienced)'),
-        ('15+', '15+ years (Expert)'),
+        ('0-1', _('0-1 years (Beginner)')),
+        ('1-3', _('1-3 years (Novice)')),
+        ('3-9', _('3-9 years (Intermediate)')),
+        ('9-15', _('9-15 years (Experienced)')),
+        ('15+', _('15+ years (Expert)')),
     ]
     
 # Remove old region choices - will use dynamic location system
@@ -40,7 +41,7 @@ class UserProfile(models.Model):
     AVATAR_CHOICES = [
         ('farmer_man_1', '👨‍🌾'),
         ('farmer_woman_1', '👩‍🌾'),
-        ('default', 'default_user'),
+        ('default', 'User Icon'),
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -118,9 +119,17 @@ class UserProfile(models.Model):
             'farmer_man_2': '🧑‍🌾', 
             'farmer_woman_1': '👩‍🌾',
             'farmer_woman_2': '🧕',
-            'default': 'default_user',  # Special case for SVG icon
+            'default': '<i class="bi bi-person-circle"></i>',  # Bootstrap person icon
         }
         return avatar_map.get(self.avatar_choice, avatar_map['default'])
+    
+    def get_avatar_display(self):
+        """Get avatar for display - returns HTML for icons or emoji for emojis"""
+        from django.utils.safestring import mark_safe
+        avatar = self.get_avatar_emoji()
+        if avatar.startswith('<i class='):
+            return mark_safe(avatar)
+        return avatar
     
     def get_avatar_class(self):
         """Get CSS class for avatar styling"""

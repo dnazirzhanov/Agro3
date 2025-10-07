@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load forum_tags %}
 
 {% block title %}{{ post.title }} - Community Forum - Batken Agri-Helper{% endblock %}
 
@@ -787,7 +788,7 @@ body.modal-open {
 
                     <!-- Main text content -->
                     <div class="article-text">
-                        {{ post.content|safe }}
+                        {% render_blog_content_with_language post %}
                     </div>
 
                     <!-- Integrated Image Gallery within content -->
@@ -914,19 +915,42 @@ body.modal-open {
                                         {% endif %}
                                     </div>
                                     {% if post.author.profile.bio %}
-                                        <p class="mb-2 text-muted small">{{ post.author.profile.bio|truncatewords:25 }}</p>
+                                        <p class="mb-2 text-muted small">{{ post.author.profile.bio|truncatewords:30 }}</p>
+                                    {% else %}
+                                        <p class="mb-2 text-muted small fst-italic">This farmer hasn't added a bio yet.</p>
                                     {% endif %}
-                                    <div class="d-flex gap-3 small text-muted mb-2">
-                                        <span><i class="bi bi-star-fill text-warning me-1"></i>{{ post.author.profile.reputation_score }} reputation</span>
-                                        <span><i class="bi bi-chat-dots me-1"></i>{{ post.author.blog_posts.count }} posts</span>
-                                        {% if post.author.profile.phone_number and post.author.profile.phone_number != 'UPDATE_REQUIRED' %}
-                                            <span><i class="bi bi-telephone me-1"></i>
-                                                <a href="tel:{{ post.author.profile.phone_number }}" class="text-decoration-none">
-                                                    📞 Call {{ post.author.profile.phone_number }}
-                                                </a>
+                                    <div class="d-flex flex-wrap gap-2 small text-muted mb-2">
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-star-fill text-warning me-1"></i>{{ post.author.profile.reputation_score }} reputation
+                                        </span>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-chat-dots me-1"></i>{{ post.author.blog_posts.count }} posts
+                                        </span>
+                                        {% if post.author.date_joined %}
+                                            <span class="badge bg-light text-dark border">
+                                                <i class="bi bi-calendar-plus me-1"></i>Member since {{ post.author.date_joined|date:"M Y" }}
                                             </span>
                                         {% endif %}
                                     </div>
+                                    {% if post.author.profile.phone_number and post.author.profile.phone_number != 'UPDATE_REQUIRED' %}
+                                        <div class="d-flex gap-2 small mb-2">
+                                            <span class="text-success">
+                                                <i class="bi bi-telephone-fill me-1"></i>
+                                                <a href="tel:{{ post.author.profile.phone_number }}" class="text-decoration-none text-success">
+                                                    {{ post.author.profile.phone_number }}
+                                                </a>
+                                            </span>
+                                            {% if post.author.profile.whatsapp_number %}
+                                                <span class="text-success">
+                                                    <i class="bi bi-whatsapp me-1"></i>
+                                                    <a href="https://wa.me/{{ post.author.profile.whatsapp_number }}" 
+                                                       class="text-decoration-none text-success" target="_blank">
+                                                        WhatsApp
+                                                    </a>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-auto">

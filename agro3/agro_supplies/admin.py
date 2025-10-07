@@ -41,19 +41,19 @@ class ChemicalProductAdmin(admin.ModelAdmin):
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ('name', 'shop_type', 'get_location_display', 'phone_number', 'is_active', 'is_verified')
+    list_display = ('name', 'shop_type', 'get_location_display', 'phone_number', 'whatsapp_number', 'is_active', 'is_verified')
     list_filter = ('shop_type', 'country', 'region', 'is_active', 'is_verified', 'delivery_available')
-    search_fields = ('name', 'owner_name', 'phone_number', 'email', 'address')
+    search_fields = ('name', 'owner_name', 'phone_number', 'whatsapp_number', 'email', 'address')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'shop_type', 'owner_name', 'is_active', 'is_verified')
         }),
         ('Contact Information', {
-            'fields': ('phone_number', 'email', 'website')
+            'fields': ('phone_number', 'whatsapp_number', 'email', 'website')
         }),
         ('Location', {
-            'fields': ('country', 'region', 'city', 'address')
+            'fields': ('country', 'region', 'city', 'address', 'google_maps_link')
         }),
         ('Business Details', {
             'fields': ('license_number', 'established_year', 'description')
