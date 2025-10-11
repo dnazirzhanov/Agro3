@@ -5,6 +5,84 @@ from users.models import UserProfile
 from django.utils.translation import get_language
 from weather.templatetags.weather_tags import REGION_TRANSLATIONS, CITY_TRANSLATIONS
 
+# Translation mappings for location names
+REGION_TRANSLATIONS = {
+    'ky': {  # Kyrgyz translations
+        'Chuy': 'Чүй',
+        'Issyk-Kul': 'Ысык-Көл', 
+        'Naryn': 'Нарын',
+        'Talas': 'Талас',
+        'Osh': 'Ош',
+        'Jalal-Abad': 'Жалал-Абад',
+        'Batken': 'Баткен',
+        'Bishkek': 'Бишкек',
+        'Almaty': 'Алматы',
+        'Nur-Sultan': 'Нур-Султан',
+        'Astana': 'Астана',
+        'Tashkent': 'Ташкент',
+        'Samarkand': 'Самарканд',
+        'Bukhara': 'Бухара',
+    },
+    'ru': {  # Russian translations
+        'Chuy': 'Чуй',
+        'Issyk-Kul': 'Иссык-Куль',
+        'Naryn': 'Нарын', 
+        'Talas': 'Талас',
+        'Osh': 'Ош',
+        'Jalal-Abad': 'Джалал-Абад',
+        'Batken': 'Баткен',
+        'Bishkek': 'Бишкек',
+        'Almaty': 'Алматы',
+        'Nur-Sultan': 'Нур-Султан',
+        'Astana': 'Астана',
+        'Tashkent': 'Ташкент',
+        'Samarkand': 'Самарканд', 
+        'Bukhara': 'Бухара',
+    }
+}
+
+CITY_TRANSLATIONS = {
+    'ky': {
+        'Bishkek': 'Бишкек',
+        'Osh': 'Ош',
+        'Jalal-Abad': 'Жалал-Абад',
+        'Karakol': 'Каракол',
+        'Tokmok': 'Токмок',
+        'Uzgen': 'Үзгөн',
+        'Naryn': 'Нарын',
+        'Talas': 'Талас',
+        'Batken': 'Баткен',
+        'Kara-Balta': 'Кара-Балта',
+        'Kant': 'Кант',
+        'Kyzyl-Kiya': 'Кызыл-Кия',
+        'Cholpon-Ata': 'Чолпон-Ата',
+        'Balykchy': 'Балыкчы',
+        'Almaty': 'Алматы',
+        'Tashkent': 'Ташкент',
+        'Dushanbe': 'Душанбе',
+    },
+    'ru': {
+        'Bishkek': 'Бишкек',
+        'Osh': 'Ош',
+        'Jalal-Abad': 'Джалал-Абад',
+        'Karakol': 'Каракол',
+        'Tokmok': 'Токмак',
+        'Uzgen': 'Узген',
+        'Naryn': 'Нарын',
+        'Talas': 'Талас',
+        'Batken': 'Баткен',
+        'Kara-Balta': 'Кара-Балта',
+        'Kant': 'Кант',
+        'Kyzyl-Kiya': 'Кызыл-Кия',
+        'Cholpon-Ata': 'Чолпон-Ата',
+        'Balykchy': 'Балыкчи',
+        'Almaty': 'Алматы',
+        'Tashkent': 'Ташкент',
+        'Dushanbe': 'Душанбе',
+    }
+}
+
+
 class GetRegionsView(View):
     """AJAX view to get regions for a selected country with multilingual support"""
     

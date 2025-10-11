@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load weather_tags %}
 
-{% block title %}Weather Forecast - Batken Agri-Helper{% endblock %}
+{% block title %}{% trans "Weather Forecast" %} - Batken Agri-Helper{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h1><i class="bi bi-cloud-sun text-primary me-2"></i>Weather Forecast</h1>
-        <p class="lead">Stay informed about weather conditions to make better agricultural decisions.</p>
+        <h1><i class="bi bi-cloud-sun text-primary me-2"></i>{% trans "Weather Forecast" %}</h1>
+        <p class="lead">{% trans "Stay informed about weather conditions to make better agricultural decisions." %}</p>
     </div>
 </div>
 
@@ -15,51 +17,51 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-search me-2"></i>Search Location</h5>
+                <h5 class="mb-0"><i class="bi bi-search me-2"></i>{% trans "Search Location" %}</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="{% url 'weather:search' %}" class="row g-3">
                     {% csrf_token %}
                     <div class="col-md-3">
-                        <label for="country" class="form-label">Country</label>
+                        <label for="country" class="form-label">{% trans "Country" %}</label>
                         <select name="country" id="country" class="form-select">
-                            <option value="">Select Country...</option>
+                            <option value="">{% trans "Select Country..." %}</option>
                             {% for country in countries %}
-                                <option value="{{ country.id }}" data-code="{{ country.code }}">{{ country.name }}</option>
+                                <option value="{{ country.id }}" data-code="{{ country.code }}">{{ country.name|translate_country }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="region" class="form-label">Region/State</label>
+                        <label for="region" class="form-label">{% trans "Region/State" %}</label>
                         <select name="region" id="region" class="form-select" disabled>
-                            <option value="">Select Region...</option>
+                            <option value="">{% trans "Select Region..." %}</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label for="city_name" class="form-label">City/Village Name</label>
+                        <label for="city_name" class="form-label">{% trans "City/Village Name" %}</label>
                         <input type="text" name="city_name" id="city_name" class="form-control" 
-                               placeholder="Enter city or village name..." required>
+                               placeholder="{% trans 'Enter city or village name...' %}" required>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-search me-1"></i>Search
+                            <i class="bi bi-search me-1"></i>{% trans "Search" %}
                         </button>
                     </div>
                 </form>
                 
                 <!-- Alternative text search -->
                 <div class="mt-3">
-                    <p class="mb-2"><small class="text-muted">Or search by city name:</small></p>
+                    <p class="mb-2"><small class="text-muted">{% trans "Or search by city name:" %}</small></p>
                     <form method="POST" action="{% url 'weather:search' %}" class="row g-2">
                         {% csrf_token %}
                         <div class="col-8">
                             <input type="text" class="form-control" name="city_text" 
-                                   placeholder="Enter city name (e.g., Batken, Bishkek, Osh)">
+                                   placeholder="{% trans 'Enter city name (e.g., Batken, Bishkek, Osh)' %}">
                         </div>
                         <div class="col-4">
                             <button type="submit" class="btn btn-outline-primary w-100">
-                                <i class="bi bi-search me-1"></i>Search
+                                <i class="bi bi-search me-1"></i>{% trans "Search" %}
                             </button>
                         </div>
                     </form>
@@ -67,12 +69,12 @@
                 
                 {% if recent_locations %}
                 <div class="mt-3">
-                    <small class="text-muted">Recent locations:</small>
+                    <small class="text-muted">{% trans "Recent locations:" %}</small>
                     <div class="mt-1">
                         {% for location in recent_locations %}
                             <a href="?lat={{ location.latitude }}&lon={{ location.longitude }}&location={{ location.name }}" 
                                class="btn btn-sm btn-outline-secondary me-2 mb-1">
-                                <i class="bi bi-geo-alt me-1"></i>{{ location.name }}
+                                <i class="bi bi-geo-alt me-1"></i>{{ location.name|translate_location }}
                             </a>
                         {% endfor %}
                     </div>
@@ -86,9 +88,9 @@
 {% if not api_configured %}
     <div class="alert alert-warning">
         <i class="bi bi-exclamation-triangle me-2"></i>
-        <strong>Weather API Not Configured</strong><br>
-        To use weather features, please set your OpenWeatherMap API key in the environment variable <code>OPENWEATHER_API_KEY</code>.
-        <br><small class="text-muted">Get a free API key at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></small>
+        <strong>{% trans "Weather API Not Configured" %}</strong><br>
+        {% trans "To use weather features, please set your OpenWeatherMap API key in the environment variable" %} <code>OPENWEATHER_API_KEY</code>.
+        <br><small class="text-muted">{% trans "Get a free API key at" %} <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></small>
     </div>
 {% elif weather_data %}
     <!-- Current Weather -->
@@ -97,8 +99,8 @@
             <div class="card border-primary">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-geo-alt me-2"></i>Current Weather - {{ weather_data.location.name }}
-                        {% if weather_data.location.state %}, {{ weather_data.location.state }}{% endif %}
+                        <i class="bi bi-geo-alt me-2"></i>{% trans "Current Weather" %} - {{ weather_data.location.name|translate_city }}
+                        {% if weather_data.location.state %}, {{ weather_data.location.state|translate_location }}{% endif %}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -107,7 +109,7 @@
                             <img src="http://openweathermap.org/img/wn/{{ weather_data.current.weather_icon }}@2x.png" 
                                  alt="{{ weather_data.current.weather_description }}" class="img-fluid mb-2">
                             <h2 class="display-4 text-primary mb-0">{{ weather_data.current.temperature|floatformat:0 }}°C</h2>
-                            <p class="text-muted mb-0">Feels like {{ weather_data.current.feels_like|floatformat:0 }}°C</p>
+                            <p class="text-muted mb-0">{% trans "Feels like" %} {{ weather_data.current.feels_like|floatformat:0 }}°C</p>
                         </div>
                         <div class="col-md-9">
                             <h4 class="text-capitalize mb-3">{{ weather_data.current.weather_description }}</h4>
@@ -117,7 +119,7 @@
                                         <i class="bi bi-droplet text-info me-2 fs-4"></i>
                                         <div>
                                             <strong>{{ weather_data.current.humidity }}%</strong>
-                                            <br><small class="text-muted">Humidity</small>
+                                            <br><small class="text-muted">{% trans "Humidity" %}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +128,7 @@
                                         <i class="bi bi-wind text-success me-2 fs-4"></i>
                                         <div>
                                             <strong>{{ weather_data.current.wind_speed|floatformat:1 }} m/s</strong>
-                                            <br><small class="text-muted">Wind ({{ weather_data.current.wind_direction_text }})</small>
+                                            <br><small class="text-muted">{% trans "Wind" %} ({{ weather_data.current.wind_direction_text }})</small>
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +137,7 @@
                                         <i class="bi bi-speedometer text-warning me-2 fs-4"></i>
                                         <div>
                                             <strong>{{ weather_data.current.pressure|floatformat:0 }} hPa</strong>
-                                            <br><small class="text-muted">Pressure</small>
+                                            <br><small class="text-muted">{% trans "Pressure" %}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -145,7 +147,7 @@
                                         <i class="bi bi-eye text-secondary me-2 fs-4"></i>
                                         <div>
                                             <strong>{{ weather_data.current.visibility|floatformat:0 }} m</strong>
-                                            <br><small class="text-muted">Visibility</small>
+                                            <br><small class="text-muted">{% trans "Visibility" %}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -164,7 +166,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-clock me-2"></i>24-Hour Forecast</h5>
+                    <h5 class="mb-0"><i class="bi bi-clock me-2"></i>{% trans "24-Hour Forecast" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-0">
@@ -220,42 +222,42 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-lightbulb text-warning me-2"></i>Farming Tips</h5>
+                    <h5 class="mb-0"><i class="bi bi-lightbulb text-warning me-2"></i>{% trans "Farming Tips" %}</h5>
                 </div>
                 <div class="card-body">
                     {% if weather_data.current.weather_main == 'Rain' %}
                         <div class="alert alert-info">
                             <i class="bi bi-cloud-rain me-2"></i>
-                            <strong>Rainy Weather:</strong> Good for recently planted crops. Avoid field work and consider covered storage for harvested crops.
+                            <strong>{% trans "Rainy Weather:" %}</strong> {% trans "Good for recently planted crops. Avoid field work and consider covered storage for harvested crops." %}
                         </div>
                     {% elif weather_data.current.temperature > 30 %}
                         <div class="alert alert-warning">
                             <i class="bi bi-thermometer-sun me-2"></i>
-                            <strong>Hot Weather:</strong> Ensure adequate irrigation. Consider early morning or evening work to avoid heat stress.
+                            <strong>{% trans "Hot Weather:" %}</strong> {% trans "Ensure adequate irrigation. Consider early morning or evening work to avoid heat stress." %}
                         </div>
                     {% elif weather_data.current.temperature < 5 %}
                         <div class="alert alert-primary">
                             <i class="bi bi-thermometer-snow me-2"></i>
-                            <strong>Cold Weather:</strong> Protect sensitive crops from frost. Check greenhouse heating systems.
+                            <strong>{% trans "Cold Weather:" %}</strong> {% trans "Protect sensitive crops from frost. Check greenhouse heating systems." %}
                         </div>
                     {% elif weather_data.current.wind_speed > 10 %}
                         <div class="alert alert-secondary">
                             <i class="bi bi-wind me-2"></i>
-                            <strong>Windy Conditions:</strong> Secure greenhouses and equipment. Avoid spraying operations.
+                            <strong>{% trans "Windy Conditions:" %}</strong> {% trans "Secure greenhouses and equipment. Avoid spraying operations." %}
                         </div>
                     {% else %}
                         <div class="alert alert-success">
                             <i class="bi bi-check-circle me-2"></i>
-                            <strong>Good Conditions:</strong> Ideal weather for most agricultural activities.
+                            <strong>{% trans "Good Conditions:" %}</strong> {% trans "Ideal weather for most agricultural activities." %}
                         </div>
                     {% endif %}
                     
-                    <h6 class="mt-3">General Recommendations:</h6>
+                    <h6 class="mt-3">{% trans "General Recommendations:" %}</h6>
                     <ul class="small">
-                        <li>Monitor soil moisture levels regularly</li>
-                        <li>Adjust irrigation based on weather forecast</li>
-                        <li>Plan fieldwork during optimal conditions</li>
-                        <li>Protect equipment from extreme weather</li>
+                        <li>{% trans "Monitor soil moisture levels regularly" %}</li>
+                        <li>{% trans "Adjust irrigation based on weather forecast" %}</li>
+                        <li>{% trans "Plan fieldwork during optimal conditions" %}</li>
+                        <li>{% trans "Protect equipment from extreme weather" %}</li>
                     </ul>
                 </div>
             </div>
@@ -264,21 +266,21 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-info-circle text-primary me-2"></i>Weather Information</h5>
+                    <h5 class="mb-0"><i class="bi bi-info-circle text-primary me-2"></i>{% trans "Weather Information" %}</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Data Source:</strong> OpenWeatherMap</p>
-                    <p><strong>Last Updated:</strong> {{ weather_data.current.created_at|date:"M d, Y H:i" }}</p>
-                    <p><strong>Location:</strong> {{ weather_data.location.name }}, {{ weather_data.location.country }}</p>
-                    <p><strong>Coordinates:</strong> {{ weather_data.location.latitude|floatformat:4 }}°, {{ weather_data.location.longitude|floatformat:4 }}°</p>
+                    <p><strong>{% trans "Data Source:" %}</strong> OpenWeatherMap</p>
+                    <p><strong>{% trans "Last Updated:" %}</strong> {{ weather_data.current.created_at|date:"M d, Y H:i" }}</p>
+                    <p><strong>{% trans "Location:" %}</strong> {{ weather_data.location.name|translate_city }}, {{ weather_data.location.country|translate_country }}</p>
+                    <p><strong>{% trans "Coordinates:" %}</strong> {{ weather_data.location.latitude|floatformat:4 }}°, {{ weather_data.location.longitude|floatformat:4 }}°</p>
                     
                     <div class="mt-3">
-                        <h6>Quick Actions:</h6>
+                        <h6>{% trans "Quick Actions:" %}</h6>
                         <a href="{% url 'crops:list' %}" class="btn btn-outline-success btn-sm me-2">
-                            <i class="bi bi-flower3 me-1"></i>Crop Guide
+                            <i class="bi bi-flower3 me-1"></i>{% trans "Crop Guide" %}
                         </a>
                         <a href="{% url 'agro_supplies:calculator' %}" class="btn btn-outline-info btn-sm">
-                            <i class="bi bi-calculator me-1"></i>Dosage Calculator
+                            <i class="bi bi-calculator me-1"></i>{% trans "Dosage Calculator" %}
                         </a>
                     </div>
                 </div>
@@ -289,8 +291,8 @@
 {% else %}
     <div class="text-center py-5">
         <i class="bi bi-cloud-slash text-muted mb-3" style="font-size: 4rem;"></i>
-        <h4 class="text-muted">No Weather Data Available</h4>
-        <p class="text-muted">Please search for a location or check your internet connection.</p>
+        <h4 class="text-muted">{% trans "No Weather Data Available" %}</h4>
+        <p class="text-muted">{% trans "Please search for a location or check your internet connection." %}</p>
     </div>
 {% endif %}
 {% endblock %}
@@ -365,21 +367,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const countryCode = selectedOption.dataset.code;
         
         if (countryCode) {
-            let placeholder = 'Enter city or village name...';
+            let placeholder = '{% trans "Enter city or village name..." %}';
             
             // Customize placeholder based on country
             switch(countryCode) {
                 case 'KG':
-                    placeholder = 'Enter city/village (e.g., Batken, Osh, Talas...)';
+                    placeholder = '{% trans "Enter city/village (e.g., Batken, Osh, Talas...)" %}';
                     break;
                 case 'KZ':
-                    placeholder = 'Enter city/village (e.g., Almaty, Astana, Shymkent...)';
+                    placeholder = '{% trans "Enter city/village (e.g., Almaty, Astana, Shymkent...)" %}';
                     break;
                 case 'TJ':
-                    placeholder = 'Enter city/village (e.g., Dushanbe, Khujand, Kulob...)';
+                    placeholder = '{% trans "Enter city/village (e.g., Dushanbe, Khujand, Kulob...)" %}';
                     break;
                 case 'UZ':
-                    placeholder = 'Enter city/village (e.g., Tashkent, Samarkand, Bukhara...)';
+                    placeholder = '{% trans "Enter city/village (e.g., Tashkent, Samarkand, Bukhara...)" %}';
                     break;
             }
             

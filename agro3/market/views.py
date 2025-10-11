@@ -8,6 +8,7 @@ statistics to help farmers make informed selling decisions.
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Avg, Max, Min
+from django.utils.translation import gettext_lazy as _
 from .models import MarketPrice, Product, Market
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -91,10 +92,10 @@ def market_price_list_view(request):
         'current_search': search or '',
         'stats': stats,
         'date_range_choices': [
-            ('1', 'Today'),
-            ('7', 'Last 7 days'),
-            ('30', 'Last 30 days'),
-            ('90', 'Last 3 months'),
+            ('1', _('Today')),
+            ('7', _('Last 7 days')),
+            ('30', _('Last 30 days')),
+            ('90', _('Last 3 months')),
         ],
     }
     

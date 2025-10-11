@@ -94,3 +94,26 @@ class MarketPrice(models.Model):
     
     def get_absolute_url(self):
         return reverse('market:price_detail', kwargs={'pk': self.pk})
+    
+    def get_localized_price_display(self, language_code='en'):
+        """Get price with localized currency and unit"""
+        # Get localized currency
+        if language_code == 'ky':
+            currency_text = 'сом'
+        elif language_code == 'ru':
+            currency_text = 'сом'
+        else:
+            currency_text = 'som'
+        
+        # Get localized unit
+        unit_translations = {
+            'kg': {'ky': 'кг', 'ru': 'кг', 'en': 'kg'},
+            'piece': {'ky': 'дн', 'ru': 'шт', 'en': 'pcs'},
+            'bundle': {'ky': 'боо', 'ru': 'пуч', 'en': 'bundle'},
+            'liter': {'ky': 'л', 'ru': 'л', 'en': 'L'},
+            'ton': {'ky': 'т', 'ru': 'т', 'en': 't'},
+            'box': {'ky': 'кут', 'ru': 'кор', 'en': 'box'},
+        }
+        
+        unit_text = unit_translations.get(str(self.unit), {}).get(language_code, str(self.unit))
+        return f"{self.price} {currency_text}/{unit_text}"

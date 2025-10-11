@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 20:22+0000\n"
+"POT-Creation-Date: 2025-10-11 17:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,29 +92,283 @@ msgstr "Айыл чарба билимиңизди, кеңештериңизди
 msgid "Please add some content to your post."
 msgstr "Постуңузга мазмун кошуңуз."
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:4
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:12
-msgid "Dose Calculator"
-msgstr "Доза Калькулятору"
+#: market/templates/market/price_comparison.html:5
+#: market/templates/market/price_comparison.html:13
+#: market/templates/market/price_comparison.html:20
+msgid "Price Comparison"
+msgstr "Баа Салыштыруу"
 
+#: market/templates/market/price_comparison.html:5
+#: market/templates/market/price_comparison.html:12
+#: market/templates/market/price_list.html:5
+#: market/templates/market/price_list.html:11
+#: market/templates/market/price_list.html:112 templates/base.html:74
+msgid "Market Prices"
+msgstr "Базар Баалары"
+
+#: market/templates/market/price_comparison.html:11
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:10
 #: templates/base.html:64
 msgid "Home"
 msgstr "Башкы бет"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:11
-msgid "Pests & Diseases"
-msgstr "Зыянкечтер жана Оорулар"
+#: market/templates/market/price_comparison.html:22
+msgid "Back to Prices"
+msgstr "Баалардын Тизмесине"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:22
+#: market/templates/market/price_comparison.html:25
+msgid "Compare prices for the same product across different markets."
+msgstr "Бир эле товардын баасын ар кандай базарларда салыштырыңыз."
+
+#: market/templates/market/price_comparison.html:34
+msgid "Select Product to Compare"
+msgstr "Салыштыруу Үчүн Товар Тандаңыз"
+
+#: market/templates/market/price_comparison.html:40
+msgid "Choose a product..."
+msgstr "Товар тандаңыз..."
+
+#: market/templates/market/price_comparison.html:50
+#: market/templates/market/price_list.html:14
+msgid "Compare Prices"
+msgstr "Баа Салыштыруу"
+
+#: market/templates/market/price_comparison.html:64
+msgid "Comparing"
+msgstr "Салыштыруу"
+
+#: market/templates/market/price_comparison.html:65
+msgid "Showing latest prices from the last 7 days across different markets."
+msgstr "Акыркы 7 күндүн ичиндеги ар кандай базардын эң жаңы баалары."
+
+#: market/templates/market/price_comparison.html:78
+#: market/templates/market/price_comparison.html:183
+msgid "Best Price"
+msgstr "Эң Жакшы Баа"
+
+#: market/templates/market/price_comparison.html:93
+msgid "per unit"
+msgstr "бирдик үчүн"
+
+#: market/templates/market/price_comparison.html:98
+msgid "Updated"
+msgstr "Жаңыртылган"
+
+#: market/templates/market/price_comparison.html:110
+msgid "Read more"
+msgstr "Толугу менен окуу"
+
+#: market/templates/market/price_comparison.html:121
+msgid "Note for"
+msgstr "Эскертүү"
+
+#: market/templates/market/price_comparison.html:121
+msgid "at"
+msgstr "базарында"
+
+#: market/templates/market/price_comparison.html:132
+msgid "Close"
+msgstr "Жабуу"
+
+#: market/templates/market/price_comparison.html:160
+msgid "Price Summary"
+msgstr "Баа Жыйынтыгы"
+
+#: market/templates/market/price_comparison.html:167
+#: market/templates/market/price_list.html:73
+#: market/templates/market/price_list.html:122
+msgid "Market"
+msgstr "Базар"
+
+#: market/templates/market/price_comparison.html:168
+#: market/templates/market/price_list.html:123
+msgid "Location"
+msgstr "Жайгашкан Жери"
+
+#: market/templates/market/price_comparison.html:169
+#: market/templates/market/price_list.html:124
+msgid "Price"
+msgstr "Баа"
+
+#: market/templates/market/price_comparison.html:170
+msgid "Unit"
+msgstr "Бирдик"
+
+#: market/templates/market/price_comparison.html:171
+msgid "Last Updated"
+msgstr "Акыркы Жаңыртуу"
+
+#: market/templates/market/price_comparison.html:172
+msgid "Contact"
+msgstr "Байланыш"
+
+#: market/templates/market/price_comparison.html:212
+msgid "No Recent Price Data Available"
+msgstr "Жакынкы Баа Маалыматы Жок"
+
+#: market/templates/market/price_comparison.html:213
+msgid "No price data found for"
+msgstr "Баа маалыматы табылган жок"
+
+#: market/templates/market/price_comparison.html:213
+msgid "in the last 7 days."
+msgstr "акыркы 7 күндө."
+
+#: market/templates/market/price_comparison.html:224
+msgid "Select a Product to Compare"
+msgstr "Салыштыруу Үчүн Товар Тандаңыз"
+
+#: market/templates/market/price_comparison.html:225
+msgid ""
+"Choose a product from the dropdown above to compare prices across different "
+"markets."
+msgstr ""
+"Ар кандай базарлардагы баалардын салыштырмасы үчүн жогорудагы тизмеден товар "
+"тандаңыз."
+
+#: market/templates/market/price_comparison.html:236
+msgid "Need More Information?"
+msgstr "Кошумча Маалымат Керекпи?"
+
+#: market/templates/market/price_comparison.html:239
+msgid "View Crops"
+msgstr "Өсүмдүктөрдү Көрүү"
+
+#: market/templates/market/price_comparison.html:242
+msgid "All Prices"
+msgstr "Бардык Баалар"
+
+#: market/templates/market/price_comparison.html:245
+msgid "Ask Community"
+msgstr "Коомчулуктан Сурануу"
+
+#: market/templates/market/price_list.html:18
+msgid "Stay updated with current market prices across different markets."
+msgstr "Ар түрдүү базардагы учурдагы базар баалары менен тааныш болуп турчу."
+
+#: market/templates/market/price_list.html:27
+msgid "Price Statistics"
+msgstr "Баа Статистикасы"
+
+#: market/templates/market/price_list.html:27 market/views.py:97
+msgid "Last 30 days"
+msgstr "Акыркы 30 күн"
+
+#: market/templates/market/price_list.html:30
+msgid "Average Price"
+msgstr "Орточо Баа"
+
+#: market/templates/market/price_list.html:33
+msgid "Lowest Price"
+msgstr "Эң Арзан Баа"
+
+#: market/templates/market/price_list.html:36
+msgid "Highest Price"
+msgstr "Эң Кымбат Баа"
+
+#: market/templates/market/price_list.html:39
+msgid "Entries"
+msgstr "Жазуулар"
+
+#: market/templates/market/price_list.html:52
+msgid "Filter Prices"
+msgstr "Баалары Чыпкалоо"
+
+#: market/templates/market/price_list.html:57
+msgid "Search Product"
+msgstr "Товар Издөө"
+
+#: market/templates/market/price_list.html:59
+msgid "Enter product name..."
+msgstr "Товардын атын киргизиңиз..."
+
+#: market/templates/market/price_list.html:62
+#: market/templates/market/price_list.html:121
+msgid "Product"
+msgstr "Товар"
+
+#: market/templates/market/price_list.html:64
+msgid "All Products"
+msgstr "Бардык Товарлар"
+
+#: market/templates/market/price_list.html:75
+msgid "All Markets"
+msgstr "Бардык Базарлар"
+
+#: market/templates/market/price_list.html:84
+msgid "Time Period"
+msgstr "Убакыт Мезгили"
+
+#: market/templates/market/price_list.html:95
+msgid "Filter"
+msgstr "Чыпкалоо"
+
+#: market/templates/market/price_list.html:98
+msgid "Clear"
+msgstr "Өчүр"
+
+#: market/templates/market/price_list.html:113
+msgid "entries found"
+msgstr "жазуу табылды"
+
+#: market/templates/market/price_list.html:125
+msgid "Date"
+msgstr "Күнү"
+
+#: market/templates/market/price_list.html:126
+msgid "Notes"
+msgstr "Белгилер"
+
+#: market/templates/market/price_list.html:209
+msgid "No price data found"
+msgstr "Баа маалыматы табылган жок"
+
+#: market/templates/market/price_list.html:210
+msgid "Try adjusting your search criteria or"
+msgstr "Издөө шарттарыңызды өзгөртүп көрүңүз же"
+
+#: market/templates/market/price_list.html:211
+msgid "view all prices"
+msgstr "бардык баалар көрүү"
+
+#: market/templates/market/price_list.html:221
+msgid "Price pagination"
+msgstr "Баа беттери"
+
+#: market/templates/market/price_list.html:226
+msgid "Previous"
+msgstr "Мурунку"
+
+#: market/templates/market/price_list.html:246
+msgid "Next"
+msgstr "Кийинки"
+
+#: market/views.py:95
+msgid "Today"
+msgstr "Бүгүн"
+
+#: market/views.py:96
+msgid "Last 7 days"
+msgstr "Акыркык 7 күн"
+
+#: market/views.py:98
+msgid "Last 3 months"
+msgstr "Акыркы 3 ай"
+
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:4
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:11
+msgid "Dose Calculator"
+msgstr "Доза Калькулятору"
+
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:21
 msgid "Chemical Dose Calculator"
 msgstr "Химиялык Доза Калькулятору"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:29
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:28
 msgid "How to use:"
 msgstr "Кантип колдонуу керек:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:29
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:28
 msgid ""
 "Enter the recommended dose per liter (usually provided by chemical sellers) "
 "and the total volume of water you need to prepare. The calculator will show "
@@ -124,92 +378,91 @@ msgstr ""
 "берилет) жана сиз даярдоого керек болгон суунун жалпы көлөмүн киргизиңиз. "
 "Калькулятор керектүү химиялык заттын так өлчөмүн көрсөтөт."
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:39
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:103
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:38
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:102
 msgid "Dose per Liter"
 msgstr "Литрге Доза"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:48
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:47
 msgid "e.g., 10"
 msgstr "мис., 10"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:51
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:50
 msgid "grams"
 msgstr "грамм"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:54
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:53
 msgid "Amount of chemical recommended per liter of water"
 msgstr "Бир литр сууга сунушталган химиялык заттын саны"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:60
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:60
-msgid "Water Volume"
-msgstr "Суунун Көлөмү"
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:59
+msgid "Total Volume Needed"
+msgstr "Керектүү Жалпы Көлөм"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:69
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:68
 msgid "e.g., 560"
 msgstr "мис., 560"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:72
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:71
 msgid "liters"
 msgstr "литр"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:75
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:74
 msgid "Total volume of solution you need to prepare"
 msgstr "Даярдоого керек болгон эритмеден жалпы көлөм"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:82
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:81
 msgid "Calculate Dose"
 msgstr "Дозаны Эсептөө"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:97
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:96
 msgid "Calculation Result"
 msgstr "Эсептөө Жыйынтыгы"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:104
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:116
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:103
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:115
 msgid "g"
 msgstr "г"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:109
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:108
 msgid "Total Volume"
 msgstr "Жалпы Көлөм"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:110
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:109
 msgid "L"
 msgstr "Л"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:115
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:114
 msgid "Total Chemical Needed"
 msgstr "Керектүү Химиялык Зат"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:119
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:118
 msgid "kg"
 msgstr "кг"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:128
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:127
 msgid "Quick Reference:"
 msgstr "Тез Маалымат:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:130
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:129
 #, python-format
 msgid "Total needed: %(total_dose)s grams"
 msgstr "Жалпы керек: %(total_dose)s грамм"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:132
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:131
 #, python-format
 msgid "This equals: %(total_dose_kg)s kg (%(total_dose)s ÷ 1000)"
 msgstr "Бул барабар: %(total_dose_kg)s кг (%(total_dose)s ÷ 1000)"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:146
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:145
 msgid "Usage Examples"
 msgstr "Колдонуу Мисалдары"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:153
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:152
 msgid "Example 1:"
 msgstr "1-мисал:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:155
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:154
 msgid ""
 "If the chemical seller recommends <strong>10 grams per liter</strong> and "
 "you need <strong>560 liters</strong> of solution:"
@@ -217,133 +470,131 @@ msgstr ""
 "Эгер химиялык зат сатуучу <strong>бир литрге 10 грамм</strong> сунуштаса "
 "жана сизге <strong>560 литр</strong> эритме керек болсо:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:158
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:169
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:157
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:168
 msgid "Result:"
 msgstr "Жыйынтык:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:158
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:157
 msgid "You need 5,600 grams (5.6 kg) of chemical"
 msgstr "Сизге 5,600 грамм (5.6 кг) химиялык зат керек"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:164
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:163
 msgid "Example 2:"
 msgstr "2-мисал:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:166
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:165
 msgid ""
 "If the recommendation is <strong>25 grams per liter</strong> and you need "
 "<strong>200 liters</strong> of solution:"
 msgstr ""
-"Эгер сунуш <strong>бир литрге 25 грамм</strong> болсо жана сизге "
-"<strong>200 литр</strong> эритме керек болсо:"
+"Эгер сунуш <strong>бир литрге 25 грамм</strong> болсо жана сизге <strong>200 "
+"литр</strong> эритме керек болсо:"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:169
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:168
 msgid "You need 5,000 grams (5 kg) of chemical"
 msgstr "Сизге 5,000 грамм (5 кг) химиялык зат керек"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:181
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:180
 msgid "Safety Tips"
 msgstr "Коопсуздук Кеңештери"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:186
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:185
 msgid "Always wear protective equipment when handling chemicals"
 msgstr "Химиялык заттарды колдонуу учурунда ар дайым коргоочу жабдуу кийиңиз"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:187
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:186
 msgid "Follow the manufacturer's instructions on the chemical label"
 msgstr "Химиялык заттын белгисиндеги өндүрүүчүнүн көрсөтмөлөрүн аткарыңыз"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:188
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:187
 msgid "Mix chemicals in well-ventilated areas"
 msgstr "Химиялык заттарды жакшы желдетилген жерлерде аралаштырыңыз"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:189
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:188
 msgid "Keep chemicals away from children and animals"
 msgstr "Химиялык заттарды балдардан жана айбандардан алыс сактаңыз"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:190
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:189
 msgid "Dispose of empty containers properly"
 msgstr "Бош контейнерлерди туура жол менен жок кылыңыз"
 
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:191
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:190
 msgid "If in doubt, consult with agricultural experts"
 msgstr "Эгер күмөнү болсо, айыл чарба адистери менен кеңешиңиз"
 
-#: templates/base.html:69
+#: templates/base.html:69 weather/templates/weather/dashboard.html:283
 msgid "Dosage Calculator"
-msgstr ""
-
-#: templates/base.html:74
-msgid "Market Prices"
-msgstr ""
+msgstr "Доза Эсептегич"
 
 #: templates/base.html:79
 msgid "Weather"
-msgstr ""
+msgstr "Аба Ырайы"
 
 #: templates/base.html:84
 msgid "Community"
-msgstr ""
+msgstr "Коомчулук"
 
 #: templates/base.html:89
 msgid "Agro Supplies"
-msgstr ""
+msgstr "Айыл Чарба Жабдуулары"
 
 #: templates/base.html:92
 msgid "Chemical Products"
-msgstr ""
+msgstr "Химиялык Продуктулар"
 
 #: templates/base.html:93
 msgid "Price Calculator"
-msgstr ""
+msgstr "Баа Эсептегич"
 
 #: templates/base.html:145
 msgid "Dashboard"
-msgstr ""
+msgstr "Башкаруу Панели"
 
 #: templates/base.html:148
 msgid "Edit Profile"
-msgstr ""
+msgstr "Профилди Түзөтүү"
 
 #: templates/base.html:151
 msgid "View Profile"
-msgstr ""
+msgstr "Профилди Көрүү"
 
 #: templates/base.html:155 users/templates/users/farmers_list.html:6
 #: users/templates/users/farmers_list.html:55
 msgid "Find Farmers"
-msgstr ""
+msgstr "Дыйканчыларды Издөө"
 
 #: templates/base.html:160
 msgid "Admin Panel"
-msgstr ""
+msgstr "Админ Панели"
 
 #: templates/base.html:168
 msgid "Logout"
-msgstr ""
+msgstr "Чыгуу"
 
 #: templates/base.html:177 users/templates/users/login.html:6
 msgid "Login"
-msgstr ""
+msgstr "Кируу"
 
 #: templates/base.html:182 users/templates/users/register.html:6
 msgid "Register"
-msgstr ""
+msgstr "Катталуу"
 
 #: templates/base.html:212
 msgid ""
 "Empowering farmers in Batken region, Kyrgyzstan with data-driven "
 "agricultural solutions."
 msgstr ""
+"Кыргызстандын Баткен облусундагы дыйканчыларды маалыматтарга негизделген "
+"айыл чарба чечимдери менен күчөтүү."
 
 #: users/forms.py:11
 msgid "Required for password reset and notifications"
-msgstr ""
+msgstr "Сырсөздү калыбына келтирүү жана билдирүүлөр үчүн керек"
 
 #: users/forms.py:12
 msgid "Your first name"
-msgstr ""
+msgstr "Сиздин атыңыз"
 
 #: users/forms.py:13
 msgid "Your last name"
@@ -473,16 +724,18 @@ msgstr ""
 
 #: users/templates/users/farmers_list.html:70
 #: users/templates/users/register.html:438
+#: weather/templates/weather/dashboard.html:26
 msgid "Country"
-msgstr ""
+msgstr "Өлкө"
 
 #: users/templates/users/farmers_list.html:72
 msgid "All Countries"
 msgstr ""
 
 #: users/templates/users/farmers_list.html:82
+#: weather/templates/weather/dashboard.html:35
 msgid "Region/State"
-msgstr ""
+msgstr "Аймак/Облус"
 
 #: users/templates/users/farmers_list.html:84
 #: users/templates/users/farmers_list.html:254
@@ -861,3 +1114,227 @@ msgstr ""
 #: users/templates/users/register.html:518
 msgid "Already have an account?"
 msgstr ""
+
+#: weather/templates/weather/dashboard.html:5
+#: weather/templates/weather/dashboard.html:10
+msgid "Weather Forecast"
+msgstr "Аба Ырайы Болжолу"
+
+#: weather/templates/weather/dashboard.html:11
+msgid ""
+"Stay informed about weather conditions to make better agricultural decisions."
+msgstr ""
+"Айыл чарба чечимдерин туура кабыл алуу үчүн аба ырайы жөнүндө маалыматта "
+"болуңуз."
+
+#: weather/templates/weather/dashboard.html:20
+msgid "Search Location"
+msgstr "Жайгашкан Жер Издөө"
+
+#: weather/templates/weather/dashboard.html:28
+msgid "Select Country..."
+msgstr "Өлкөнү тандаңыз..."
+
+#: weather/templates/weather/dashboard.html:37
+msgid "Select Region..."
+msgstr "Аймакты тандаңыз..."
+
+#: weather/templates/weather/dashboard.html:41
+msgid "City/Village Name"
+msgstr "Шаар/Айыл Аталышы"
+
+#: weather/templates/weather/dashboard.html:43
+#: weather/templates/weather/dashboard.html:370
+msgid "Enter city or village name..."
+msgstr "Шаар же айылдын атын киргизиңиз..."
+
+#: weather/templates/weather/dashboard.html:48
+#: weather/templates/weather/dashboard.html:64
+msgid "Search"
+msgstr "Издөө"
+
+#: weather/templates/weather/dashboard.html:55
+msgid "Or search by city name:"
+msgstr "Же шаардын аталышы боюнча издеңиз:"
+
+#: weather/templates/weather/dashboard.html:60
+msgid "Enter city name (e.g., Batken, Bishkek, Osh)"
+msgstr "Шаардын аталышын киргизиңиз (мис., Баткен, Бишкек, Ош)"
+
+#: weather/templates/weather/dashboard.html:72
+msgid "Recent locations:"
+msgstr "Акыркы жайгашкан жерлер:"
+
+#: weather/templates/weather/dashboard.html:91
+msgid "Weather API Not Configured"
+msgstr "Аба Ырайы API Конфигурацияланган Эмес"
+
+#: weather/templates/weather/dashboard.html:92
+msgid ""
+"To use weather features, please set your OpenWeatherMap API key in the "
+"environment variable"
+msgstr ""
+"Аба ырайы функцияларын колдонуу үчүн, OpenWeatherMap API ачкычын чөйрө "
+"өзгөрмөсүндө орнотуңуз"
+
+#: weather/templates/weather/dashboard.html:93
+msgid "Get a free API key at"
+msgstr "Бекер API ачкычын алыңыз"
+
+#: weather/templates/weather/dashboard.html:102
+msgid "Current Weather"
+msgstr "Учурдагы Аба Ырайы"
+
+#: weather/templates/weather/dashboard.html:112
+msgid "Feels like"
+msgstr "Сезилиши"
+
+#: weather/templates/weather/dashboard.html:122
+msgid "Humidity"
+msgstr "Нымдуулук"
+
+#: weather/templates/weather/dashboard.html:131
+msgid "Wind"
+msgstr "Шамал"
+
+#: weather/templates/weather/dashboard.html:140
+msgid "Pressure"
+msgstr "Басым"
+
+#: weather/templates/weather/dashboard.html:150
+msgid "Visibility"
+msgstr "Көрүү Аралыгы"
+
+#: weather/templates/weather/dashboard.html:169
+msgid "24-Hour Forecast"
+msgstr "24 Саатык Болжол"
+
+#: weather/templates/weather/dashboard.html:225
+msgid "Farming Tips"
+msgstr "Фермерчилик Кеңештери"
+
+#: weather/templates/weather/dashboard.html:231
+msgid "Rainy Weather:"
+msgstr "Жамгырлуу Аба Ырайы:"
+
+#: weather/templates/weather/dashboard.html:231
+msgid ""
+"Good for recently planted crops. Avoid field work and consider covered "
+"storage for harvested crops."
+msgstr ""
+"Жаңы отургузулган өсүмдүктөр үчүн жакшы. Талаа ишинен качыңыз жана терилген "
+"өнүмдү жабык сактоо жайында сактоону ойлонуңуз."
+
+#: weather/templates/weather/dashboard.html:236
+msgid "Hot Weather:"
+msgstr "Ысык Аба Ырайы:"
+
+#: weather/templates/weather/dashboard.html:236
+msgid ""
+"Ensure adequate irrigation. Consider early morning or evening work to avoid "
+"heat stress."
+msgstr ""
+"Жетиштүү сугарууну камсыз кылыңыз. Ысыктан качуу үчүн эртең менен же кечинде "
+"иштөөнү ойлонуңуз."
+
+#: weather/templates/weather/dashboard.html:241
+msgid "Cold Weather:"
+msgstr "Суук Аба Ырайы:"
+
+#: weather/templates/weather/dashboard.html:241
+msgid "Protect sensitive crops from frost. Check greenhouse heating systems."
+msgstr ""
+"Кыңгыр өсүмдүктөрдү аязdan коргоңуз. Жылуу үйдүн жылытуу системасын "
+"текшериңиз."
+
+#: weather/templates/weather/dashboard.html:246
+msgid "Windy Conditions:"
+msgstr "Шамалдуу Аба Ырайы:"
+
+#: weather/templates/weather/dashboard.html:246
+msgid "Secure greenhouses and equipment. Avoid spraying operations."
+msgstr ""
+"Жылуу үйлөрдү жана жабдуулардын коопсуздугун камсыз кылыңыз. Чачуу иштеринен "
+"качыңыз."
+
+#: weather/templates/weather/dashboard.html:251
+msgid "Good Conditions:"
+msgstr "Жакшы Шарттар:"
+
+#: weather/templates/weather/dashboard.html:251
+msgid "Ideal weather for most agricultural activities."
+msgstr "Көпчүлүк айыл чарба иштери үчүн эң сонун аба ырайы."
+
+#: weather/templates/weather/dashboard.html:255
+msgid "General Recommendations:"
+msgstr "Жалпы Сунуштар:"
+
+#: weather/templates/weather/dashboard.html:257
+msgid "Monitor soil moisture levels regularly"
+msgstr "Топуракты нымдуулук деңгээлин дайыма көзөмөлдөө"
+
+#: weather/templates/weather/dashboard.html:258
+msgid "Adjust irrigation based on weather forecast"
+msgstr "Аба ырайы болжолуна жараша сугарууну ылайыкташтыруу"
+
+#: weather/templates/weather/dashboard.html:259
+msgid "Plan fieldwork during optimal conditions"
+msgstr "Эң сонун шарттарда талаа ишин пландаштыруу"
+
+#: weather/templates/weather/dashboard.html:260
+msgid "Protect equipment from extreme weather"
+msgstr "Жабдууларды өтө каткан аба ырайынан коргоо"
+
+#: weather/templates/weather/dashboard.html:269
+#, fuzzy
+#| msgid "Contact Information"
+msgid "Weather Information"
+msgstr "Байланыш маалыматы"
+
+#: weather/templates/weather/dashboard.html:272
+msgid "Data Source:"
+msgstr "Маалымат Булагы:"
+
+#: weather/templates/weather/dashboard.html:273
+msgid "Last Updated:"
+msgstr "Акыркы Жаңыртуу:"
+
+#: weather/templates/weather/dashboard.html:274
+msgid "Location:"
+msgstr "Жайгашкан Жери:"
+
+#: weather/templates/weather/dashboard.html:275
+msgid "Coordinates:"
+msgstr "Координаттар:"
+
+#: weather/templates/weather/dashboard.html:278
+msgid "Quick Actions:"
+msgstr "Тез Аракеттер:"
+
+#: weather/templates/weather/dashboard.html:280
+msgid "Crop Guide"
+msgstr "Өсүмдүктөр Колдонмосу"
+
+#: weather/templates/weather/dashboard.html:294
+msgid "No Weather Data Available"
+msgstr "Аба Ырайы Маалыматы Жок"
+
+#: weather/templates/weather/dashboard.html:295
+msgid "Please search for a location or check your internet connection."
+msgstr "Жайгашкан жерди издеңиз же интернет байланышыңызды текшериңиз."
+
+#: weather/templates/weather/dashboard.html:375
+msgid "Enter city/village (e.g., Batken, Osh, Talas...)"
+msgstr "Шаар/айыл киргизиңиз (мис., Баткен, Ош, Талас...)"
+
+#: weather/templates/weather/dashboard.html:378
+msgid "Enter city/village (e.g., Almaty, Astana, Shymkent...)"
+msgstr "Шаар/айыл киргизиңиз (мис., Алматы, Астана, Шымкент...)"
+
+#: weather/templates/weather/dashboard.html:381
+msgid "Enter city/village (e.g., Dushanbe, Khujand, Kulob...)"
+msgstr "Шаар/айыл киргизиңиз (мис., Душанбе, Худжанд, Кулоб...)"
+
+#: weather/templates/weather/dashboard.html:384
+msgid "Enter city/village (e.g., Tashkent, Samarkand, Bukhara...)"
+msgstr "Шаар/айыл киргизиңиз (мис., Ташкент, Самарканд, Бухара...)"

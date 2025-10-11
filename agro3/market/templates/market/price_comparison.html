@@ -1,26 +1,28 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load market_tags %}
 
-{% block title %}Price Comparison - Market Prices - AgroSovet{% endblock %}
+{% block title %}{% trans "Price Comparison" %} - {% trans "Market Prices" %} - AgroSovet{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'market:price_list' %}">Market Prices</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Price Comparison</li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'market:price_list' %}">{% trans "Market Prices" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Price Comparison" %}</li>
     </ol>
 </nav>
 
 <div class="row mb-4">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
-            <h1><i class="bi bi-bar-chart text-primary me-2"></i>Price Comparison</h1>
+            <h1><i class="bi bi-bar-chart text-primary me-2"></i>{% trans "Price Comparison" %}</h1>
             <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-left me-1"></i>Back to Prices
+                <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Prices" %}
             </a>
         </div>
-        <p class="lead">Compare prices for the same product across different markets.</p>
+        <p class="lead">{% trans "Compare prices for the same product across different markets." %}</p>
     </div>
 </div>
 
@@ -29,13 +31,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-basket me-1"></i>Select Product to Compare</h5>
+                <h5 class="mb-0"><i class="bi bi-basket me-1"></i>{% trans "Select Product to Compare" %}</h5>
             </div>
             <div class="card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-8">
                         <select class="form-select" name="product" id="product" required>
-                            <option value="">Choose a product...</option>
+                            <option value="">{% trans "Choose a product..." %}</option>
                             {% for product in products %}
                                 <option value="{{ product.pk }}" {% if selected_product and product.pk == selected_product.pk %}selected{% endif %}>
                                     {{ product.name }}{% if product.category %} - {{ product.category }}{% endif %}
@@ -45,7 +47,7 @@
                     </div>
                     <div class="col-md-4">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search me-1"></i>Compare Prices
+                            <i class="bi bi-search me-1"></i>{% trans "Compare Prices" %}
                         </button>
                     </div>
                 </form>
@@ -59,8 +61,8 @@
 <div class="row mb-4">
     <div class="col-12">
         <div class="alert alert-info">
-            <h5 class="mb-2"><i class="bi bi-info-circle me-2"></i>Comparing: {{ selected_product.name }}</h5>
-            <p class="mb-0">Showing latest prices from the last 7 days across different markets.</p>
+            <h5 class="mb-2"><i class="bi bi-info-circle me-2"></i>{% trans "Comparing" %}: {{ selected_product.name }}</h5>
+            <p class="mb-0">{% trans "Showing latest prices from the last 7 days across different markets." %}</p>
         </div>
     </div>
 </div>
@@ -73,7 +75,7 @@
         <div class="card h-100 shadow-sm {% if forloop.first %}border-success{% endif %}">
             {% if forloop.first %}
                 <div class="card-header bg-success text-white">
-                    <i class="bi bi-star me-1"></i>Best Price
+                    <i class="bi bi-star me-1"></i>{% trans "Best Price" %}
                 </div>
             {% endif %}
             <div class="card-body">
@@ -87,13 +89,13 @@
                 </h6>
                 
                 <div class="text-center my-3">
-                    <div class="display-6 fw-bold text-primary">{{ price.price }}</div>
-                    <div class="text-muted">som per {{ price.get_unit_display }}</div>
+                    <div class="display-6 fw-bold text-primary">{{ price|localized_price }}</div>
+                    <div class="text-muted">{% trans "per unit" %}</div>
                 </div>
                 
                 <div class="border-top pt-3">
                     <small class="text-muted">
-                        <i class="bi bi-calendar me-1"></i>Updated: {{ price.date_recorded|date:"M d, Y H:i" }}
+                        <i class="bi bi-calendar me-1"></i>{% trans "Updated" %}: {{ price.date_recorded|date:"M d, Y H:i" }}
                     </small>
                     {% if price.notes %}
                         <div class="mt-2">
@@ -105,7 +107,7 @@
                                 <small class="text-muted">
                                     <i class="bi bi-chat-text me-1"></i>{{ price.notes|truncatechars:150 }}
                                     <a href="#" class="text-primary ms-1" data-bs-toggle="modal" data-bs-target="#noteModal-comp-{{ price.id }}">
-                                        Read more
+                                        {% trans "Read more" %}
                                     </a>
                                 </small>
                                 
@@ -116,7 +118,7 @@
                                             <div class="modal-header">
                                                 <h6 class="modal-title">
                                                     <i class="bi bi-chat-text me-1"></i>
-                                                    Note for {{ price.product.name }} at {{ price.market.name }}
+                                                    {% trans "Note for" %} {{ price.product.name }} {% trans "at" %} {{ price.market.name }}
                                                 </h6>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
@@ -127,7 +129,7 @@
                                                 <small class="text-muted me-auto">
                                                     <i class="bi bi-calendar me-1"></i>{{ price.date_recorded|date:"M d, Y g:i A" }}
                                                 </small>
-                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -155,19 +157,19 @@
     <div class="col-12">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-table me-1"></i>Price Summary</h5>
+                <h5 class="mb-0"><i class="bi bi-table me-1"></i>{% trans "Price Summary" %}</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Market</th>
-                                <th>Location</th>
-                                <th>Price (som)</th>
-                                <th>Unit</th>
-                                <th>Last Updated</th>
-                                <th>Contact</th>
+                                <th>{% trans "Market" %}</th>
+                                <th>{% trans "Location" %}</th>
+                                <th>{% trans "Price" %}</th>
+                                <th>{% trans "Unit" %}</th>
+                                <th>{% trans "Last Updated" %}</th>
+                                <th>{% trans "Contact" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -178,11 +180,11 @@
                                         {{ price.market.name }}
                                     </a>
                                     {% if forloop.first %}
-                                        <span class="badge bg-success ms-2">Best Price</span>
+                                        <span class="badge bg-success ms-2">{% trans "Best Price" %}</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ price.market.location }}</td>
-                                <td class="fw-bold text-primary">{{ price.price }}</td>
+                                <td class="fw-bold text-primary">{{ price|localized_price }}</td>
                                 <td>{{ price.get_unit_display }}</td>
                                 <td>{{ price.date_recorded|date:"M d, H:i" }}</td>
                                 <td>
@@ -207,8 +209,8 @@
     <div class="col-12">
         <div class="text-center py-5">
             <i class="bi bi-exclamation-triangle text-muted mb-3" style="font-size: 3rem;"></i>
-            <h4 class="text-muted">No Recent Price Data Available</h4>
-            <p class="text-muted">No price data found for {{ selected_product.name }} in the last 7 days.</p>
+            <h4 class="text-muted">{% trans "No Recent Price Data Available" %}</h4>
+            <p class="text-muted">{% trans "No price data found for" %} {{ selected_product.name }} {% trans "in the last 7 days." %}</p>
         </div>
     </div>
 </div>
@@ -219,8 +221,8 @@
     <div class="col-12">
         <div class="text-center py-5">
             <i class="bi bi-bar-chart text-muted mb-3" style="font-size: 3rem;"></i>
-            <h4 class="text-muted">Select a Product to Compare</h4>
-            <p class="text-muted">Choose a product from the dropdown above to compare prices across different markets.</p>
+            <h4 class="text-muted">{% trans "Select a Product to Compare" %}</h4>
+            <p class="text-muted">{% trans "Choose a product from the dropdown above to compare prices across different markets." %}</p>
         </div>
     </div>
 </div>
@@ -231,16 +233,16 @@
     <div class="col-12">
         <div class="card bg-light">
             <div class="card-body text-center">
-                <h5>Need More Information?</h5>
+                <h5>{% trans "Need More Information?" %}</h5>
                 <div class="btn-group" role="group">
                     <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
-                        <i class="bi bi-flower3 me-1"></i>View Crops
+                        <i class="bi bi-flower3 me-1"></i>{% trans "View Crops" %}
                     </a>
                     <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-list me-1"></i>All Prices
+                        <i class="bi bi-list me-1"></i>{% trans "All Prices" %}
                     </a>
                     <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-people me-1"></i>Ask Community
+                        <i class="bi bi-people me-1"></i>{% trans "Ask Community" %}
                     </a>
                 </div>
             </div>
