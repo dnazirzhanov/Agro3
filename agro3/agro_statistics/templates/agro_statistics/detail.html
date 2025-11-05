@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ statistic.title }} - {% trans "Statistics" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">{% trans "Home" %}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'statistics:index' %}">{% trans "Statistics" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ statistic.title }}
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Statistic Header -->
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="h3">{{ statistic.title }}</h1>
+                <div class="text-muted small">
+                    <i class="bi bi-calendar"></i> {{ statistic.publication_date|date:"M j, Y" }}
+                    <span class="ms-3">
+                        <i class="bi bi-eye"></i> {{ statistic.views_count }} {% trans "views" %}
+                    </span>
+                    {% if statistic.is_featured %}
+                        <span class="badge bg-warning text-dark ms-3">
+                            <i class="bi bi-star-fill"></i> {% trans "Featured" %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HTML Content (similar to forum post) -->
+    {% if html_content %}
+        <div class="content-wrapper">
+            {{ html_content|safe }}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <h4>{% trans "Content Not Available" %}</h4>
+            <p>{% trans "The content for this statistic is not available in your selected language." %}</p>
+        </div>
+    {% endif %}
+
+    <!-- Navigation -->
+    <div class="mt-4 mb-5">
+        <a href="{% url 'statistics:index' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> {% trans "Back to Statistics" %}
+        </a>
+    </div>
+</div>
+
+<style>
+/* Similar styling to forum post content */
+.content-wrapper {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    line-height: 1.6;
+}
+
+.content-wrapper h1,
+.content-wrapper h2,
+.content-wrapper h3,
+.content-wrapper h4,
+.content-wrapper h5,
+.content-wrapper h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.content-wrapper p {
+    margin-bottom: 1rem;
+}
+
+.content-wrapper ul,
+.content-wrapper ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.content-wrapper table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+.content-wrapper table th,
+.content-wrapper table td {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.content-wrapper table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.content-wrapper img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+}
+
+.content-wrapper blockquote {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+}
+</style>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 from .models import ChemicalCategory, ChemicalProduct, Shop, ChemicalPrice, PriceHistory
 
 
@@ -11,23 +12,26 @@ class ChemicalCategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(ChemicalProduct)
-class ChemicalProductAdmin(admin.ModelAdmin):
+class ChemicalProductAdmin(TranslationAdmin):
     list_display = ('name', 'brand', 'category', 'package_size', 'package_unit', 'is_active')
     list_filter = ('category', 'brand', 'application_method', 'is_active', 'created_at')
     search_fields = ('name', 'brand', 'active_ingredient', 'target_crops')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'category', 'brand', 'is_active')
+            'fields': ('name', 'category', 'brand', 'is_active'),
+            'description': 'Enter product name in multiple languages. English is required, Russian and Kyrgyz are optional.'
         }),
         ('Chemical Details', {
-            'fields': ('active_ingredient', 'concentration', 'application_method')
+            'fields': ('active_ingredient', 'concentration', 'application_method'),
+            'description': 'Chemical composition and application details (multilingual support)'
         }),
         ('Packaging', {
             'fields': ('package_size', 'package_unit')
         }),
         ('Usage Information', {
-            'fields': ('description', 'usage_instructions', 'dosage', 'target_crops', 'target_pests')
+            'fields': ('description', 'usage_instructions', 'dosage', 'target_crops', 'target_pests'),
+            'description': 'Usage information in multiple languages for better farmer understanding'
         }),
         ('Safety & Regulations', {
             'fields': ('safety_warnings', 'registration_number')

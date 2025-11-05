@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load forum_tags %}
 
-{% block title %}Community Forum - AgroSovet{% endblock %}
+{% block title %}{% trans "Community Forum" %} - AgroSovet{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h1><i class="bi bi-people text-secondary me-2"></i>Community Forum</h1>
-        <p class="lead">Connect with fellow farmers, share experiences, and learn from agricultural experts.</p>
+        <h1><i class="bi bi-people text-secondary me-2"></i>{% trans "Community Forum" %}</h1>
+        <p class="lead">{% trans "Connect with fellow farmers, share experiences, and learn from agricultural experts." %}</p>
     </div>
 </div>
 
@@ -15,17 +17,17 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-search me-1"></i>Find Posts</h5>
+                <h5 class="mb-0"><i class="bi bi-search me-1"></i>{% trans "Find Posts" %}</h5>
             </div>
             <div class="card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-6">
                         <input type="text" class="form-control" name="search" 
-                               value="{{ current_search }}" placeholder="Search posts...">
+                               value="{{ current_search }}" placeholder="{% trans 'Search posts...' %}">
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="category">
-                            <option value="">All Categories</option>
+                            <option value="">{% trans "All Categories" %}</option>
                             {% for category in categories %}
                                 <option value="{{ category.slug }}" {% if category.slug == current_category %}selected{% endif %}>
                                     {{ category.name }}
@@ -35,9 +37,9 @@
                     </div>
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-secondary me-2">
-                            <i class="bi bi-search"></i> Search
+                            <i class="bi bi-search"></i> {% trans "Search" %}
                         </button>
-                        <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">Clear</a>
+                        <a href="{% url 'forum:index' %}" class="btn btn-outline-secondary">{% trans "Clear" %}</a>
                     </div>
                 </form>
             </div>
@@ -51,7 +53,7 @@
         <!-- Featured Posts -->
         {% if featured_posts and not current_search and not current_category %}
         <div class="mb-4">
-            <h4 class="mb-3"><i class="bi bi-star text-warning me-2"></i>Featured Posts</h4>
+            <h4 class="mb-3"><i class="bi bi-star text-warning me-2"></i>{% trans "Featured Posts" %}</h4>
             <div class="row g-3">
                 {% for post in featured_posts %}
                 <div class="col-md-4">
@@ -80,16 +82,16 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>
                 {% if current_search %}
-                    Search Results for "{{ current_search }}"
+                    {% trans "Search Results for" %} "{{ current_search }}"
                 {% elif current_category %}
-                    Category Posts
+                    {% trans "Category Posts" %}
                 {% elif current_author %}
-                    Posts by selected author
+                    {% trans "Posts by selected author" %}
                 {% else %}
-                    Recent Posts
+                    {% trans "Recent Posts" %}
                 {% endif %}
             </h4>
-            <small class="text-muted">{{ posts.paginator.count }} posts</small>
+            <small class="text-muted">{{ posts.paginator.count }} {% trans "posts" %}</small>
         </div>
 
         {% if posts %}
@@ -118,7 +120,7 @@
                     <span class="me-3">{{ post.publication_date|date:"M d, Y" }}</span>
                     
                     <i class="bi bi-eye me-1"></i>
-                    <span class="me-3">{{ post.views_count }} views</span>
+                    <span class="me-3">{{ post.views_count }} {% trans "views" %}</span>
                     
                     {% if post.has_video %}
                         <i class="bi bi-play-circle-fill text-success ms-2" title="Has video content"></i>
@@ -145,19 +147,19 @@
                 {% if posts.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ posts.previous_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">
-                            Previous
+                            {% trans "Previous" %}
                         </a>
                     </li>
                 {% endif %}
                 
                 <li class="page-item active">
-                    <span class="page-link">{{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+                    <span class="page-link">{{ posts.number }} {% trans "of" %} {{ posts.paginator.num_pages }}</span>
                 </li>
                 
                 {% if posts.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ posts.next_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">
-                            Next
+                            {% trans "Next" %}
                         </a>
                     </li>
                 {% endif %}
@@ -168,12 +170,12 @@
         {% else %}
         <div class="text-center py-5">
             <i class="bi bi-chat-text text-muted mb-3" style="font-size: 3rem;"></i>
-            <h4 class="text-muted">No posts found</h4>
+            <h4 class="text-muted">{% trans "No posts found" %}</h4>
             <p class="text-muted">
                 {% if current_search %}
-                    Try different search terms or <a href="{% url 'forum:index' %}">browse all posts</a>.
+                    {% trans "Try different search terms or" %} <a href="{% url 'forum:index' %}">{% trans "browse all posts" %}</a>.
                 {% else %}
-                    Be the first to start a discussion!
+                    {% trans "Be the first to start a discussion!" %}
                 {% endif %}
             </p>
         </div>
@@ -185,11 +187,11 @@
         <!-- Categories -->
         <div class="card shadow-sm mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-folder me-2"></i>Categories</h5>
+                <h5 class="mb-0"><i class="bi bi-folder me-2"></i>{% trans "Categories" %}</h5>
             </div>
             <div class="card-body">
                 <a href="{% url 'forum:index' %}" class="d-block py-2 text-decoration-none {% if not current_category %}fw-bold{% endif %}">
-                    All Posts
+                    {% trans "All Posts" %}
                 </a>
                 {% for category in categories %}
                 <a href="{% url 'forum:category' category.slug %}" 
@@ -205,7 +207,7 @@
         {% if popular_tags %}
         <div class="card shadow-sm mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-tags me-2"></i>Popular Tags</h5>
+                <h5 class="mb-0"><i class="bi bi-tags me-2"></i>{% trans "Popular Tags" %}</h5>
             </div>
             <div class="card-body">
                 {% for tag in popular_tags %}
@@ -220,21 +222,21 @@
         <!-- Quick Actions -->
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Links</h5>
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>{% trans "Quick Links" %}</h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
-                        <i class="bi bi-flower3 me-1"></i>Browse Crops
+                        <i class="bi bi-flower3 me-1"></i>{% trans "Browse Crops" %}
                     </a>
                     <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning">
-                        <i class="bi bi-bug me-1"></i>Pest Guide
+                        <i class="bi bi-bug me-1"></i>{% trans "Pest Guide" %}
                     </a>
                     <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-graph-up me-1"></i>Market Prices
+                        <i class="bi bi-graph-up me-1"></i>{% trans "Market Prices" %}
                     </a>
                     <a href="{% url 'weather:dashboard' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-cloud-sun me-1"></i>Weather
+                        <i class="bi bi-cloud-sun me-1"></i>{% trans "Weather" %}
                     </a>
 
                 </div>

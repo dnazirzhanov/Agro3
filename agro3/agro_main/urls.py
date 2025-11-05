@@ -59,6 +59,7 @@ urlpatterns += i18n_patterns(
     path('forum/', include('forum.urls')),
     path('weather/', include('weather.urls')),
     path('agro-supplies/', include('agro_supplies.urls')),
+    path('statistics/', include('agro_statistics.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),  # Temporarily kept for compatibility
     prefix_default_language=True,  # Include language prefix for default language too
 )

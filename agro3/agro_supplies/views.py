@@ -2,17 +2,50 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Avg, Min, Max, Count
 from django.db import models
 from django.core.paginator import Paginator
+from django.utils.translation import get_language
 from .models import ChemicalCategory, ChemicalProduct, Shop, ChemicalPrice
 from locations.models import Country, Region, City
 
 
+def filter_products_by_language(products, language_code):
+    """
+    Filter chemical products to only include those with names in the specified language.
+    
+    Args:
+        products: QuerySet of ChemicalProduct objects
+        language_code: Language code (en, ru, ky)
+    
+    Returns:
+        Filtered QuerySet of products with translation in the specified language
+    """
+    if language_code == 'en':
+        # English is the default language, show all products
+        return products
+    
+    # For non-English languages, filter products that have translation
+    field_name = f'name_{language_code}'
+    return products.filter(**{f'{field_name}__isnull': False}).exclude(**{field_name: ''})
+
+
 def product_list(request):
-    """List all chemical products with filtering and search - focused on pricing"""
-    products = ChemicalProduct.objects.filter(is_active=True).select_related('category').prefetch_related('prices__shop')
+    """
+    List all chemical products with filtering and search - focused on pricing.
+    
+    Only shows products that have names in the user's chosen language.
+    This ensures users only see chemical products they can understand.
+    """
+    current_language = get_language()
+    
+    # Get all active products
+    all_products = ChemicalProduct.objects.filter(is_active=True).select_related('category').prefetch_related('prices__shop')
+    
+    # Filter products that have translations in user's language
+    products = filter_products_by_language(all_products, current_language)
+    
     categories = ChemicalCategory.objects.all()
     
-    # Get location options for filtering - based on shops that sell products
-    countries = Country.objects.filter(shops__product_prices__product__is_active=True).distinct().order_by('name')
+    # Get location options for filtering - based on shops that sell products with translations
+    countries = Country.objects.filter(shops__product_prices__product__in=products).distinct().order_by('name')
     regions = Region.objects.none()  # Will be populated based on country selection
     
     # Filtering
@@ -27,22 +60,36 @@ def product_list(request):
     if country_id:
         # Filter products available in the selected country
         products = products.filter(prices__shop__country_id=country_id).distinct()
-        # Get regions for selected country
-        regions = Region.objects.filter(country_id=country_id, shops__product_prices__product__is_active=True).distinct().order_by('name')
+        # Get regions for selected country (only for products with translations)
+        regions = Region.objects.filter(
+            country_id=country_id, 
+            shops__product_prices__product__in=products
+        ).distinct().order_by('name')
         
         if region_id:
             # Further filter by region
             products = products.filter(prices__shop__region_id=region_id).distinct()
     
-    # Search
+    # Search (search in user's language)
     search_query = request.GET.get('search')
     if search_query:
-        products = products.filter(
-            Q(name__icontains=search_query) |
-            Q(brand__icontains=search_query) |
-            Q(active_ingredient__icontains=search_query) |
-            Q(target_crops__icontains=search_query)
-        )
+        if current_language == 'en':
+            products = products.filter(
+                Q(name__icontains=search_query) |
+                Q(brand__icontains=search_query) |
+                Q(active_ingredient__icontains=search_query) |
+                Q(target_crops__icontains=search_query)
+            )
+        else:
+            # Search in translated fields
+            name_field = f'name_{current_language}__icontains'
+            brand_field = f'brand_{current_language}__icontains' if hasattr(ChemicalProduct, f'brand_{current_language}') else 'brand__icontains'
+            products = products.filter(
+                Q(**{name_field: search_query}) |
+                Q(**{brand_field: search_query}) |
+                Q(active_ingredient__icontains=search_query) |
+                Q(target_crops__icontains=search_query)
+            )
     
     # Order products with prices - prioritize products with available prices
     products = products.annotate(
@@ -67,14 +114,32 @@ def product_list(request):
         'selected_country': country_id,
         'selected_region': region_id,
         'search_query': search_query,
-        'total_products': products.count()
+        'total_products': products.count(),
+        'current_language': current_language,
     }
     return render(request, 'agro_supplies/product_list.html', context)
 
 
 def product_detail(request, pk):
-    """Detailed view of a chemical product with price comparison"""
-    product = get_object_or_404(ChemicalProduct, pk=pk, is_active=True)
+    """
+    Detailed view of a chemical product with price comparison.
+    
+    Only shows the product if it has a name in the user's chosen language.
+    """
+    current_language = get_language()
+    
+    # Get all active products with translations in user's language
+    available_products = filter_products_by_language(
+        ChemicalProduct.objects.filter(is_active=True), 
+        current_language
+    )
+    
+    try:
+        product = available_products.get(pk=pk)
+    except ChemicalProduct.DoesNotExist:
+        # Product doesn't have translation in user's language, show 404
+        from django.http import Http404
+        raise Http404("This product is not available in your selected language.")
     
     # Get all prices for this product
     prices = ChemicalPrice.objects.filter(product=product).select_related('shop', 'shop__country', 'shop__region', 'shop__city').order_by('price')
@@ -113,6 +178,7 @@ def product_detail(request, pk):
         'selected_country': country_id,
         'selected_region': region_id,
         'selected_city': city_id,
+        'current_language': current_language,
     }
     return render(request, 'agro_supplies/product_detail.html', context)
 
@@ -288,55 +354,3 @@ def price_comparison(request):
         'search_query': search_query,
     }
     return render(request, 'agro_supplies/price_comparison.html', context)
-
-
-def price_calculator(request):
-    """Chemical product price calculator"""
-    products = ChemicalProduct.objects.filter(is_active=True, prices__isnull=False).distinct().select_related('category').order_by('brand', 'name')
-    categories = ChemicalCategory.objects.all()
-    countries = Country.objects.filter(shops__product_prices__product__is_active=True).distinct().order_by('name')
-    
-    context = {
-        'products': products,
-        'categories': categories,
-        'countries': countries,
-    }
-    return render(request, 'agro_supplies/calculator.html', context)
-
-
-def get_product_prices(request, product_id):
-    """API endpoint to get prices for a specific product"""
-    from django.http import JsonResponse
-    
-    try:
-        product = ChemicalProduct.objects.get(id=product_id, is_active=True)
-        prices = ChemicalPrice.objects.filter(
-            product=product, 
-            is_in_stock=True
-        ).select_related('shop', 'shop__country', 'shop__region', 'shop__city').order_by('price')
-        
-        price_data = []
-        for price in prices:
-            price_data.append({
-                'id': price.id,
-                'shop_name': price.shop.name,
-                'shop_location': price.shop.get_location_display(),
-                'price': float(price.price),  # This is the price per package at this shop
-                'currency': price.currency,
-                'package_size': float(product.package_size),
-                'package_unit': product.get_package_unit_display(),
-            })
-        
-        return JsonResponse({
-            'success': True,
-            'product_name': f"{product.brand} {product.name}",
-            'package_size': float(product.package_size),
-            'package_unit': product.get_package_unit_display(),
-            'prices': price_data
-        })
-    
-    except ChemicalProduct.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': 'Product not found'
-        })

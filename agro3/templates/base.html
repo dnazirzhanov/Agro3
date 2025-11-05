@@ -69,10 +69,14 @@
                             <i class="bi bi-calculator me-1"></i>{% trans "Dosage Calculator" %}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'market:price_list' %}">
-                            <i class="bi bi-graph-up me-1"></i>{% trans "Market Prices" %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-currency-dollar me-1"></i>{% trans "Prices" %}
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'market:price_list' %}"><i class="bi bi-graph-up me-2"></i>{% trans "Market Prices" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'agro_supplies:product_list' %}"><i class="bi bi-flask me-2"></i>{% trans "Chemical Products" %}</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'weather:dashboard' %}">
@@ -84,14 +88,10 @@
                             <i class="bi bi-people me-1"></i>{% trans "Community" %}
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-capsule-pill me-1"></i>{% trans "Agro Supplies" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'statistics:index' %}">
+                            <i class="bi bi-bar-chart me-1"></i>{% trans "Statistics" %}
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'agro_supplies:product_list' %}"><i class="bi bi-flask me-2"></i>{% trans "Chemical Products" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'agro_supplies:calculator' %}"><i class="bi bi-calculator me-2"></i>{% trans "Price Calculator" %}</a></li>
-                        </ul>
                     </li>
                     
                     <!-- Language Switcher -->

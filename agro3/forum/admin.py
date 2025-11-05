@@ -1,4 +1,5 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 from .models import Category, Tag, BlogPost, Comment, PostImage
 from django import forms
 from django.utils.html import format_html
@@ -124,11 +125,12 @@ class PostImageInline(admin.TabularInline):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(TranslationAdmin):
     """
-    Admin interface for Category model.
+    Admin interface for Category model with multilingual support.
     
-    Enables creation and management of blog categories for organizing agricultural content.
+    Enables creation and management of blog categories in multiple languages 
+    for organizing agricultural content.
     """
     list_display = ['name', 'slug', 'color', 'created_at']
     search_fields = ['name', 'description']
@@ -138,16 +140,18 @@ class CategoryAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Category Details', {
             'fields': ('name', 'slug', 'description', 'color'),
+            'description': 'Enter category information in multiple languages. English is required, Russian and Kyrgyz are optional.'
         }),
     )
 
 
 @admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(TranslationAdmin):
     """
-    Admin interface for Tag model.
+    Admin interface for Tag model with multilingual support.
     
-    Allows creation and management of tags for improved content discoverability.
+    Allows creation and management of tags in multiple languages for improved 
+    content discoverability across language barriers.
     """
     list_display = ['name', 'slug', 'created_at']
     search_fields = ['name']
@@ -157,12 +161,13 @@ class TagAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Tag Details', {
             'fields': ('name', 'slug'),
+            'description': 'Enter tag name in multiple languages. English is required, Russian and Kyrgyz are optional.'
         }),
     )
 
 
 @admin.register(BlogPost)
-class BlogPostAdmin(admin.ModelAdmin):
+class BlogPostAdmin(TranslationAdmin):
     """
     Admin interface for BlogPost model with comprehensive multi-language support.
     

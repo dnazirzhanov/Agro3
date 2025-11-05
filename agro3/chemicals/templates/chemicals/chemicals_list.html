@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Chemical Products" %}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1>{% trans "Chemical Products" %}</h1>
+    <p class="lead">{% trans "Browse agricultural chemicals and plant protection products." %}</p>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th>{% trans "Manufacturer" %}</th>
+                <th>{% trans "Active Ingredient" %}</th>
+                <th>{% trans "Registration Number" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product|get_translated:'name' }}</td>
+                <td>{{ product|get_translated:'description' }}</td>
+                <td>{{ product|get_translated:'manufacturer' }}</td>
+                <td>{{ product|get_translated:'active_ingredient' }}</td>
+                <td>{{ product.registration_number }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" class="text-center">{% trans "No products found in this language." %}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

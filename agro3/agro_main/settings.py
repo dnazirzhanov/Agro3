@@ -49,13 +49,13 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.ge
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',  # Must be first for translation registration
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'modeltranslation',  # Must come before apps with translations
     'ckeditor',  # Temporarily kept for migration compatibility
     'ckeditor_uploader',  # Temporarily kept for migration compatibility
     # 'django_quill',  # Removed - problematic migrations
@@ -66,7 +66,8 @@ INSTALLED_APPS = [
     'market',
     'forum',
     'weather',
-    'agro_supplies',
+    'agro_supplies.apps.AgroSuppliesConfig',
+    'agro_statistics',
     'rest_framework',
     'rest_framework.authtoken',
     'widget_tweaks',

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Chemical Product Price Calculator - Agro3{% endblock %}
+{% block title %}{% trans "Chemical Product Price Calculator" %} - Agro3{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -8,12 +8,12 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h1><i class="bi bi-calculator text-primary me-2"></i>Chemical Product Price Calculator</h1>
+                <h1><i class="bi bi-calculator text-primary me-2"></i>{% trans "Chemical Product Price Calculator" %}</h1>
                 <a href="{% url 'agro_supplies:product_list' %}" class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left me-1"></i>Back to Products
+                    <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Products" %}
                 </a>
             </div>
-            <p class="lead">Calculate the total cost for your chemical product purchases across different suppliers.</p>
+            <p class="lead">{% trans "Calculate the total cost for your chemical product purchases across different suppliers." %}</p>
         </div>
     </div>
 
@@ -29,10 +29,10 @@
                         <!-- Product Selection -->
                         <div class="mb-4">
                             <label for="product" class="form-label">
-                                <i class="bi bi-flask me-1"></i>Select Chemical Product
+                                <i class="bi bi-flask me-1"></i>{% trans "Select Chemical Product" %}
                             </label>
                             <select class="form-select" id="product" name="product" required>
-                                <option value="">Choose a product...</option>
+                                <option value="">{% trans "Choose a product..." %}</option>
                                 {% for product in products %}
                                 <option value="{{ product.id }}" 
                                         data-package-size="{{ product.package_size }}"
@@ -47,30 +47,30 @@
 
 
                         <!-- Shop Selection -->
-                        <div class="mb-4">
+                                <i class="bi bi-shop me-1"></i>{% trans "Select Shop" %}
                             <label for="shop" class="form-label">
                                 <i class="bi bi-shop me-1"></i>Select Shop
-                            </label>
+                                <option value="">{% trans "First select a product..." %}</option>
                             <select class="form-select" id="shop" name="shop" required disabled>
                                 <option value="">First select a product...</option>
                             </select>
                         </div>
 
                         <!-- Quantity Input -->
-                        <div class="mb-4">
+                                <i class="bi bi-box me-1"></i>{% trans "Quantity" %}
                             <label for="quantity" class="form-label">
                                 <i class="bi bi-box me-1"></i>Quantity
                             </label>
                             <div class="input-group">
                                 <input type="number" class="form-control" id="quantity" name="quantity" 
                                        min="0.1" step="0.1" placeholder="Enter quantity" required disabled>
-                                <span class="input-group-text" id="quantityUnit">units</span>
+                            <div class="form-text">{% trans "Enter the amount you want to purchase" %}</div>
                             </div>
                             <div class="form-text">Enter the amount you want to purchase</div>
                         </div>
 
                         <!-- Calculate Button -->
-                        <div class="mb-4">
+                                <i class="bi bi-calculator me-2"></i>{% trans "Calculate Total Price" %}
                             <button type="button" class="btn btn-primary btn-lg w-100" id="calculateBtn" disabled>
                                 <i class="bi bi-calculator me-2"></i>Calculate Total Price
                             </button>
@@ -78,7 +78,7 @@
                     </form>
 
                     <!-- Results -->
-                    <div id="results" class="d-none">
+                        <h5><i class="bi bi-receipt me-2"></i>{% trans "Calculation Results" %}</h5>
                         <hr>
                         <h5><i class="bi bi-receipt me-2"></i>Calculation Results</h5>
                         <div id="calculationDetails"></div>
@@ -91,11 +91,11 @@
     <!-- Recent Calculations -->
     <div class="row mt-5">
         <div class="col-12">
-            <div class="card">
+                    <h6 class="mb-0"><i class="bi bi-clock-history me-1"></i>{% trans "Recent Calculations" %}</h6>
                 <div class="card-header">
                     <h6 class="mb-0"><i class="bi bi-clock-history me-1"></i>Recent Calculations</h6>
                 </div>
-                <div class="card-body">
+                        <p class="text-muted mb-0">{% trans "No recent calculations. Use the calculator above to get started." %}</p>
                     <div id="recentCalculations">
                         <p class="text-muted mb-0">No recent calculations. Use the calculator above to get started.</p>
                     </div>

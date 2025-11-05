@@ -11,75 +11,174 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
+from django.utils.translation import get_language
 from django import forms
 # Removed django_quill dependency
 from .models import BlogPost, Category, Tag, Comment, Like
 
 
-def blog_index_view(request):
-    """Display all published blog posts with search and filtering."""
-    posts = BlogPost.objects.filter(is_published=True).select_related('author', 'category').prefetch_related('tags')
+def filter_posts_by_language(posts, language_code):
+    """
+    Filter blog posts to only include those with content in the specified language.
     
-    # Search functionality
+    Args:
+        posts: QuerySet of BlogPost objects
+        language_code: Language code (en, ru, ky)
+    
+    Returns:
+        List of posts that have translation in the specified language
+    """
+    return [post for post in posts if post.has_translation(language_code)]
+
+
+def filter_categories_by_language(categories, language_code):
+    """
+    Filter categories to only include those with names in the specified language.
+    
+    Args:
+        categories: QuerySet of Category objects  
+        language_code: Language code (en, ru, ky)
+    
+    Returns:
+        Filtered QuerySet of categories with translation in the specified language
+    """
+    if language_code == 'en':
+        # English is the default language, show all categories
+        return categories
+    
+    # For non-English languages, filter categories that have translation
+    field_name = f'name_{language_code}'
+    return categories.filter(**{f'{field_name}__isnull': False}).exclude(**{field_name: ''})
+
+
+def filter_tags_by_language(tags, language_code):
+    """
+    Filter tags to only include those with names in the specified language.
+    
+    Args:
+        tags: QuerySet of Tag objects
+        language_code: Language code (en, ru, ky)
+    
+    Returns:
+        Filtered QuerySet of tags with translation in the specified language
+    """
+    if language_code == 'en':
+        # English is the default language, show all tags
+        return tags
+    
+    # For non-English languages, filter tags that have translation
+    field_name = f'name_{language_code}'
+    return tags.filter(**{f'{field_name}__isnull': False}).exclude(**{field_name: ''})
+
+
+def blog_index_view(request):
+    """
+    Display all published blog posts with search and filtering.
+    
+    Only shows posts, categories, and tags that have translations in the user's chosen language.
+    This ensures users only see content they can understand in their preferred language.
+    """
+    current_language = get_language()
+    
+    posts = BlogPost.objects.filter(is_published=True).select_related('author', 'category').prefetch_related('tags')
+
+    # Search functionality (search in user's language)
     search = request.GET.get('search')
     if search:
-        posts = posts.filter(
-            Q(title__icontains=search) | 
-            Q(content__icontains=search) |
-            Q(short_description__icontains=search)
-        )
-    
+        if current_language == 'en':
+            posts = posts.filter(
+                Q(title__icontains=search) |
+                Q(content__icontains=search) |
+                Q(short_description__icontains=search)
+            )
+        else:
+            # Search in translated fields
+            title_field = f'title_{current_language}__icontains'
+            content_field = f'content_{current_language}__icontains'
+            desc_field = f'short_description_{current_language}__icontains'
+            posts = posts.filter(
+                Q(**{title_field: search}) |
+                Q(**{content_field: search}) |
+                Q(**{desc_field: search})
+            )
+
+    # Get categories and tags with translations in user's language
+    available_categories = filter_categories_by_language(Category.objects.all(), current_language)
+    available_tags = filter_tags_by_language(Tag.objects.all(), current_language)
+
     # Category filter
     category_slug = request.GET.get('category')
     if category_slug:
-        posts = posts.filter(category__slug=category_slug)
-    
+        try:
+            category = available_categories.get(slug=category_slug)
+            posts = posts.filter(category=category)
+        except Category.DoesNotExist:
+            # Category doesn't have translation in user's language, ignore filter
+            category_slug = None
+
     # Tag filter
     tag_slug = request.GET.get('tag')
     if tag_slug:
-        posts = posts.filter(tags__slug=tag_slug)
+        try:
+            tag = available_tags.get(slug=tag_slug)
+            posts = posts.filter(tags=tag)
+        except Tag.DoesNotExist:
+            # Tag doesn't have translation in user's language, ignore filter
+            tag_slug = None
 
     # Author filter (for dashboard deep link)
     author_id = request.GET.get('author')
     if author_id:
         posts = posts.filter(author_id=author_id)
-    
+
+    # Only show posts with a translation in the current language
+    posts_with_translation = filter_posts_by_language(posts, current_language)
+
     # Pagination
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts_with_translation, 10)
     page_number = request.GET.get('page')
-    posts = paginator.get_page(page_number)
-    
-    # Get featured posts
-    featured_posts = BlogPost.objects.filter(is_published=True, is_featured=True)[:3]
-    
-    # Get categories and tags for sidebar
-    categories = Category.objects.all()
-    popular_tags = Tag.objects.all()[:10]
-    
+    paginated_posts = paginator.get_page(page_number)
+
+    # Get featured posts (only those with translation in user's language)
+    featured_posts_queryset = BlogPost.objects.filter(is_published=True, is_featured=True)
+    featured_posts = filter_posts_by_language(featured_posts_queryset, current_language)[:3]
+
     context = {
-        'posts': posts,
+        'posts': paginated_posts,
         'featured_posts': featured_posts,
-        'categories': categories,
-        'popular_tags': popular_tags,
+        'categories': available_categories,
+        'popular_tags': available_tags[:10],
         'current_search': search or '',
         'current_category': category_slug,
         'current_tag': tag_slug,
         'current_author': author_id,
+        'current_language': current_language,
     }
-    
+
     return render(request, 'forum/index.html', context)
 
 
 def blog_post_detail_view(request, slug):
-    """Display a single blog post using uploaded HTML file content."""
+    """
+    Display a single blog post using uploaded HTML file content.
+    
+    Only shows the post if it has content in the user's chosen language.
+    """
+    current_language = get_language()
+    
     post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+    
+    # Check if post has translation in user's language
+    if not post.has_translation(current_language):
+        # Post doesn't have content in user's language, show 404
+        messages.warning(request, f"This post is not available in your selected language.")
+        return redirect('forum:index')
     
     # Increment view count
     post.views_count += 1
     post.save(update_fields=['views_count'])
     
     # Get HTML content and styles for current language
-    current_language = getattr(request, 'LANGUAGE_CODE', 'en')
     html_content = post.get_html_content_for_language(current_language)
     extracted_styles = post.get_extracted_styles_for_language(current_language)
     
@@ -97,6 +196,8 @@ def blog_category_list_view(request, slug):
     """
     Display posts filtered by category.
     
+    Only shows the category and its posts if they have translations in the user's chosen language.
+    
     Handles GET requests to show all published posts within a specific category
     with pagination (10 posts per page).
     
@@ -106,21 +207,36 @@ def blog_category_list_view(request, slug):
     Returns:
         Paginated list of posts in the specified category
     """
-    category = get_object_or_404(Category, slug=slug)
-    posts = BlogPost.objects.filter(
+    current_language = get_language()
+    
+    # Get categories with translations in user's language
+    available_categories = filter_categories_by_language(Category.objects.all(), current_language)
+    
+    try:
+        category = available_categories.get(slug=slug)
+    except Category.DoesNotExist:
+        # Category doesn't have translation in user's language, show 404
+        messages.warning(request, f"This category is not available in your selected language.")
+        return redirect('forum:index')
+    
+    posts_queryset = BlogPost.objects.filter(
         is_published=True,
         category=category
     ).select_related('author').prefetch_related('tags')
     
+    # Only show posts with translation in user's language
+    posts_with_translation = filter_posts_by_language(posts_queryset, current_language)
+    
     # Pagination
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts_with_translation, 10)
     page_number = request.GET.get('page')
-    posts = paginator.get_page(page_number)
+    paginated_posts = paginator.get_page(page_number)
     
     context = {
-        'posts': posts,
+        'posts': paginated_posts,
         'category': category,
         'page_title': f'Posts in {category.name}',
+        'current_language': current_language,
     }
     
     return render(request, 'forum/post_list_by_category.html', context)
@@ -129,6 +245,8 @@ def blog_category_list_view(request, slug):
 def blog_tag_list_view(request, slug):
     """
     Display posts filtered by tag.
+    
+    Only shows the tag and its posts if they have translations in the user's chosen language.
     
     Handles GET requests to show all published posts tagged with a specific tag
     with pagination (10 posts per page).
@@ -139,21 +257,36 @@ def blog_tag_list_view(request, slug):
     Returns:
         Paginated list of posts with the specified tag
     """
-    tag = get_object_or_404(Tag, slug=slug)
-    posts = BlogPost.objects.filter(
+    current_language = get_language()
+    
+    # Get tags with translations in user's language
+    available_tags = filter_tags_by_language(Tag.objects.all(), current_language)
+    
+    try:
+        tag = available_tags.get(slug=slug)
+    except Tag.DoesNotExist:
+        # Tag doesn't have translation in user's language, show 404
+        messages.warning(request, f"This tag is not available in your selected language.")
+        return redirect('forum:index')
+    
+    posts_queryset = BlogPost.objects.filter(
         is_published=True,
         tags=tag
     ).select_related('author', 'category').prefetch_related('tags')
     
+    # Only show posts with translation in user's language
+    posts_with_translation = filter_posts_by_language(posts_queryset, current_language)
+    
     # Pagination
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts_with_translation, 10)
     page_number = request.GET.get('page')
-    posts = paginator.get_page(page_number)
+    paginated_posts = paginator.get_page(page_number)
     
     context = {
-        'posts': posts,
+        'posts': paginated_posts,
         'tag': tag,
         'page_title': f'Posts tagged with "{tag.name}"',
+        'current_language': current_language,
     }
     
     return render(request, 'forum/post_list_by_tag.html', context)
