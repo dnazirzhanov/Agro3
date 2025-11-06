@@ -44,7 +44,7 @@ class MarketAdmin(TranslationAdmin):
 
 
 @admin.register(MarketPrice)
-class MarketPriceAdmin(admin.ModelAdmin):
+class MarketPriceAdmin(TranslationAdmin):
     list_display = ['product', 'market', 'price', 'unit', 'date_recorded']
     list_filter = ['product', 'market', 'unit', 'date_recorded', 'created_at']
     search_fields = ['product__name', 'market__name', 'notes']
@@ -54,10 +54,12 @@ class MarketPriceAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Price Information', {
-            'fields': ('product', 'market', 'price', 'unit', 'date_recorded')
+            'fields': ('product', 'market', 'price', 'unit', 'date_recorded'),
+            'description': 'Select product and market, then enter price details.'
         }),
-        ('Additional Info', {
-            'fields': ('notes',)
+        ('Additional Information (Multilingual)', {
+            'fields': ('notes',),
+            'description': 'Add notes in multiple languages. These notes will be displayed to users in their selected language.'
         }),
         ('Metadata', {
             'fields': ('created_at', 'updated_at'),

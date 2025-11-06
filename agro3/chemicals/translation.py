@@ -1,7 +1,15 @@
+"""
+Translation configuration for chemical products models.
+
+This module defines which model fields should be translatable using
+django-modeltranslation, enabling multi-language support for chemical
+product data including names, descriptions, and manufacturer information.
+"""
 from modeltranslation.translator import register, TranslationOptions
-from agro_supplies.models import ChemicalProduct
+from .models import ChemicalProduct
 
 @register(ChemicalProduct)
 class ChemicalProductTranslationOptions(TranslationOptions):
-    fields = ('name', 'description', 'usage_instructions', 'target_crops', 'target_pests', 'safety_warnings')
+    """Translation options for ChemicalProduct model."""
+    fields = ('name', 'description', 'manufacturer', 'active_ingredient')
     required_languages = ('en',)

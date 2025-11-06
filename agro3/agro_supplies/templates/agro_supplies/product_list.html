@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}Chemical Product Prices - Agro3{% endblock %}
 
@@ -132,7 +133,15 @@
                                 <td>
                                     <a href="{% url 'agro_supplies:shop_detail' price.shop.pk %}" 
                                        class="text-decoration-none">
-                                        <i class="bi bi-shop me-1"></i>{{ price.shop.name }}
+                                        <i class="bi bi-shop me-1"></i>
+                                        {% get_current_language as current_language %}
+                                        {% if current_language == 'ru' %}
+                                            {{ price.shop.name_ru|default:price.shop.name }}
+                                        {% elif current_language == 'ky' %}
+                                            {{ price.shop.name_ky|default:price.shop.name }}
+                                        {% else %}
+                                            {{ price.shop.name }}
+                                        {% endif %}
                                     </a>
                                     <br>
                                     <small class="text-muted">{{ price.shop.get_location_display }}</small>

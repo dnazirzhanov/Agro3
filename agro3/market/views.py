@@ -156,60 +156,7 @@ def market_price_list_view(request):
     return render(request, 'market/price_list.html', context)
 
 
-def price_comparison_view(request):
-    """
-    Compare prices across different markets for the same product.
-    
-    Only shows products and markets that have translations in the user's chosen language.
-    
-    Handles GET requests to display price comparisons:
-    - product: Product ID to compare prices for
-    
-    Returns:
-        Price comparison page showing the latest prices (within last 7 days)
-        for the selected product across all markets, enabling farmers to
-        identify the best market for selling their produce
-    """
-    current_language = get_language()
-    
-    # Get products with translations in user's language
-    available_products = filter_by_language(Product.objects.all(), Product, current_language)
-    available_markets = filter_by_language(Market.objects.all(), Market, current_language)
-    
-    selected_product = None
-    price_data = []
-    
-    product_id = request.GET.get('product')
-    if product_id:
-        try:
-            selected_product = available_products.get(pk=product_id)
-            
-            # Get recent prices for this product across markets with translations in user's language
-            recent_prices = MarketPrice.objects.filter(
-                product=selected_product,
-                market__in=available_markets,
-                date_recorded__gte=timezone.now() - timedelta(days=7)
-            ).select_related('market').order_by('market__name', '-date_recorded')
-            
-            # Group by market and get latest price
-            market_prices = {}
-            for price in recent_prices:
-                if price.market.id not in market_prices:
-                    market_prices[price.market.id] = price
-            
-            price_data = list(market_prices.values())
-        except Product.DoesNotExist:
-            # Product doesn't have translation in user's language
-            pass
-    
-    context = {
-        'products': available_products,
-        'selected_product': selected_product,
-        'price_data': price_data,
-        'current_language': current_language,
-    }
-    
-    return render(request, 'market/price_comparison.html', context)
+# Price comparison functionality removed as requested
 
 
 def market_detail_view(request, pk):
