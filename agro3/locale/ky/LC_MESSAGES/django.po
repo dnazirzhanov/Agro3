@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-06 20:07+0000\n"
+"POT-Creation-Date: 2025-11-07 09:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -131,110 +131,138 @@ msgstr ""
 
 #: chemicals/templates/chemicals/chemicals_list.html:4
 #: chemicals/templates/chemicals/chemicals_list.html:10
-#: chemicals/templates/chemicals/chemicals_list.html:60 templates/base.html:78
+#: chemicals/templates/chemicals/chemicals_list.html:81 templates/base.html:78
 msgid "Chemical Products"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:12
-msgid "Browse agricultural chemicals and plant protection products."
-msgstr ""
+#: chemicals/templates/chemicals/chemicals_list.html:20
+msgid "Search Chemical Products"
+msgstr "Химиялык продукттарды издөө"
 
-#: chemicals/templates/chemicals/chemicals_list.html:21
-msgid "Filter Products"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:26
+#: chemicals/templates/chemicals/chemicals_list.html:25
 msgid "Search Products"
-msgstr ""
+msgstr "Продуктуларды издөө"
 
-#: chemicals/templates/chemicals/chemicals_list.html:28
-msgid "Enter product name, manufacturer or ingredient..."
-msgstr ""
+#: chemicals/templates/chemicals/chemicals_list.html:27
+msgid "Product name, brand, ingredient..."
+msgstr "Продукт аты, бренд, ингредиент..."
 
-#: chemicals/templates/chemicals/chemicals_list.html:31
-#: chemicals/templates/chemicals/chemicals_list.html:71
-msgid "Manufacturer"
-msgstr ""
+#: chemicals/templates/chemicals/chemicals_list.html:30
+#: forum/templates/forum/post_create.html:196
+msgid "Category"
+msgstr "Категория"
 
-#: chemicals/templates/chemicals/chemicals_list.html:33
-msgid "All Manufacturers"
-msgstr ""
+#: chemicals/templates/chemicals/chemicals_list.html:32
+#: forum/templates/forum/index.html:30
+msgid "All Categories"
+msgstr "Бардык категориялар"
+
+#: chemicals/templates/chemicals/chemicals_list.html:41
+#: users/templates/users/farmers_list.html:70
+#: users/templates/users/register.html:438
+#: weather/templates/weather/dashboard.html:26
+msgid "Country"
+msgstr "Өлкө"
 
 #: chemicals/templates/chemicals/chemicals_list.html:43
-#: market/templates/market/price_list.html:90
-msgid "Filter"
-msgstr ""
+#: users/templates/users/farmers_list.html:72
+msgid "All Countries"
+msgstr "Бардык өлкөлөр"
 
-#: chemicals/templates/chemicals/chemicals_list.html:46
+#: chemicals/templates/chemicals/chemicals_list.html:52
+#: users/templates/users/profile_detail.html:75
+#: users/templates/users/register.html:447
+msgid "Region"
+msgstr "Аймак"
+
+#: chemicals/templates/chemicals/chemicals_list.html:54
+#: users/templates/users/farmers_list.html:84
+#: users/templates/users/farmers_list.html:254
+#: users/templates/users/farmers_list.html:270
+msgid "All Regions"
+msgstr "Бардык аймактар"
+
+#: chemicals/templates/chemicals/chemicals_list.html:64
+#: forum/templates/forum/index.html:40
+#: weather/templates/weather/dashboard.html:48
+#: weather/templates/weather/dashboard.html:64
+msgid "Search"
+msgstr "Издөө"
+
+#: chemicals/templates/chemicals/chemicals_list.html:67
 #: forum/templates/forum/index.html:42
-#: market/templates/market/price_list.html:93
+#: market/templates/market/price_list.html:92
 msgid "Clear"
-msgstr ""
+msgstr "Тазалоо"
 
-#: chemicals/templates/chemicals/chemicals_list.html:61
+#: chemicals/templates/chemicals/chemicals_list.html:82
 msgid "products found"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:69
+#: chemicals/templates/chemicals/chemicals_list.html:90
 msgid "Product Name"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:70
+#: chemicals/templates/chemicals/chemicals_list.html:91
 msgid "Description"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:72
+#: chemicals/templates/chemicals/chemicals_list.html:92
+msgid "Manufacturer"
+msgstr ""
+
+#: chemicals/templates/chemicals/chemicals_list.html:93
 msgid "Active Ingredient"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:73
+#: chemicals/templates/chemicals/chemicals_list.html:94
 msgid "Registration"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:132
+#: chemicals/templates/chemicals/chemicals_list.html:153
 msgid "No chemical products found"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:133
-#: market/templates/market/price_list.html:205
+#: chemicals/templates/chemicals/chemicals_list.html:154
+#: market/templates/market/price_list.html:204
 msgid "Try adjusting your search criteria or"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:134
+#: chemicals/templates/chemicals/chemicals_list.html:155
 msgid "view all products"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:144
+#: chemicals/templates/chemicals/chemicals_list.html:165
 msgid "Product pagination"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:149
+#: chemicals/templates/chemicals/chemicals_list.html:170
 #: forum/templates/forum/index.html:150
-#: market/templates/market/price_list.html:221
+#: market/templates/market/price_list.html:220
 msgid "Previous"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:169
+#: chemicals/templates/chemicals/chemicals_list.html:190
 #: forum/templates/forum/index.html:162
-#: market/templates/market/price_list.html:241
+#: market/templates/market/price_list.html:240
 msgid "Next"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:182
+#: chemicals/templates/chemicals/chemicals_list.html:203
 msgid "Need Help with Chemical Products?"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:185
+#: chemicals/templates/chemicals/chemicals_list.html:206
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:4
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:11
 msgid "Dose Calculator"
 msgstr "Доза эсептегичи"
 
-#: chemicals/templates/chemicals/chemicals_list.html:188
+#: chemicals/templates/chemicals/chemicals_list.html:209
 msgid "View Crops"
 msgstr ""
 
-#: chemicals/templates/chemicals/chemicals_list.html:191
+#: chemicals/templates/chemicals/chemicals_list.html:212
 msgid "Ask Community"
 msgstr ""
 
@@ -254,16 +282,6 @@ msgstr ""
 
 #: forum/templates/forum/index.html:26
 msgid "Search posts..."
-msgstr ""
-
-#: forum/templates/forum/index.html:30
-msgid "All Categories"
-msgstr ""
-
-#: forum/templates/forum/index.html:40
-#: weather/templates/weather/dashboard.html:48
-#: weather/templates/weather/dashboard.html:64
-msgid "Search"
 msgstr ""
 
 #: forum/templates/forum/index.html:56
@@ -338,7 +356,7 @@ msgstr ""
 #: forum/templates/forum/index.html:236
 #: market/templates/market/price_list.html:5
 #: market/templates/market/price_list.html:11
-#: market/templates/market/price_list.html:107 templates/base.html:77
+#: market/templates/market/price_list.html:106 templates/base.html:77
 msgid "Market Prices"
 msgstr "Базар баалары"
 
@@ -381,10 +399,6 @@ msgstr ""
 msgid "Featured Image"
 msgstr ""
 
-#: forum/templates/forum/post_create.html:196
-msgid "Category"
-msgstr ""
-
 #: forum/templates/forum/post_create.html:209
 msgid "Tags"
 msgstr ""
@@ -418,97 +432,97 @@ msgstr ""
 msgid "Please add some content to your post."
 msgstr ""
 
-#: market/templates/market/price_list.html:13
-msgid "Stay updated with current market prices across different markets."
-msgstr ""
-
-#: market/templates/market/price_list.html:22
+#: market/templates/market/price_list.html:21
 msgid "Price Statistics"
 msgstr ""
 
-#: market/templates/market/price_list.html:22 market/views.py:151
+#: market/templates/market/price_list.html:21 market/views.py:151
 msgid "Last 30 days"
 msgstr "Акыркы 30 күн"
 
-#: market/templates/market/price_list.html:25
+#: market/templates/market/price_list.html:24
 msgid "Average Price"
 msgstr ""
 
-#: market/templates/market/price_list.html:28
+#: market/templates/market/price_list.html:27
 msgid "Lowest Price"
 msgstr ""
 
-#: market/templates/market/price_list.html:31
+#: market/templates/market/price_list.html:30
 msgid "Highest Price"
 msgstr ""
 
-#: market/templates/market/price_list.html:34
+#: market/templates/market/price_list.html:33
 msgid "Entries"
 msgstr ""
 
-#: market/templates/market/price_list.html:47
+#: market/templates/market/price_list.html:46
 msgid "Filter Prices"
 msgstr "Баалар боюнча чыпкалоо"
 
-#: market/templates/market/price_list.html:52
+#: market/templates/market/price_list.html:51
 msgid "Search Product"
 msgstr "Товар издөө"
 
-#: market/templates/market/price_list.html:54
+#: market/templates/market/price_list.html:53
 msgid "Enter product name..."
 msgstr "Товар атын киргизиңиз..."
 
-#: market/templates/market/price_list.html:57
-#: market/templates/market/price_list.html:116
+#: market/templates/market/price_list.html:56
+#: market/templates/market/price_list.html:115
 msgid "Product"
 msgstr "Товар"
 
-#: market/templates/market/price_list.html:59
+#: market/templates/market/price_list.html:58
 msgid "All Products"
 msgstr "Бардык товарлар"
 
-#: market/templates/market/price_list.html:68
-#: market/templates/market/price_list.html:117
+#: market/templates/market/price_list.html:67
+#: market/templates/market/price_list.html:116
 msgid "Market"
 msgstr "Базар"
 
-#: market/templates/market/price_list.html:70
+#: market/templates/market/price_list.html:69
 msgid "All Markets"
 msgstr "Бардык базарлар"
 
-#: market/templates/market/price_list.html:79
+#: market/templates/market/price_list.html:78
 msgid "Time Period"
 msgstr "Убакыт мезгили"
 
-#: market/templates/market/price_list.html:108
+#: market/templates/market/price_list.html:89
+msgid "Filter"
+msgstr ""
+
+#: market/templates/market/price_list.html:107
 msgid "entries found"
 msgstr ""
 
-#: market/templates/market/price_list.html:118
+#: market/templates/market/price_list.html:117
 msgid "Location"
 msgstr ""
 
-#: market/templates/market/price_list.html:119
+#: market/templates/market/price_list.html:118
 msgid "Price"
 msgstr ""
 
-#: market/templates/market/price_list.html:120
+#: market/templates/market/price_list.html:119
 msgid "Date"
 msgstr ""
 
-#: market/templates/market/price_list.html:121
+#: market/templates/market/price_list.html:120
 msgid "Notes"
 msgstr ""
 
-#: market/templates/market/price_list.html:204
+#: market/templates/market/price_list.html:203
 msgid "No price data found"
 msgstr ""
 
-#: market/templates/market/price_list.html:206
+#: market/templates/market/price_list.html:205
 msgid "view all prices"
 msgstr ""
 
-#: market/templates/market/price_list.html:216
+#: market/templates/market/price_list.html:215
 msgid "Price pagination"
 msgstr ""
 
@@ -617,71 +631,6 @@ msgstr "Жалпы керек: %(total_dose)s грамм"
 #, python-format
 msgid "This equals: %(total_dose_kg)s kg (%(total_dose)s ÷ 1000)"
 msgstr "Бул барабар: %(total_dose_kg)s кг (%(total_dose)s ÷ 1000)"
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:145
-msgid "Usage Examples"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:152
-msgid "Example 1:"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:154
-msgid ""
-"If the chemical seller recommends <strong>10 grams per liter</strong> and "
-"you need <strong>560 liters</strong> of solution:"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:157
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:168
-msgid "Result:"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:157
-msgid "You need 5,600 grams (5.6 kg) of chemical"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:163
-msgid "Example 2:"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:165
-msgid ""
-"If the recommendation is <strong>25 grams per liter</strong> and you need "
-"<strong>200 liters</strong> of solution:"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:168
-msgid "You need 5,000 grams (5 kg) of chemical"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:180
-msgid "Safety Tips"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:185
-msgid "Always wear protective equipment when handling chemicals"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:186
-msgid "Follow the manufacturer's instructions on the chemical label"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:187
-msgid "Mix chemicals in well-ventilated areas"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:188
-msgid "Keep chemicals away from children and animals"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:189
-msgid "Dispose of empty containers properly"
-msgstr ""
-
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:190
-msgid "If in doubt, consult with agricultural experts"
-msgstr ""
 
 #: templates/base.html:69 weather/templates/weather/dashboard.html:283
 msgid "Dosage Calculator"
@@ -868,25 +817,9 @@ msgstr ""
 msgid "Search Filters"
 msgstr ""
 
-#: users/templates/users/farmers_list.html:70
-#: users/templates/users/register.html:438
-#: weather/templates/weather/dashboard.html:26
-msgid "Country"
-msgstr ""
-
-#: users/templates/users/farmers_list.html:72
-msgid "All Countries"
-msgstr ""
-
 #: users/templates/users/farmers_list.html:82
 #: weather/templates/weather/dashboard.html:35
 msgid "Region/State"
-msgstr ""
-
-#: users/templates/users/farmers_list.html:84
-#: users/templates/users/farmers_list.html:254
-#: users/templates/users/farmers_list.html:270
-msgid "All Regions"
 msgstr ""
 
 #: users/templates/users/farmers_list.html:95
@@ -1126,11 +1059,6 @@ msgstr ""
 
 #: users/templates/users/profile_detail.html:73
 msgid "About"
-msgstr ""
-
-#: users/templates/users/profile_detail.html:75
-#: users/templates/users/register.html:447
-msgid "Region"
 msgstr ""
 
 #: users/templates/users/profile_detail.html:77

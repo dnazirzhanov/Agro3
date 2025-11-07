@@ -9,7 +9,6 @@
         <div class="d-flex justify-content-between align-items-center">
             <h1><i class="bi bi-flask text-success me-2"></i>{% trans "Chemical Products" %}</h1>
         </div>
-        <p class="lead">{% trans "Browse agricultural chemicals and plant protection products." %}</p>
     </div>
 </div>
 
@@ -18,29 +17,51 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-funnel me-1"></i>{% trans "Filter Products" %}</h5>
+                <h5 class="mb-0"><i class="bi bi-funnel me-1"></i>{% trans "Search Chemical Products" %}</h5>
             </div>
             <div class="card-body">
                 <form method="GET" class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="search" class="form-label">{% trans "Search Products" %}</label>
                         <input type="text" class="form-control" id="search" name="search" 
-                               value="{{ current_search }}" placeholder="{% trans "Enter product name, manufacturer or ingredient..." %}">
+                               value="{{ current_search }}" placeholder="{% trans "Product name, brand, ingredient..." %}">
                     </div>
-                    <div class="col-md-4">
-                        <label for="manufacturer" class="form-label">{% trans "Manufacturer" %}</label>
-                        <select class="form-select" id="manufacturer" name="manufacturer">
-                            <option value="">{% trans "All Manufacturers" %}</option>
-                            {% for manufacturer in manufacturers %}
-                                <option value="{{ manufacturer }}" {% if manufacturer == current_manufacturer %}selected{% endif %}>
-                                    {{ manufacturer }}
+                    <div class="col-md-2">
+                        <label for="category" class="form-label">{% trans "Category" %}</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">{% trans "All Categories" %}</option>
+                            {% for category in categories %}
+                                <option value="{{ category }}" {% if category == current_category %}selected{% endif %}>
+                                    {{ category }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-2">
+                        <label for="country" class="form-label">{% trans "Country" %}</label>
+                        <select class="form-select" id="country" name="country">
+                            <option value="">{% trans "All Countries" %}</option>
+                            {% for country in countries %}
+                                <option value="{{ country }}" {% if country == current_country %}selected{% endif %}>
+                                    {{ country }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="region" class="form-label">{% trans "Region" %}</label>
+                        <select class="form-select" id="region" name="region">
+                            <option value="">{% trans "All Regions" %}</option>
+                            {% for region in regions %}
+                                <option value="{{ region }}" {% if region == current_region %}selected{% endif %}>
+                                    {{ region }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2">
-                            <i class="bi bi-search me-1"></i>{% trans "Filter" %}
+                            <i class="bi bi-search me-1"></i>{% trans "Search" %}
                         </button>
                         <a href="{% url 'chemicals:chemicals_list' %}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-clockwise me-1"></i>{% trans "Clear" %}

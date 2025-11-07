@@ -64,22 +64,40 @@ def chemicals_list_view(request):
             )
             available_products = available_products.filter(search_filter)
     
-    # Manufacturer/Brand filter  
-    manufacturer_filter = request.GET.get('manufacturer')
-    if manufacturer_filter:
+    # Category filter (placeholder - can be extended when categories are added to model)
+    category_filter = request.GET.get('category')
+    if category_filter:
+        # For now, we'll search in product names/descriptions for category-like terms
         if current_language == 'en':
-            available_products = available_products.filter(brand__icontains=manufacturer_filter)
+            available_products = available_products.filter(
+                Q(name__icontains=category_filter) | Q(description__icontains=category_filter)
+            )
         else:
-            available_products = available_products.filter(**{f'brand_{current_language}__icontains': manufacturer_filter})
+            available_products = available_products.filter(
+                Q(**{f'name_{current_language}__icontains': category_filter}) |
+                Q(**{f'description_{current_language}__icontains': category_filter})
+            )
     
-    # Get unique manufacturers/brands for filter dropdown (in user's language)
-    if current_language == 'en':
-        manufacturers = ChemicalProduct.objects.exclude(brand__isnull=True).exclude(brand='').values_list('brand', flat=True).distinct()
-    else:
-        field_name = f'brand_{current_language}'
-        manufacturers = ChemicalProduct.objects.exclude(**{f'{field_name}__isnull': True}).exclude(**{field_name: ''}).values_list(field_name, flat=True).distinct()
+    # Country filter (placeholder - can be extended when country field is added to model)
+    country_filter = request.GET.get('country')
+    if country_filter:
+        if current_language == 'en':
+            available_products = available_products.filter(brand__icontains=country_filter)
+        else:
+            available_products = available_products.filter(**{f'brand_{current_language}__icontains': country_filter})
     
-    manufacturers = [m for m in manufacturers if m] # Remove empty values
+    # Region filter (placeholder - can be extended when region field is added to model)  
+    region_filter = request.GET.get('region')
+    if region_filter:
+        if current_language == 'en':
+            available_products = available_products.filter(description__icontains=region_filter)
+        else:
+            available_products = available_products.filter(**{f'description_{current_language}__icontains': region_filter})
+    
+    # Get filter options (simplified for now - can be enhanced when proper fields are added)
+    categories = ['Herbicide', 'Fungicide', 'Insecticide', 'Fertilizer'] # Placeholder
+    countries = ['Kyrgyzstan', 'Russia', 'Kazakhstan', 'China', 'Turkey'] # Placeholder  
+    regions = ['Chuy', 'Osh', 'Jalal-Abad', 'Issyk-Kul', 'Naryn', 'Talas', 'Batken'] # Placeholder
     
     # Pagination
     paginator = Paginator(available_products, 20)
@@ -88,9 +106,13 @@ def chemicals_list_view(request):
     
     context = {
         'products': products,
-        'manufacturers': sorted(manufacturers),
+        'categories': categories,
+        'countries': countries,
+        'regions': regions,
         'current_search': search or '',
-        'current_manufacturer': manufacturer_filter or '',
+        'current_category': category_filter or '',
+        'current_country': country_filter or '',
+        'current_region': region_filter or '',
         'current_language': current_language,
     }
     
