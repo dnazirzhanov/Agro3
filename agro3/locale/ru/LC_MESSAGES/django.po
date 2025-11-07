@@ -430,7 +430,7 @@ msgstr ""
 
 #: market/templates/market/price_list.html:22 market/views.py:151
 msgid "Last 30 days"
-msgstr ""
+msgstr "Последние 30 дней"
 
 #: market/templates/market/price_list.html:25
 msgid "Average Price"
@@ -450,37 +450,37 @@ msgstr ""
 
 #: market/templates/market/price_list.html:47
 msgid "Filter Prices"
-msgstr ""
+msgstr "Фильтровать цены"
 
 #: market/templates/market/price_list.html:52
 msgid "Search Product"
-msgstr ""
+msgstr "Поиск товара"
 
 #: market/templates/market/price_list.html:54
 msgid "Enter product name..."
-msgstr ""
+msgstr "Введите название товара..."
 
 #: market/templates/market/price_list.html:57
 #: market/templates/market/price_list.html:116
 msgid "Product"
-msgstr ""
+msgstr "Товар"
 
 #: market/templates/market/price_list.html:59
 msgid "All Products"
-msgstr ""
+msgstr "Все товары"
 
 #: market/templates/market/price_list.html:68
 #: market/templates/market/price_list.html:117
 msgid "Market"
-msgstr ""
+msgstr "Рынок"
 
 #: market/templates/market/price_list.html:70
 msgid "All Markets"
-msgstr ""
+msgstr "Все рынки"
 
 #: market/templates/market/price_list.html:79
 msgid "Time Period"
-msgstr ""
+msgstr "Период времени"
 
 #: market/templates/market/price_list.html:108
 msgid "entries found"
@@ -516,15 +516,15 @@ msgstr ""
 
 #: market/views.py:149
 msgid "Today"
-msgstr ""
+msgstr "Сегодня"
 
 #: market/views.py:150
 msgid "Last 7 days"
-msgstr ""
+msgstr "Последние 7 дней"
 
 #: market/views.py:152
 msgid "Last 3 months"
-msgstr ""
+msgstr "Последние 3 месяца"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:21
 msgid "Chemical Dose Calculator"

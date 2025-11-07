@@ -428,7 +428,7 @@ msgstr ""
 
 #: market/templates/market/price_list.html:22 market/views.py:151
 msgid "Last 30 days"
-msgstr ""
+msgstr "Акыркы 30 күн"
 
 #: market/templates/market/price_list.html:25
 msgid "Average Price"
@@ -448,37 +448,37 @@ msgstr ""
 
 #: market/templates/market/price_list.html:47
 msgid "Filter Prices"
-msgstr ""
+msgstr "Баалар боюнча чыпкалоо"
 
 #: market/templates/market/price_list.html:52
 msgid "Search Product"
-msgstr ""
+msgstr "Товар издөө"
 
 #: market/templates/market/price_list.html:54
 msgid "Enter product name..."
-msgstr ""
+msgstr "Товар атын киргизиңиз..."
 
 #: market/templates/market/price_list.html:57
 #: market/templates/market/price_list.html:116
 msgid "Product"
-msgstr ""
+msgstr "Товар"
 
 #: market/templates/market/price_list.html:59
 msgid "All Products"
-msgstr ""
+msgstr "Бардык товарлар"
 
 #: market/templates/market/price_list.html:68
 #: market/templates/market/price_list.html:117
 msgid "Market"
-msgstr ""
+msgstr "Базар"
 
 #: market/templates/market/price_list.html:70
 msgid "All Markets"
-msgstr ""
+msgstr "Бардык базарлар"
 
 #: market/templates/market/price_list.html:79
 msgid "Time Period"
-msgstr ""
+msgstr "Убакыт мезгили"
 
 #: market/templates/market/price_list.html:108
 msgid "entries found"
@@ -514,15 +514,15 @@ msgstr ""
 
 #: market/views.py:149
 msgid "Today"
-msgstr ""
+msgstr "Бүгүн"
 
 #: market/views.py:150
 msgid "Last 7 days"
-msgstr ""
+msgstr "Акыркы 7 күн"
 
 #: market/views.py:152
 msgid "Last 3 months"
-msgstr ""
+msgstr "Акыркы 3 ай"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:21
 msgid "Chemical Dose Calculator"
