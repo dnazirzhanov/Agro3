@@ -36,36 +36,8 @@ def statistic_detail_view(request, slug):
     """
     Display a single statistic using uploaded HTML file content.
     
-    Only shows the statistic if it has content in the user's chosen language.
-    """
-    current_language = get_language()
-    
-    statistic = get_object_or_404(Statistic, slug=slug, is_published=True)
-    
-    # Check if statistic has translation in user's language
-    if not statistic.has_translation(current_language):
-        messages.warning(request, f"This statistic is not available in your selected language.")
-        return redirect('statistics:index')
-    
-    # Increment view count
-    statistic.views_count += 1
-    statistic.save(update_fields=['views_count'])
-    
-    # Get HTML content for current language
-    html_content = statistic.get_html_content_for_language(current_language)
-    
-    context = {
-        'statistic': statistic,
-        'html_content': html_content,
-        'current_language': current_language,
-    }
-    
-    return render(request, 'agro_statistics/detail.html', context)
-def statistic_detail_view(request, slug):
-    """
-    Display a single statistic using uploaded HTML file content.
-    
     Similar to forum post detail view - renders the HTML file directly.
+    Uses the simple template for clean HTML display like forum articles.
     """
     current_language = get_language()
     
@@ -89,4 +61,4 @@ def statistic_detail_view(request, slug):
         'current_language': current_language,
     }
     
-    return render(request, 'agro_statistics/detail.html', context)
+    return render(request, 'agro_statistics/detail_simple.html', context)
