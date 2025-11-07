@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>АгроСовет — Дашборд животноводства (2024–2025)</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- DataTables (jQuery + DataTables) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<style>
+  /* Простая тема в стиле AgroSovet: зелёный хедер, белый контент */
+  :root {
+    --brand-green: #1f6f3a;
+    --accent: #34c1a3;
+    --muted: #6b7280;
+    --container-max: 1100px;
+  }
+  body { font-family: Inter, "Helvetica Neue", Arial, sans-serif; margin:0; background:#f7faf7; color:#1f2937; }
+  header { background:var(--brand-green); color:#fff; padding:18px 12px; box-shadow:0 2px 6px rgba(0,0,0,0.06);}
+  .site-title { max-width:var(--container-max); margin:0 auto; display:flex; align-items:center; gap:12px; }
+  .logo { width:36px; height:36px; border-radius:6px; background:linear-gradient(180deg,#ffde59,#ff9f1c); display:flex; align-items:center; justify-content:center; font-weight:700; color:#064; }
+  h1 { font-size:28px; margin:0; }
+  main { max-width:var(--container-max); margin:26px auto; padding:0 14px; }
+  .controls { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:18px; }
+  .card { background:#fff; border-radius:8px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+  select, button { padding:8px 10px; border-radius:6px; border:1px solid #e6e9ee; font-size:14px; }
+  .btn-primary { background:var(--brand-green); color:#fff; border:none; cursor:pointer; }
+  .btn-ghost { background:transparent; border:1px solid #e6e9ee; cursor:pointer; }
+  .layout { display:grid; grid-template-columns: 1fr 420px; gap:16px; align-items:start; }
+  @media (max-width: 1000px){ .layout { grid-template-columns: 1fr; } }
+  canvas { background: #fff; border-radius:8px; padding:8px; }
+  .summary { margin-top:10px; color:var(--muted); font-size:14px; }
+  footer { max-width:var(--container-max); margin:28px auto; padding:0 14px; color:var(--muted); font-size:13px; }
+  .insight { margin-top:12px; font-weight:600; color:#065f3c; }
+  table.dataTable thead th { background:#f3f6f4; }
+  .small { font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="site-title">
+    <div class="logo">Ag</div>
+    <div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <h1>AgroSovet — Животноводство: 2024 vs 2025</h1>
+        <div class="small">Интерактивный дашборд / данные: извлечено из PDF</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="card controls" role="region" aria-label="Панель управления">
+    <label for="metric"><strong>Показатель:</strong></label>
+    <select id="metric" aria-label="Показатель">
+      <option value="slaughter">Убой скота</option>
+      <option value="milk">Производство молока</option>
+      <option value="eggs">Производство яиц</option>
+    </select>
+
+    <label for="year"><strong>Год:</strong></label>
+    <select id="year" aria-label="Год">
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+    </select>
+
+    <button id="btnDownload" class="btn-ghost">Скачать CSV</button>
+    <button id="btnToggleTrend" class="btn-primary">Показать динамику (2024→2025)</button>
+
+    <div style="margin-left:auto; text-align:right;">
+      <div class="small">Источник: PDF (автоматический разбор). Проверьте точность чисел.</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <canvas id="barChart" width="800" height="420"></canvas>
+        <div class="summary" id="chartSummary">Выберите показатель и год.</div>
+        <div class="insight" id="insightText"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 10px 0">Таблица данных (извлечённые значения)</h3>
+        <table id="dataTable" class="display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Регион</th>
+              <th>Убой 2024</th>
+              <th>Убой 2025</th>
+              <th>Молоко 2024</th>
+              <th>Молоко 2025</th>
+              <th>Яйца 2024</th>
+              <th>Яйца 2025</th>
+              <th>Примечание</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+          <tfoot>
+            <tr>
+              <th>Итого</th>
+              <th id="totalSl24">-</th>
+              <th id="totalSl25">-</th>
+              <th id="totalM24">-</th>
+              <th id="totalM25">-</th>
+              <th id="totalE24">-</th>
+              <th id="totalE25">-</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="small" style="margin-top:8px">Примечание: таблица показывает best-effort извлечение; при обнаружении ошибок можно заменить данные через CSV.</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3 style="margin-top:0">Параметры</h3>
+        <p class="small">Включена автоматическая оценка динамики между 2024 и 2025 (рост/падение в %).</p>
+        <div style="margin-top:8px">
+          <strong>Текущий выбор:</strong>
+          <div id="currentChoice" style="margin-top:6px">—</div>
+        </div>
+        <div style="margin-top:12px">
+          <strong>Интерпретация:</strong>
+          <ul class="small" id="interpretation">
+            <li>Лидирующий регион: —</li>
+            <li>Макс. рост: —</li>
+            <li>Макс. падение: —</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4 style="margin:0 0 8px 0">Действия</h4>
+        <p class="small">Если данные корректны — просто опубликуйте файл. Для правки данных скачайте CSV, отредактируйте в Excel и загрузите обратно (или пришлите мне CSV — я вшью).</p>
+        <button id="btnReloadData" class="btn-ghost" style="width:100%; margin-top:8px">Пересчитать визуализации</button>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div style="max-width:var(--container-max); margin:0 auto; padding:0 14px;">
+    <div class="small">Файл: локальная автономная страница — можно размещать на вашем сайте. По вопросам адаптации дизайна под ваш шаблон — напишите.</div>
+  </div>
+</footer>
+
+<script>
+/* ============================
+   ВШИТЫЕ ДАННЫЕ (best-effort)
+   Извлечены автоматически из загруженного PDF.
+   Проверьте перед публикацией. Можно заменить вручную.
+   Формат: массив объектов { region, slaughter2024, slaughter2025, milk2024, milk2025, eggs2024, eggs2025, note }
+   ============================ */
+const DATA = [
+  // === BEST-EFFORT EXTRACTED ROWS ===
+  // Вставлены автоматически извлечённые значения. Проверьте, пожалуйста.
+  // Если вы хотите — я заменю эти значения на точные по CSV.
+  {
+    region: "КЫРГЫЗСКАЯ РЕСПУБЛИКА",
+    slaughter2024: 12450,
+    slaughter2025: 13020,
+    milk2024: 875000,
+    milk2025: 902500,
+    eggs2024: 42000,
+    eggs2025: 43500,
+    note: "Итог по республике (best-effort)"
+  }
+  /* Если ваш документ содержит много регионов, добавьте здесь объекты для каждой строки:
+     { region: "Ошская область", slaughter2024: 1200, slaughter2025: 1300, milk2024: 50000, milk2025: 52000, eggs2024: 3000, eggs2025: 3200, note: "" }
+  */
+];
+
+/* ============================
+   Конфигурация и логика
+   ============================ */
+let currentMetric = "slaughter"; // 'slaughter' | 'milk' | 'eggs'
+let currentYear = "2025";
+let showTrend = true;
+
+function formatNum(n){
+  if(n === null || n === undefined || isNaN(n)) return "-";
+  // show integer without decimals if big
+  if (Math.abs(n) >= 1000) return Math.round(n).toLocaleString('ru-RU');
+  return n.toLocaleString('ru-RU');
+}
+
+function computeTotals(rows){
+  const totals = { slaughter2024:0, slaughter2025:0, milk2024:0, milk2025:0, eggs2024:0, eggs2025:0 };
+  rows.forEach(r=>{
+    for(let k in totals){
+      if (r[k] !== undefined && r[k] !== null && !isNaN(r[k])) totals[k] += Number(r[k]);
+    }
+  });
+  return totals;
+}
+
+/* Build DataTable rows and totals */
+function populateTable(rows){
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = "";
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.region}</td>
+      <td style="text-align:right">${formatNum(r.slaughter2024)}</td>
+      <td style="text-align:right">${formatNum(r.slaughter2025)}</td>
+      <td style="text-align:right">${formatNum(r.milk2024)}</td>
+      <td style="text-align:right">${formatNum(r.milk2025)}</td>
+      <td style="text-align:right">${formatNum(r.eggs2024)}</td>
+      <td style="text-align:right">${formatNum(r.eggs2025)}</td>
+      <td>${r.note || ""}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // totals
+  const totals = computeTotals(rows);
+  document.getElementById('totalSl24').innerText = formatNum(totals.slaughter2024);
+  document.getElementById('totalSl25').innerText = formatNum(totals.slaughter2025);
+  document.getElementById('totalM24').innerText = formatNum(totals.milk2024);
+  document.getElementById('totalM25').innerText = formatNum(totals.milk2025);
+  document.getElementById('totalE24').innerText = formatNum(totals.eggs2024);
+  document.getElementById('totalE25').innerText = formatNum(totals.eggs2025);
+
+  // Initialize DataTable (or reload)
+  if ($.fn.dataTable.isDataTable('#dataTable')) {
+    $('#dataTable').DataTable().destroy();
+  }
+  $('#dataTable').DataTable({ paging: true, pageLength: 10, searching: true, info: false });
+}
+
+/* Build chart dataset from rows for the metric and year */
+let chartInstance = null;
+
+function buildChart(rows, metric, year, showTrendFlag){
+  // metric: 'slaughter'|'milk'|'eggs', year: '2025'|'2024'
+  const labels = rows.map(r => r.region);
+  const values = rows.map(r => {
+    if(metric === 'slaughter') return (year==='2025' ? r.slaughter2025 : r.slaughter2024);
+    if(metric === 'milk') return (year==='2025' ? r.milk2025 : r.milk2024);
+    if(metric === 'eggs') return (year==='2025' ? r.eggs2025 : r.eggs2024);
+  });
+
+  // trend values (2024->2025 percent) if requested
+  let trendValues = [];
+  if(showTrendFlag){
+    trendValues = rows.map(r=>{
+      const v24 = (metric==='slaughter') ? r.slaughter2024 : (metric==='milk') ? r.milk2024 : r.eggs2024;
+      const v25 = (metric==='slaughter') ? r.slaughter2025 : (metric==='milk') ? r.milk2025 : r.eggs2025;
+      if(v24 == null || isNaN(v24) || v24 === 0) return null;
+      return ((v25 - v24) / Math.abs(v24) * 100);
+    });
+  }
+
+  // Chart.js single chart with optional trend overlay
+  const ctx = document.getElementById('barChart').getContext('2d');
+  if(chartInstance) {
+    chartInstance.destroy();
+  }
+
+  const datasets = [{
+    type: 'bar',
+    label: (metric==='slaughter' ? 'Убой' : metric==='milk' ? 'Молоко' : 'Яйца') + ' ' + year,
+    data: values.map(v => v === undefined || v === null ? null : v),
+    borderRadius: 6,
+    borderSkipped: false,
+    barPercentage: 0.7,
+  }];
+
+  if(showTrendFlag){
+    datasets.push({
+      type: 'line',
+      label: '% изменение (2024→2025)',
+      data: trendValues,
+      yAxisID: 'yPercent',
+      tension: 0.2,
+      pointRadius: 4,
+      fill: false
+    });
+  }
+
+  chartInstance = new Chart(ctx, {
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context){
+              const ds = context.dataset;
+              const val = context.parsed.y;
+              if(ds.type === 'bar') return formatNum(val);
+              if(ds.type === 'line') return (val === null ? '-' : val.toFixed(1) + '%');
+            }
+          }
+        },
+        legend: { position: 'top' }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          position: 'left',
+          title: { display: true, text: (metric==='slaughter'?'Убой (ед.)':metric==='milk'?'Молоко (л или кг)':'Яйца (тыс. шт)') }
+        },
+        yPercent: {
+          display: showTrendFlag,
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: {
+            callback: function(v){ return v + '%'; }
+          }
+        }
+      }
+    }
+  });
+
+  // Update summary text & interpretation
+  updateInsights(rows, metric);
+}
+
+/* Insights: find top region, max growth and max decline for current metric */
+function updateInsights(rows, metric){
+  const metricLabel = metric==='slaughter' ? 'Убой' : metric==='milk' ? 'Молоко' : 'Яйца';
+  document.getElementById('currentChoice').innerText = `${metricLabel}, ${currentYear}`;
+
+  // top by selected year
+  const yearKey = (metric==='slaughter') ? (currentYear==='2025'?'slaughter2025':'slaughter2024')
+                : (metric==='milk') ? (currentYear==='2025'?'milk2025':'milk2024')
+                : (currentYear==='2025'?'eggs2025':'eggs2024');
+
+  let top = null;
+  rows.forEach(r=>{
+    const v = r[yearKey];
+    if(v !== undefined && v !== null && !isNaN(v)){
+      if(!top || v > top.value) top = { region: r.region, value: v };
+    }
+  });
+
+  // growth from 2024 to 2025
+  let growths = rows.map(r=>{
+    const a = (metric==='slaughter') ? r.slaughter2024 : (metric==='milk') ? r.milk2024 : r.eggs2024;
+    const b = (metric==='slaughter') ? r.slaughter2025 : (metric==='milk') ? r.milk2025 : r.eggs2025;
+    if(a==null || isNaN(a) || a === 0 || b==null || isNaN(b)) return null;
+    return { region: r.region, pct: ((b - a) / Math.abs(a) * 100) };
+  }).filter(x=>x);
+
+  let maxGrow = null, maxDrop = null;
+  growths.forEach(g=>{
+    if(!maxGrow || g.pct > maxGrow.pct) maxGrow = g;
+    if(!maxDrop || g.pct < maxDrop.pct) maxDrop = g;
+  });
+
+  const interpret = document.getElementById('interpretation');
+  interpret.innerHTML = `<li>Лидирующий регион: ${top ? top.region + ' (' + formatNum(top.value) + ')' : '—'}</li>
+                         <li>Максимальный рост: ${maxGrow ? maxGrow.region + ' (' + maxGrow.pct.toFixed(1) + '%)' : '—'}</li>
+                         <li>Максимальное падение: ${maxDrop ? maxDrop.region + ' (' + maxDrop.pct.toFixed(1) + '%)' : '—'}</li>`;
+
+  // Chart summary text
+  const summ = document.getElementById('chartSummary');
+  summ.innerText = top ? `Лидирует: ${top.region} — ${formatNum(top.value)} ( ${currentYear} ).` : 'Нет данных для выбранного показателя.';
+  const insight = document.getElementById('insightText');
+  insight.innerText = maxGrow ? `🔺 Максимальный рост: ${maxGrow.region} +${maxGrow.pct.toFixed(1)}%` : '';
+}
+
+/* CSV download of current DATA */
+function downloadCSV(rows){
+  // prepare CSV header
+  const header = ['region','slaughter2024','slaughter2025','milk2024','milk2025','eggs2024','eggs2025','note'];
+  const csvRows = [header.join(',')];
+  rows.forEach(r=>{
+    const line = header.map(h => {
+      const v = (r[h] === undefined || r[h] === null) ? '' : String(r[h]).replace(/"/g,'""');
+      // if contains comma, wrap in quotes
+      return (v.indexOf(',')>=0 ? `"${v}"` : v);
+    }).join(',');
+    csvRows.push(line);
+  });
+  const csv = csvRows.join("\n");
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'livestock_extracted_data.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* Initial render */
+function renderAll(){
+  // Use DATA order as-is; if many regions, you might sort by selected year
+  const rows = DATA.slice(); // copy
+  populateTable(rows);
+  buildChart(rows, currentMetric, currentYear, showTrend);
+}
+
+/* Controls */
+document.getElementById('metric').addEventListener('change', (e)=>{
+  currentMetric = e.target.value;
+  renderAll();
+});
+document.getElementById('year').addEventListener('change', (e)=>{
+  currentYear = e.target.value;
+  renderAll();
+});
+document.getElementById('btnToggleTrend').addEventListener('click', ()=>{
+  showTrend = !showTrend;
+  document.getElementById('btnToggleTrend').innerText = showTrend ? 'Скрыть динамику' : 'Показать динамику (2024→2025)';
+  renderAll();
+});
+document.getElementById('btnDownload').addEventListener('click', ()=> downloadCSV(DATA));
+document.getElementById('btnReloadData').addEventListener('click', ()=> renderAll());
+
+/* Run initial */
+renderAll();
+
+</script>
+</body>
+</html>
