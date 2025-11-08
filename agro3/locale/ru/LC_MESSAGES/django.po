@@ -1057,199 +1057,212 @@ msgstr ""
 #: weather/templates/weather/dashboard.html:5
 #: weather/templates/weather/dashboard.html:10
 msgid "Weather Forecast"
-msgstr ""
+msgstr "Прогноз погоды"
 
 #: weather/templates/weather/dashboard.html:11
 msgid ""
 "Stay informed about weather conditions to make better agricultural decisions."
 msgstr ""
+"Будьте в курсе погодных условий для принятия более эффективных решений в "
+"сельском хозяйстве."
 
 #: weather/templates/weather/dashboard.html:20
 msgid "Search Location"
-msgstr ""
+msgstr "Поиск места"
 
 #: weather/templates/weather/dashboard.html:28
 msgid "Select Country..."
-msgstr ""
+msgstr "Выберите страну..."
 
 #: weather/templates/weather/dashboard.html:37
 msgid "Select Region..."
-msgstr ""
+msgstr "Выберите регион..."
 
 #: weather/templates/weather/dashboard.html:41
 msgid "City/Village Name"
-msgstr ""
+msgstr "Название города/села"
 
 #: weather/templates/weather/dashboard.html:43
 #: weather/templates/weather/dashboard.html:370
 msgid "Enter city or village name..."
-msgstr ""
+msgstr "Введите название города или села..."
 
 #: weather/templates/weather/dashboard.html:55
 msgid "Or search by city name:"
-msgstr ""
+msgstr "Или поиск по названию города:"
 
 #: weather/templates/weather/dashboard.html:60
 msgid "Enter city name (e.g., Batken, Bishkek, Osh)"
-msgstr ""
+msgstr "Введите название города (например, Баткен, Бишкек, Ош)"
 
 #: weather/templates/weather/dashboard.html:72
 msgid "Recent locations:"
-msgstr ""
+msgstr "Недавние местоположения:"
 
 #: weather/templates/weather/dashboard.html:91
 msgid "Weather API Not Configured"
-msgstr ""
+msgstr "API Погоды не настроен"
 
 #: weather/templates/weather/dashboard.html:92
 msgid ""
 "To use weather features, please set your OpenWeatherMap API key in the "
 "environment variable"
 msgstr ""
+"Чтобы использовать функции погоды, пожалуйста, установите ключ API "
+"OpenWeatherMap в переменную окружения"
 
 #: weather/templates/weather/dashboard.html:93
 msgid "Get a free API key at"
-msgstr ""
+msgstr "Получите бесплатный ключ API на"
 
 #: weather/templates/weather/dashboard.html:102
 msgid "Current Weather"
-msgstr ""
+msgstr "Текущая погода"
 
 #: weather/templates/weather/dashboard.html:112
 msgid "Feels like"
-msgstr ""
+msgstr "Ощущается как"
 
 #: weather/templates/weather/dashboard.html:122
 msgid "Humidity"
-msgstr ""
+msgstr "Влажность"
 
 #: weather/templates/weather/dashboard.html:131
 msgid "Wind"
-msgstr ""
+msgstr "Ветер"
 
 #: weather/templates/weather/dashboard.html:140
 msgid "Pressure"
-msgstr ""
+msgstr "Давление"
 
 #: weather/templates/weather/dashboard.html:150
 msgid "Visibility"
-msgstr ""
+msgstr "Видимость"
 
 #: weather/templates/weather/dashboard.html:169
 msgid "24-Hour Forecast"
-msgstr ""
+msgstr "24-часовой прогноз"
 
 #: weather/templates/weather/dashboard.html:225
 msgid "Farming Tips"
-msgstr ""
+msgstr "Советы по фермерству"
 
 #: weather/templates/weather/dashboard.html:231
 msgid "Rainy Weather:"
-msgstr ""
+msgstr "Дождливая погода:"
 
 #: weather/templates/weather/dashboard.html:231
 msgid ""
 "Good for recently planted crops. Avoid field work and consider covered "
 "storage for harvested crops."
 msgstr ""
+"Хорошо для недавно посаженных культур. Избегайте полевых работ и "
+"рассмотрите крытое хранение для собранного урожая."
 
 #: weather/templates/weather/dashboard.html:236
 msgid "Hot Weather:"
-msgstr ""
+msgstr "Жаркая погода:"
 
 #: weather/templates/weather/dashboard.html:236
 msgid ""
 "Ensure adequate irrigation. Consider early morning or evening work to avoid "
 "heat stress."
 msgstr ""
+"Обеспечьте достаточный полив. Рассмотрите работу рано утром или вечером, "
+"чтобы избежать теплового стресса."
 
 #: weather/templates/weather/dashboard.html:241
 msgid "Cold Weather:"
-msgstr ""
+msgstr "Холодная погода:"
 
 #: weather/templates/weather/dashboard.html:241
 msgid "Protect sensitive crops from frost. Check greenhouse heating systems."
 msgstr ""
+"Защитите чувствительные культуры от мороза. Проверьте системы отопления "
+"теплиц."
 
 #: weather/templates/weather/dashboard.html:246
 msgid "Windy Conditions:"
-msgstr ""
+msgstr "Ветреные условия:"
 
 #: weather/templates/weather/dashboard.html:246
 msgid "Secure greenhouses and equipment. Avoid spraying operations."
 msgstr ""
+"Закрепите теплицы и оборудование. Избегайте операций опрыскивания."
 
 #: weather/templates/weather/dashboard.html:251
 msgid "Good Conditions:"
-msgstr ""
+msgstr "Хорошие условия:"
 
 #: weather/templates/weather/dashboard.html:251
 msgid "Ideal weather for most agricultural activities."
-msgstr ""
+msgstr "Идеальная погода для большинства сельскохозяйственных работ."
 
 #: weather/templates/weather/dashboard.html:255
 msgid "General Recommendations:"
-msgstr ""
+msgstr "Общие рекомендации:"
 
 #: weather/templates/weather/dashboard.html:257
 msgid "Monitor soil moisture levels regularly"
-msgstr ""
+msgstr "Регулярно контролируйте уровень влажности почвы"
 
 #: weather/templates/weather/dashboard.html:258
 msgid "Adjust irrigation based on weather forecast"
-msgstr ""
+msgstr "Корректируйте полив на основе прогноза погоды"
 
 #: weather/templates/weather/dashboard.html:259
 msgid "Plan fieldwork during optimal conditions"
-msgstr ""
+msgstr "Планируйте полевые работы в оптимальных условиях"
 
 #: weather/templates/weather/dashboard.html:260
 msgid "Protect equipment from extreme weather"
-msgstr ""
+msgstr "Защищайте оборудование от экстремальных погодных условий"
 
 #: weather/templates/weather/dashboard.html:269
 msgid "Weather Information"
-msgstr ""
+msgstr "Информация о погоде"
 
 #: weather/templates/weather/dashboard.html:272
 msgid "Data Source:"
-msgstr ""
+msgstr "Источник данных:"
 
 #: weather/templates/weather/dashboard.html:273
 msgid "Last Updated:"
-msgstr ""
+msgstr "Последнее обновление:"
 
 #: weather/templates/weather/dashboard.html:274
 msgid "Location:"
-msgstr ""
+msgstr "Местоположение:"
 
 #: weather/templates/weather/dashboard.html:275
 msgid "Coordinates:"
-msgstr ""
+msgstr "Координаты:"
 
 #: weather/templates/weather/dashboard.html:278
 msgid "Quick Actions:"
-msgstr ""
+msgstr "Быстрые действия:"
 
 #: weather/templates/weather/dashboard.html:280
 msgid "Crop Guide"
-msgstr ""
+msgstr "Руководство по культурам"
 
 #: weather/templates/weather/dashboard.html:294
 msgid "No Weather Data Available"
-msgstr ""
+msgstr "Данные о погоде недоступны"
 
 #: weather/templates/weather/dashboard.html:295
 msgid "Please search for a location or check your internet connection."
 msgstr ""
+"Пожалуйста, выполните поиск местоположения или проверьте подключение к "
+"интернету."
 
 #: weather/templates/weather/dashboard.html:375
 msgid "Enter city/village (e.g., Batken, Osh, Talas...)"
-msgstr ""
+msgstr "Введите город/село (например, Баткен, Ош, Талас...)"
 
 #: weather/templates/weather/dashboard.html:378
 msgid "Enter city/village (e.g., Almaty, Astana, Shymkent...)"
-msgstr ""
+msgstr "Введите город/село (например, Алматы, Астана, Шымкент...)"
 
 #: weather/templates/weather/dashboard.html:381
 msgid "Enter city/village (e.g., Dushanbe, Khujand, Kulob...)"
