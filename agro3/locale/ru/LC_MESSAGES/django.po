@@ -78,21 +78,23 @@ msgstr ""
 
 #: forum/templates/forum/index.html:5 forum/templates/forum/index.html:10
 msgid "Community Forum"
-msgstr ""
+msgstr "Форум сообщества"
 
 #: forum/templates/forum/index.html:11
 msgid ""
 "Connect with fellow farmers, share experiences, and learn from agricultural "
 "experts."
 msgstr ""
+"Общайтесь с коллегами-фермерами, делитесь опытом и учитесь у экспертов в "
+"области сельского хозяйства."
 
 #: forum/templates/forum/index.html:20
 msgid "Find Posts"
-msgstr ""
+msgstr "Найти сообщения"
 
 #: forum/templates/forum/index.html:26
 msgid "Search posts..."
-msgstr ""
+msgstr "Поиск сообщений..."
 
 #: forum/templates/forum/index.html:30
 msgid "All Categories"
@@ -111,66 +113,66 @@ msgstr "Очистить"
 
 #: forum/templates/forum/index.html:56
 msgid "Featured Posts"
-msgstr ""
+msgstr "Рекомендуемые сообщения"
 
 #: forum/templates/forum/index.html:85
 msgid "Search Results for"
-msgstr ""
+msgstr "Результаты поиска для"
 
 #: forum/templates/forum/index.html:87
 msgid "Category Posts"
-msgstr ""
+msgstr "Сообщения категории"
 
 #: forum/templates/forum/index.html:89
 msgid "Posts by selected author"
-msgstr ""
+msgstr "Сообщения выбранного автора"
 
 #: forum/templates/forum/index.html:91
 #: users/templates/users/profile_detail.html:115
 msgid "Recent Posts"
-msgstr ""
+msgstr "Недавние сообщения"
 
 #: forum/templates/forum/index.html:94
 msgid "posts"
-msgstr ""
+msgstr "сообщений"
 
 #: forum/templates/forum/index.html:150
 #: market/templates/market/price_list.html:220
 msgid "Previous"
-msgstr ""
+msgstr "Предыдущая"
 
 #: forum/templates/forum/index.html:156
 msgid "of"
-msgstr ""
+msgstr "из"
 
 #: forum/templates/forum/index.html:162
 #: market/templates/market/price_list.html:240
 msgid "Next"
-msgstr ""
+msgstr "Следующая"
 
 #: forum/templates/forum/index.html:173
 msgid "No posts found"
-msgstr ""
+msgstr "Сообщения не найдены"
 
 #: forum/templates/forum/index.html:176
 msgid "Try different search terms or"
-msgstr ""
+msgstr "Попробуйте другие поисковые термины или"
 
 #: forum/templates/forum/index.html:176
 msgid "browse all posts"
-msgstr ""
+msgstr "просмотрите все сообщения"
 
 #: forum/templates/forum/index.html:178
 msgid "Be the first to start a discussion!"
-msgstr ""
+msgstr "Будьте первым, кто начнет обсуждение!"
 
 #: forum/templates/forum/index.html:190
 msgid "Categories"
-msgstr ""
+msgstr "Категории"
 
 #: forum/templates/forum/index.html:194
 msgid "All Posts"
-msgstr ""
+msgstr "Все сообщения"
 
 #: forum/templates/forum/index.html:210
 msgid "Popular Tags"

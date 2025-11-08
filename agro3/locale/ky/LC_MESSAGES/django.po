@@ -76,21 +76,23 @@ msgstr ""
 
 #: forum/templates/forum/index.html:5 forum/templates/forum/index.html:10
 msgid "Community Forum"
-msgstr ""
+msgstr "Жамааттык форум"
 
 #: forum/templates/forum/index.html:11
 msgid ""
 "Connect with fellow farmers, share experiences, and learn from agricultural "
 "experts."
 msgstr ""
+"Башка фермерлер менен байланышыңыз, тажрыйба бөлүшүңүз жана айыл чарба "
+"адистеринен үйрөнүңүз."
 
 #: forum/templates/forum/index.html:20
 msgid "Find Posts"
-msgstr ""
+msgstr "Посттарды табуу"
 
 #: forum/templates/forum/index.html:26
 msgid "Search posts..."
-msgstr ""
+msgstr "Посттарды издөө..."
 
 #: forum/templates/forum/index.html:30
 msgid "All Categories"
@@ -109,66 +111,66 @@ msgstr "Тазалоо"
 
 #: forum/templates/forum/index.html:56
 msgid "Featured Posts"
-msgstr ""
+msgstr "Сунушталган посттар"
 
 #: forum/templates/forum/index.html:85
 msgid "Search Results for"
-msgstr ""
+msgstr "Издөө натыйжалары"
 
 #: forum/templates/forum/index.html:87
 msgid "Category Posts"
-msgstr ""
+msgstr "Категория посттары"
 
 #: forum/templates/forum/index.html:89
 msgid "Posts by selected author"
-msgstr ""
+msgstr "Тандалган автордун посттары"
 
 #: forum/templates/forum/index.html:91
 #: users/templates/users/profile_detail.html:115
 msgid "Recent Posts"
-msgstr ""
+msgstr "Акыркы посттар"
 
 #: forum/templates/forum/index.html:94
 msgid "posts"
-msgstr ""
+msgstr "посттор"
 
 #: forum/templates/forum/index.html:150
 #: market/templates/market/price_list.html:220
 msgid "Previous"
-msgstr ""
+msgstr "Мурунку"
 
 #: forum/templates/forum/index.html:156
 msgid "of"
-msgstr ""
+msgstr "дан"
 
 #: forum/templates/forum/index.html:162
 #: market/templates/market/price_list.html:240
 msgid "Next"
-msgstr ""
+msgstr "Кийинки"
 
 #: forum/templates/forum/index.html:173
 msgid "No posts found"
-msgstr ""
+msgstr "Эч кандай пост табылган жок"
 
 #: forum/templates/forum/index.html:176
 msgid "Try different search terms or"
-msgstr ""
+msgstr "Башка издөө сөздөрүн колдонуп көрүңүз же"
 
 #: forum/templates/forum/index.html:176
 msgid "browse all posts"
-msgstr ""
+msgstr "бардык посттарды караңыз"
 
 #: forum/templates/forum/index.html:178
 msgid "Be the first to start a discussion!"
-msgstr ""
+msgstr "Талкууну баштаган биринчи адам болуңуз!"
 
 #: forum/templates/forum/index.html:190
 msgid "Categories"
-msgstr ""
+msgstr "Категориялар"
 
 #: forum/templates/forum/index.html:194
 msgid "All Posts"
-msgstr ""
+msgstr "Бардык посттар"
 
 #: forum/templates/forum/index.html:210
 msgid "Popular Tags"
