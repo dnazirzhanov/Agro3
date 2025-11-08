@@ -18,14 +18,14 @@
         <div class="card shadow-sm border-success">
             <div class="card-header bg-success text-white">
                 <h3 class="mb-0">
-                    <i class="bi bi-calculator me-2"></i>{% trans "Chemical Dose Calculator" %}
+                    <i class="bi bi-calculator me-2"></i>{% trans "Dose Calculator" %}
                 </h3>
             </div>
             <div class="card-body">
                 <!-- Information Alert -->
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
-                    <strong>{% trans "How to use:" %}</strong> {% trans "Enter the recommended dose per liter (usually provided by chemical sellers) and the total volume of water you need to prepare. The calculator will show you the exact amount of chemical needed." %}
+                    <strong>{% trans "How to use:" %}</strong> {% trans "Enter the recommended dose per liter and the total volume of water you need to prepare. The calculator will show you the exact amount needed." %}
                 </div>
 
                 <!-- Calculator Form -->
@@ -50,7 +50,7 @@
                                 <span class="input-group-text">{% trans "grams" %}</span>
                             </div>
                             <div class="form-text">
-                                {% trans "Amount of chemical recommended per liter of water" %}
+                                {% trans "Amount recommended per liter of water" %}
                             </div>
                         </div>
 
@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="p-3 bg-success text-white rounded">
-                                        <div class="small mb-1">{% trans "Total Chemical Needed" %}</div>
+                                        <div class="small mb-1">{% trans "Total Amount Needed" %}</div>
                                         <div class="h4 mb-0 fw-bold">{{ result.total_dose|stringformat:".2f" }} {% trans "g" %}</div>
                                         {% if result.total_dose >= 1000 %}
                                         <div class="h3 mb-0 fw-bold mt-2" style="font-size: 1.8rem;">

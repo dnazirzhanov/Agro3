@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-07 09:13+0000\n"
+"POT-Creation-Date: 2025-11-08 08:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: agro_statistics/templates/agro_statistics/detail.html:4
 #: agro_statistics/templates/agro_statistics/detail.html:15
 #: agro_statistics/templates/agro_statistics/index.html:4
-#: templates/base.html:93
+#: templates/base.html:92
 msgid "Statistics"
 msgstr ""
 
@@ -74,198 +74,6 @@ msgid ""
 "selector."
 msgstr ""
 
-#: agro_supplies/templates/agro_supplies/calculator.html:3
-#: agro_supplies/templates/agro_supplies/calculator.html:11
-msgid "Chemical Product Price Calculator"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:13
-msgid "Back to Products"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:16
-msgid ""
-"Calculate the total cost for your chemical product purchases across "
-"different suppliers."
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:32
-msgid "Select Chemical Product"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:35
-msgid "Choose a product..."
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:50
-msgid "Select Shop"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:53
-msgid "First select a product..."
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:60
-msgid "Quantity"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:67
-msgid "Enter the amount you want to purchase"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:73
-msgid "Calculate Total Price"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:81
-msgid "Calculation Results"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:94
-msgid "Recent Calculations"
-msgstr ""
-
-#: agro_supplies/templates/agro_supplies/calculator.html:98
-msgid "No recent calculations. Use the calculator above to get started."
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:4
-#: chemicals/templates/chemicals/chemicals_list.html:10
-#: chemicals/templates/chemicals/chemicals_list.html:81 templates/base.html:78
-msgid "Chemical Products"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:20
-msgid "Search Chemical Products"
-msgstr "Химиялык продукттарды издөө"
-
-#: chemicals/templates/chemicals/chemicals_list.html:25
-msgid "Search Products"
-msgstr "Продуктуларды издөө"
-
-#: chemicals/templates/chemicals/chemicals_list.html:27
-msgid "Product name, brand, ingredient..."
-msgstr "Продукт аты, бренд, ингредиент..."
-
-#: chemicals/templates/chemicals/chemicals_list.html:30
-#: forum/templates/forum/post_create.html:196
-msgid "Category"
-msgstr "Категория"
-
-#: chemicals/templates/chemicals/chemicals_list.html:32
-#: forum/templates/forum/index.html:30
-msgid "All Categories"
-msgstr "Бардык категориялар"
-
-#: chemicals/templates/chemicals/chemicals_list.html:41
-#: users/templates/users/farmers_list.html:70
-#: users/templates/users/register.html:438
-#: weather/templates/weather/dashboard.html:26
-msgid "Country"
-msgstr "Өлкө"
-
-#: chemicals/templates/chemicals/chemicals_list.html:43
-#: users/templates/users/farmers_list.html:72
-msgid "All Countries"
-msgstr "Бардык өлкөлөр"
-
-#: chemicals/templates/chemicals/chemicals_list.html:52
-#: users/templates/users/profile_detail.html:75
-#: users/templates/users/register.html:447
-msgid "Region"
-msgstr "Аймак"
-
-#: chemicals/templates/chemicals/chemicals_list.html:54
-#: users/templates/users/farmers_list.html:84
-#: users/templates/users/farmers_list.html:254
-#: users/templates/users/farmers_list.html:270
-msgid "All Regions"
-msgstr "Бардык аймактар"
-
-#: chemicals/templates/chemicals/chemicals_list.html:64
-#: forum/templates/forum/index.html:40
-#: weather/templates/weather/dashboard.html:48
-#: weather/templates/weather/dashboard.html:64
-msgid "Search"
-msgstr "Издөө"
-
-#: chemicals/templates/chemicals/chemicals_list.html:67
-#: forum/templates/forum/index.html:42
-#: market/templates/market/price_list.html:92
-msgid "Clear"
-msgstr "Тазалоо"
-
-#: chemicals/templates/chemicals/chemicals_list.html:82
-msgid "products found"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:90
-msgid "Product Name"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:91
-msgid "Description"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:92
-msgid "Manufacturer"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:93
-msgid "Active Ingredient"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:94
-msgid "Registration"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:153
-msgid "No chemical products found"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:154
-#: market/templates/market/price_list.html:204
-msgid "Try adjusting your search criteria or"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:155
-msgid "view all products"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:165
-msgid "Product pagination"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:170
-#: forum/templates/forum/index.html:150
-#: market/templates/market/price_list.html:220
-msgid "Previous"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:190
-#: forum/templates/forum/index.html:162
-#: market/templates/market/price_list.html:240
-msgid "Next"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:203
-msgid "Need Help with Chemical Products?"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:206
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:4
-#: pests_diseases/templates/pests_diseases/dose_calculator.html:11
-msgid "Dose Calculator"
-msgstr "Доза эсептегичи"
-
-#: chemicals/templates/chemicals/chemicals_list.html:209
-msgid "View Crops"
-msgstr ""
-
-#: chemicals/templates/chemicals/chemicals_list.html:212
-msgid "Ask Community"
-msgstr ""
-
 #: forum/templates/forum/index.html:5 forum/templates/forum/index.html:10
 msgid "Community Forum"
 msgstr ""
@@ -283,6 +91,21 @@ msgstr ""
 #: forum/templates/forum/index.html:26
 msgid "Search posts..."
 msgstr ""
+
+#: forum/templates/forum/index.html:30
+msgid "All Categories"
+msgstr "Бардык категориялар"
+
+#: forum/templates/forum/index.html:40
+#: weather/templates/weather/dashboard.html:48
+#: weather/templates/weather/dashboard.html:64
+msgid "Search"
+msgstr "Издөө"
+
+#: forum/templates/forum/index.html:42
+#: market/templates/market/price_list.html:92
+msgid "Clear"
+msgstr "Тазалоо"
 
 #: forum/templates/forum/index.html:56
 msgid "Featured Posts"
@@ -309,8 +132,18 @@ msgstr ""
 msgid "posts"
 msgstr ""
 
+#: forum/templates/forum/index.html:150
+#: market/templates/market/price_list.html:220
+msgid "Previous"
+msgstr ""
+
 #: forum/templates/forum/index.html:156
 msgid "of"
+msgstr ""
+
+#: forum/templates/forum/index.html:162
+#: market/templates/market/price_list.html:240
+msgid "Next"
 msgstr ""
 
 #: forum/templates/forum/index.html:173
@@ -360,7 +193,7 @@ msgstr ""
 msgid "Market Prices"
 msgstr "Базар баалары"
 
-#: forum/templates/forum/index.html:239 templates/base.html:83
+#: forum/templates/forum/index.html:239 templates/base.html:82
 msgid "Weather"
 msgstr ""
 
@@ -398,6 +231,10 @@ msgstr ""
 #: forum/templates/forum/post_create.html:178
 msgid "Featured Image"
 msgstr ""
+
+#: forum/templates/forum/post_create.html:196
+msgid "Category"
+msgstr "Категория"
 
 #: forum/templates/forum/post_create.html:209
 msgid "Tags"
@@ -518,6 +355,10 @@ msgstr ""
 msgid "No price data found"
 msgstr ""
 
+#: market/templates/market/price_list.html:204
+msgid "Try adjusting your search criteria or"
+msgstr ""
+
 #: market/templates/market/price_list.html:205
 msgid "view all prices"
 msgstr ""
@@ -538,23 +379,28 @@ msgstr "Акыркы 7 күн"
 msgid "Last 3 months"
 msgstr "Акыркы 3 ай"
 
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:4
+#: pests_diseases/templates/pests_diseases/dose_calculator.html:11
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:21
-msgid "Chemical Dose Calculator"
-msgstr "Химиялык доза эсептегичи"
+msgid "Dose Calculator"
+msgstr "Доза эсептегичи"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:28
 msgid "How to use:"
 msgstr "Кантип колдонуу керек:"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:28
+#, fuzzy
+#| msgid ""
+#| "Enter the recommended dose per liter (usually provided by chemical "
+#| "sellers) and the total volume of water you need to prepare. The "
+#| "calculator will show you the exact amount of chemical needed."
 msgid ""
-"Enter the recommended dose per liter (usually provided by chemical sellers) "
-"and the total volume of water you need to prepare. The calculator will show "
-"you the exact amount of chemical needed."
+"Enter the recommended dose per liter and the total volume of water you need "
+"to prepare. The calculator will show you the exact amount needed."
 msgstr ""
-"Литрине сунушталган дозаны киргизиңиз (адатта химиялык заттарды сатуучулар "
-"берет) жана даярдоо керек болгон суунун жалпы көлөмүн киргизиңиз. Эсептегич "
-"керектүү химиялык заттардын так санын көрсөтөт."
+"Литрине сунушталган дозаны жана даярдоо керек болгон суунун жалпы көлөмүн "
+"киргизиңиз. Эсептегич керектүү санын так көрсөтөт."
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:38
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:102
@@ -570,8 +416,8 @@ msgid "grams"
 msgstr "грамм"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:53
-msgid "Amount of chemical recommended per liter of water"
-msgstr "Суунун бир литрине сунушталган химиялык заттын саны"
+msgid "Amount recommended per liter of water"
+msgstr "Суунун бир литрине сунушталган сан"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:59
 msgid "Total Volume Needed"
@@ -611,8 +457,8 @@ msgid "L"
 msgstr "л"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:114
-msgid "Total Chemical Needed"
-msgstr "Жалпы химиялык зат керек"
+msgid "Total Amount Needed"
+msgstr "Жалпы керектүү сан"
 
 #: pests_diseases/templates/pests_diseases/dose_calculator.html:118
 msgid "kg"
@@ -640,44 +486,44 @@ msgstr ""
 msgid "Prices"
 msgstr ""
 
-#: templates/base.html:88
+#: templates/base.html:87
 msgid "Community"
 msgstr ""
 
-#: templates/base.html:145
+#: templates/base.html:144
 msgid "Dashboard"
 msgstr ""
 
-#: templates/base.html:148
+#: templates/base.html:147
 msgid "Edit Profile"
 msgstr ""
 
-#: templates/base.html:151
+#: templates/base.html:150
 msgid "View Profile"
 msgstr ""
 
-#: templates/base.html:155 users/templates/users/farmers_list.html:6
+#: templates/base.html:154 users/templates/users/farmers_list.html:6
 #: users/templates/users/farmers_list.html:55
 msgid "Find Farmers"
 msgstr ""
 
-#: templates/base.html:160
+#: templates/base.html:159
 msgid "Admin Panel"
 msgstr ""
 
-#: templates/base.html:168
+#: templates/base.html:167
 msgid "Logout"
 msgstr ""
 
-#: templates/base.html:177 users/templates/users/login.html:6
+#: templates/base.html:176 users/templates/users/login.html:6
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:182 users/templates/users/register.html:6
+#: templates/base.html:181 users/templates/users/register.html:6
 msgid "Register"
 msgstr ""
 
-#: templates/base.html:212
+#: templates/base.html:211
 msgid ""
 "Empowering farmers in Batken region, Kyrgyzstan with data-driven "
 "agricultural solutions."
@@ -817,10 +663,26 @@ msgstr ""
 msgid "Search Filters"
 msgstr ""
 
+#: users/templates/users/farmers_list.html:70
+#: users/templates/users/register.html:438
+#: weather/templates/weather/dashboard.html:26
+msgid "Country"
+msgstr "Өлкө"
+
+#: users/templates/users/farmers_list.html:72
+msgid "All Countries"
+msgstr "Бардык өлкөлөр"
+
 #: users/templates/users/farmers_list.html:82
 #: weather/templates/weather/dashboard.html:35
 msgid "Region/State"
 msgstr ""
+
+#: users/templates/users/farmers_list.html:84
+#: users/templates/users/farmers_list.html:254
+#: users/templates/users/farmers_list.html:270
+msgid "All Regions"
+msgstr "Бардык аймактар"
 
 #: users/templates/users/farmers_list.html:95
 #: users/templates/users/profile_detail.html:76
@@ -1060,6 +922,11 @@ msgstr ""
 #: users/templates/users/profile_detail.html:73
 msgid "About"
 msgstr ""
+
+#: users/templates/users/profile_detail.html:75
+#: users/templates/users/register.html:447
+msgid "Region"
+msgstr "Аймак"
 
 #: users/templates/users/profile_detail.html:77
 msgid "Experience"
@@ -1389,3 +1256,18 @@ msgstr ""
 #: weather/templates/weather/dashboard.html:384
 msgid "Enter city/village (e.g., Tashkent, Samarkand, Bukhara...)"
 msgstr ""
+
+#~ msgid "Chemical Dose Calculator"
+#~ msgstr "Химиялык доза эсептегичи"
+
+#~ msgid "Total Chemical Needed"
+#~ msgstr "Жалпы химиялык зат керек"
+
+#~ msgid "Search Chemical Products"
+#~ msgstr "Химиялык продукттарды издөө"
+
+#~ msgid "Search Products"
+#~ msgstr "Продуктуларды издөө"
+
+#~ msgid "Product name, brand, ingredient..."
+#~ msgstr "Продукт аты, бренд, ингредиент..."

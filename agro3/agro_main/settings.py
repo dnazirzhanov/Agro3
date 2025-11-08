@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'market',
     'forum',
     'weather',
-    'agro_supplies.apps.AgroSuppliesConfig',
     'agro_statistics',
     'rest_framework',
     'rest_framework.authtoken',

@@ -105,6 +105,5 @@ if __name__ == '__main__':
     populate_sample_locations()
     test_ajax_endpoints()
     print("\n🎯 Test the dropdowns at:")
-    print("   - http://127.0.0.1:8000/en/agro-supplies/shops/")
-    print("   - http://127.0.0.1:8000/en/agro-supplies/products/")
+
     print("   - http://127.0.0.1:8000/en/users/register/")
