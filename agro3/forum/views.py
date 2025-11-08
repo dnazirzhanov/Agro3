@@ -147,7 +147,6 @@ def blog_index_view(request):
         'posts': paginated_posts,
         'featured_posts': featured_posts,
         'categories': available_categories,
-        'popular_tags': available_tags[:10],
         'current_search': search or '',
         'current_category': category_slug,
         'current_tag': tag_slug,

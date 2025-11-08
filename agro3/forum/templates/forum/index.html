@@ -203,45 +203,8 @@
             </div>
         </div>
         
-        <!-- Popular Tags -->
-        {% if popular_tags %}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-tags me-2"></i>{% trans "Popular Tags" %}</h5>
-            </div>
-            <div class="card-body">
-                {% for tag in popular_tags %}
-                    <a href="{% url 'forum:tag' tag.slug %}" class="badge bg-light text-dark text-decoration-none me-2 mb-2">
-                        #{{ tag.name }}
-                    </a>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- Quick Actions -->
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>{% trans "Quick Links" %}</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'crops:list' %}" class="btn btn-outline-success">
-                        <i class="bi bi-flower3 me-1"></i>{% trans "Browse Crops" %}
-                    </a>
-                    <a href="{% url 'pests_diseases:list' %}" class="btn btn-outline-warning">
-                        <i class="bi bi-bug me-1"></i>{% trans "Pest Guide" %}
-                    </a>
-                    <a href="{% url 'market:price_list' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-graph-up me-1"></i>{% trans "Market Prices" %}
-                    </a>
-                    <a href="{% url 'weather:dashboard' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-cloud-sun me-1"></i>{% trans "Weather" %}
-                    </a>
 
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 {% endblock %}
